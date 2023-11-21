@@ -1,0 +1,3 @@
+[submodule "Assets/IRXRObject"]
+	path = Assets/IRXRObject
+	url = git@github.com:intuitive-robots/IRXRObject.git

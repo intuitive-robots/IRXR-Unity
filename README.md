@@ -2,3 +2,6 @@
 
 This repo will make robot simulation and interaction more intuitive via Mixed Reality.
 
+## Submodules
+- IRXR Object
+- QR Anchor
