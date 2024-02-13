@@ -10,7 +10,7 @@ using System.Text;
 using UnityEngine;
 using System.Collections;
 using NativeWebSocket;
-using Newtonsoft.Json;
+// using Newtonsoft.Json;
 using System.Net;
 using System.Net.NetworkInformation;
 using System;
@@ -18,6 +18,7 @@ using System;
 
 namespace IRXR
 {
+    
     public class IRXRClient : IRXRSingleton<IRXRClient>
     {
 
@@ -38,8 +39,8 @@ namespace IRXR
         private string _ConnectedIP;
         private ClientState _clientState = ClientState.Disconnected;
         private string port;
-
-        private Dictionary<string, Delegate> _MsgCallbackDict;
+        public delegate void Subscriber(string message);
+        private Dictionary<string, Subscriber> subscribers = new Dictionary<string, Subscriber>();
 
         private void Start() 
         {
@@ -63,26 +64,28 @@ namespace IRXR
                 // UIObjectManager.Instance.ClearAllObjects();
                 if (_ConnectedIP != null)
                 {
+                    StartConnection(_ConnectedIP, port);
+                    // StartCoroutine(StartConnection(_ConnectedIP, port));
                     _clientState = ClientState.Reconnecting;
-                    StartCoroutine(Reconnect());
+                    // StartCoroutine(Reconnect());
                 }
                 else
                 {
                     _clientState = ClientState.Searching;
-                    StartCoroutine(SearchForWebSocket());
+                    // StartCoroutine(SearchForWebSocket());
                 }
             }
         }
 
-        public void SubscribeCallback(string header, Delegate callback)
+        public void SubscribeCallback(string header, Subscriber callback)
         {
-            if (_MsgCallbackDict.ContainsKey(header))
+            if (subscribers.ContainsKey(header))
             {
-                _MsgCallbackDict[header] = Delegate.Combine(_MsgCallbackDict[header], callback);
+                subscribers[header] += callback;
             }
             else
             {
-                _MsgCallbackDict[header] = callback;
+                subscribers[header] = callback;
             }
         }
 
@@ -129,13 +132,12 @@ namespace IRXR
                 _WebSocket.OnMessage += (bytes) =>
                 {
                     // getting the message as a string
-                    var str = Encoding.UTF8.GetString(bytes);
-                    IRXRMsg msg = JsonConvert.DeserializeObject<IRXRMsg>(str);
-                    if (!_MsgCallbackDict.ContainsKey(msg.header))
+                    IRXRMsgPack pack = new IRXRMsgPack(Encoding.UTF8.GetString(bytes));
+                    if (!subscribers.ContainsKey(pack.header))
                     {
                         return;
                     }
-                    _MsgCallbackDict[msg.header]?.DynamicInvoke(msg.data);
+                    subscribers[pack.header]?.DynamicInvoke(pack.msg);
                 };
 
                 _WebSocketRunThread = Task.Run(async () => 
@@ -151,21 +153,21 @@ namespace IRXR
         }
 
 
-        public void SendRequest(string type, string value)
-        {
-            Dictionary<string, string> req = new Dictionary<string, string>();
-            req["Type"] = type;
-            req["Value"] = value;
-            _WebSocket.SendText(JsonConvert.SerializeObject(req));
-        }
+        // public void SendRequest(string type, string value)
+        // {
+        //     Dictionary<string, string> req = new Dictionary<string, string>();
+        //     req["Type"] = type;
+        //     req["Value"] = value;
+        //     _WebSocket.SendText(JsonConvert.SerializeObject(req));
+        // }
 
-        public async Task AsyncSendRequest(string type, string value)
-        {
-            Dictionary<string, string> req = new Dictionary<string, string>();
-            req["Type"] = type;
-            req["Value"] = value;
-            await _WebSocket.SendText(JsonConvert.SerializeObject(req));
-        }
+        // public async Task AsyncSendRequest(string type, string value)
+        // {
+        //     Dictionary<string, string> req = new Dictionary<string, string>();
+        //     req["Type"] = type;
+        //     req["Value"] = value;
+        //     await _WebSocket.SendText(JsonConvert.SerializeObject(req));
+        // }
 
         private void OnApplicationQuit()
         {
