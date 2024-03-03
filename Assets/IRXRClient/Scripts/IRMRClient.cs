@@ -36,9 +36,9 @@ namespace IRXR
         // The websocket setting
         private Task _WebSocketRunThread;
         private WebSocket _WebSocket;
-        private string _ConnectedIP;
+        private string _ConnectedIP = "127.0.0.1";
         private ClientState _clientState = ClientState.Disconnected;
-        private string port;
+        private string port = "8052";
         public delegate void Subscriber(string message);
         private Dictionary<string, Subscriber> subscribers = new Dictionary<string, Subscriber>();
 
@@ -47,9 +47,11 @@ namespace IRXR
 
         }
 
-        private void Update() {        
+        private void Update() {
+            // Debug.Log(_clientState);
             if (_clientState == ClientState.OnConnected)
             {
+                // Debug.Log("Processing connection");
                 _WebSocket.DispatchMessageQueue();
 
                 // if (updateMsg != null)
@@ -64,14 +66,14 @@ namespace IRXR
                 // UIObjectManager.Instance.ClearAllObjects();
                 if (_ConnectedIP != null)
                 {
+                    _clientState = ClientState.Reconnecting;
                     StartConnection(_ConnectedIP, port);
                     // StartCoroutine(StartConnection(_ConnectedIP, port));
-                    _clientState = ClientState.Reconnecting;
                     // StartCoroutine(Reconnect());
                 }
                 else
                 {
-                    _clientState = ClientState.Searching;
+                    _clientState = ClientState.Reconnecting;
                     // StartCoroutine(SearchForWebSocket());
                 }
             }
@@ -106,50 +108,48 @@ namespace IRXR
 
             Task connectTask = testWebSocket.Connect();
 
-            if (testWebSocket.State == WebSocketState.Open && _WebSocket == null)
+            Debug.Log($"Find a WebSocket server in {ipAddress}");
+            _ConnectedIP = ipAddress;
+            _WebSocket = testWebSocket;
+            _clientState = ClientState.OnConnected;
+
+            _WebSocket.OnOpen += () =>
             {
-                Debug.Log($"Find a WebSocket server in {ipAddress}");
-                _ConnectedIP = ipAddress;
-                _WebSocket = testWebSocket;
-                _clientState = ClientState.OnConnected;
+                _WebSocket.SendText("Heollo");
+            };
 
-                _WebSocket.OnOpen += () =>
-                {
-                    _WebSocket.SendText("Heollo");
-                };
+            _WebSocket.OnError += (e) =>
+            {
+                Debug.Log("Error! " + e);
+                Task.Run(async () => {await _WebSocket.Close();});
+            };
 
-                _WebSocket.OnError += (e) =>
-                {
-                    Debug.Log("Error! " + e);
-                    Task.Run(async () => {await _WebSocket.Close();});
-                };
+            _WebSocket.OnClose += (e) =>
+            {
+                Debug.Log($"Connection with {this._ConnectedIP} is closed!");
+            };
 
-                _WebSocket.OnClose += (e) =>
+            _WebSocket.OnMessage += (bytes) =>
+            {
+                // Debug.Log("Receive the message");
+                // getting the message as a string
+                IRXRMsgPack pack = new IRXRMsgPack(Encoding.UTF8.GetString(bytes));
+                if (!subscribers.ContainsKey(pack.header))
                 {
-                    Debug.Log($"Connection with {this._ConnectedIP} is closed!");
-                };
+                    return;
+                }
+                subscribers[pack.header]?.DynamicInvoke(pack.msg);
+            };
 
-                _WebSocket.OnMessage += (bytes) =>
-                {
-                    // getting the message as a string
-                    IRXRMsgPack pack = new IRXRMsgPack(Encoding.UTF8.GetString(bytes));
-                    if (!subscribers.ContainsKey(pack.header))
-                    {
-                        return;
-                    }
-                    subscribers[pack.header]?.DynamicInvoke(pack.msg);
-                };
-
-                _WebSocketRunThread = Task.Run(async () => 
-                {
-                    // await AsyncSendRequest("start_stream", "");
-                    await connectTask;
-                    Debug.Log($"Quit WebSocket run thread");
-                    _clientState = ClientState.Disconnected;
-                    _WebSocket = null;
-                });
-                Debug.Log("Start a new thread for WebSocket");
-            }
+            _WebSocketRunThread = Task.Run(async () => 
+            {
+                // await AsyncSendRequest("start_stream", "");
+                await connectTask;
+                Debug.Log($"Quit WebSocket run thread");
+                _clientState = ClientState.Disconnected;
+                _WebSocket = null;
+            });
+            Debug.Log("Start a new thread for WebSocket");
         }
 
 
@@ -169,10 +169,12 @@ namespace IRXR
         //     await _WebSocket.SendText(JsonConvert.SerializeObject(req));
         // }
 
-        private void OnApplicationQuit()
+        private void OnDestroy()
         {
+
             if (_WebSocket != null)
             {
+                Debug.Log("Close application and shut down the Server");
                 Task closeTask = Task.Run(
                     async () => {
                         await _WebSocket.Close();

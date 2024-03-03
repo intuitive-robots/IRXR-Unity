@@ -12,6 +12,7 @@ namespace IRXR
         public IRXRMsgPack(string package)
         {
             string[] split = package.Split(HEADER_SEPERATOR);
+            Debug.Log(package);
             if (split.Length != 2) 
             {
                 Debug.LogWarning($"Invalid message formatting {package}, this message will be ignored");
