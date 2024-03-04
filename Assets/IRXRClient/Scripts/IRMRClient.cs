@@ -167,7 +167,7 @@ namespace IRXR
         private IEnumerator TryWebSockets(string ipAddress)
         {
             WebSocket testWebSocket = new WebSocket($"ws://{ipAddress}:{port}");
-            Debug.Log($"Start to try ip: {ipAddress}:{port}");
+            // Debug.Log($"Start to try ip: {ipAddress}:{port}");
             Task connectTask = testWebSocket.Connect();
 
             // wait until the websocket has updated 
