@@ -25,11 +25,9 @@ This application is supported by our paper published on HRI2024. If you find our
 }
 ```
 
-Please cite 
-
 ## Software Dependency
 
-For main module:
+For the basic application:
 - [MRTK2](https://learn.microsoft.com/en-us/windows/mixed-reality/mrtk-unity/mrtk2/?view=mrtkunity-2022-05)
 The configuration of MRTK relied on [Mixed Reality Feature Tool](https://learn.microsoft.com/en-us/windows/mixed-reality/develop/unity/welcome-to-mr-feature-tool)
 - [Newtonsoft.Json-for-Unity](https://github.com/applejag/Newtonsoft.Json-for-Unity)
