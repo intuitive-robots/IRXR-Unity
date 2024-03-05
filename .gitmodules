@@ -1,0 +1,7 @@
+[submodule "Assets/IRXRObject"]
+	path = Assets/IRXRObject
+	url = https://github.com/intuitive-robots/IRXRObject.git
+
+[submodule "Assets/HDAR"]
+	path = Assets/HDAR
+	url = https://github.com/intuitive-robots/HDAR.git
