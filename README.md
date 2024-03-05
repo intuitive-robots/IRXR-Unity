@@ -1,16 +1,29 @@
 # Intuitive Robot & Mixed Reality (IRXR-Unity)
 
-This repo will make robot simulation more intuitive and interactable via Mixed Reality.
+This repository aims to enhance robot simulation by making it more intuitive and interactive through Mixed Reality (MR). 
+Current visualization devices, such as XR/AR/VR glasses, support only basic physics simulations and are not tailored for research-driven simulation due to their limited computational resources.
+
+To ensure the reproducibility of simulation results, we have decoupled the simulation and rendering processes onto two separate machines. 
+This separation allows for more efficient and accurate simulations. 
+These two systems are interconnected via [SimPublisher](https://github.com/intuitive-robots/SimPublisher.git), which simplifies the process of remotely rendering simulated objects from the simulation machine.
+This repo is the implementation of rendering part.
+
+We have created some applications based on this framework, and supported applications could be found through [application](#applications).
+
+## Core Modules
+
+- [IRXRObject](https://github.com/intuitive-robots/IRXRObject.git)
+- QRAnchor
 
 ## Applications
 
 ### Create human demonstration by Augmented Reality
 
-[Docs](Assets/HDAR/HDAR.md) | [Paper Website](https://intuitive-robots.github.io/HDAR-Simulator/)
+[Docs](https://github.com/intuitive-robots/HDAR) | [Paper Website](https://intuitive-robots.github.io/HDAR-Simulator/)
 
-The [HDAR](Assets/HDAR/HDAR.md) applicatin is used to create human demonstration by Augmented Reality.
+The [HDAR](https://github.com/intuitive-robots/HDAR) applicatin is used to create human demonstration by Augmented Reality.
 
-This application is supported by our paper published on HRI2024. If you find our work useful, please consider citing.
+This application supports our paper ["A Comprehensive User Study on Augmented Reality-Based Data Collection Interfaces for Robot Learning"](https://intuitive-robots.github.io/HDAR-Simulator/), which was published on HRI2024. If you find our work useful, please consider citing.
 
 ```latex
 @inproceedings{jiang2024comprehensive,
@@ -38,10 +51,10 @@ For QRAnchor:
 
 ## Hardware Requirement
 
-You need one MR/AR/VR device and one PC for running simulation,
+You need one XR/AR/VR device and one PC for running simulation,
 the ip addresses of these two device should be in the same subnet.
 
-The MR/AR/VR device we have tested is:
+The XR/AR/VR device we have tested is:
 - HoloLens 2
 
 ## System Setting
@@ -54,11 +67,11 @@ We use [SimPublisher](https://github.com/intuitive-robots/SimPublisher.git) to m
 
 ### Deploy Unity Project
 
-Deploy this unity project scene to your MR/AR/VR device by Unity, here is a example about [how to deploy a Unity project to Hololens2](https://learn.microsoft.com/en-us/windows/mixed-reality/develop/advanced-concepts/using-visual-studio?tabs=hl2).
+Deploy this unity project scene to your XR/AR/VR device by Unity, here is a example about [how to deploy a Unity project to Hololens2](https://learn.microsoft.com/en-us/windows/mixed-reality/develop/advanced-concepts/using-visual-studio?tabs=hl2).
 
-### Setting up your MR/AR/VR device and run the application
+### Setting up your XR/AR/VR device and run the application
 
-Setting up and keep your MR/AR/VR device and your simulation PC in a subnet.
+Setting up and keep your XR/AR/VR device and your simulation PC in a subnet.
 
 Run the server application and Unity application,
 and this project will automatically search available PC in the subnet.
