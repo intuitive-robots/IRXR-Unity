@@ -77,6 +77,10 @@ and this Unity project will automatically search available PC in the subnet and 
 
 ### HDAR: Create human demonstration by Augmented Reality
 
+**Stll Under testing for real robot open-source control repo alternative and will release before April!!!!!!**
+
+Please contact me (xinkai.jiang@kit.edu) if you have question.
+
 [Submodule Code](https://github.com/intuitive-robots/HDAR) | [Paper Website](https://intuitive-robots.github.io/HDAR-Simulator/)
 
 The [HDAR](https://github.com/intuitive-robots/HDAR) applicatin is used to create human demonstration by Augmented Reality.
