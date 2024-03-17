@@ -89,13 +89,10 @@ This application supports our paper ["A Comprehensive User Study on Augmented Re
 
 ```latex
 @inproceedings{jiang2024comprehensive,
-  title={A Comprehensive User Study on Augmented Reality-Based Data Collection Interfaces for Robot Learning},
-  author={Jiang, Xinkai and Mattes, Paul and Jia, Xiaogang and Schreiber, Nicolas and Neumann, Gerhard and Lioutikov, Rudolf},
-  booktitle={Proceedings of the 2024 ACM/IEEE International Conference on Human-Robot Interaction},
-  pages={10},
-  year={2024},
-  organization={ACM},
-  address={Boulder, CO, USA},
-  date={March 11--14}
+title={A Comprehensive User Study on Augmented Reality-Based Data Collection Interfaces for Robot Learning},
+author={Jiang, Xinkai and Mattes, Paul and Jia, Xiaogang and Schreiber, Nicolas and Neumann, Gerhard and Lioutikov, Rudolf},
+booktitle={Proceedings of the 2024 ACM/IEEE International Conference on Human-Robot Interaction},
+pages={333--342},
+year={2024}
 }
 ```
