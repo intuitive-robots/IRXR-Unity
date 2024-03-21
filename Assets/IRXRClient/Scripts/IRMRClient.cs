@@ -53,33 +53,6 @@ namespace IRXR
 
         private void Update() {
             updateAction?.Invoke();
-            // if (_clientState == ClientState.Connected)
-            // {
-            //     _webSocket.DispatchMessageQueue();
-
-            //     // if (updateMsg != null)
-            //     // {
-            //     //     OnSceneUpdate?.Invoke(updateMsg.Data);
-            //     //     SendManipulableObjData();
-            //     // }
-            // }
-            // else if (_clientState == ClientState.Disconnected)
-            // {
-            //     // SFObjectManager.Instance.ClearAllObjects();
-            //     // UIObjectManager.Instance.ClearAllObjects();
-            //     if (_connectedIP != null)
-            //     {
-            //         StartConnection(_ConnectedIP, port);
-            //         // StartCoroutine(StartConnection(_ConnectedIP, port));
-            //         _clientState = ClientState.Reconnecting;
-            //         // StartCoroutine(Reconnect());
-            //     }
-            //     else
-            //     {
-            //         _clientState = ClientState.Searching;
-            //         // StartCoroutine(SearchForWebSocket());
-            //     }
-            // }
         }
 
         private void SearchingAction()
