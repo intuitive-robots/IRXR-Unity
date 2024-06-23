@@ -5,8 +5,6 @@ using Newtonsoft.Json;
 
 public class DataLoader : MonoBehaviour {
 
-  [SerializeField] private Material _defaultMaterial;
-
   [SerializeField] ServiceConnection _connection;
 
   [SerializeField] StreamingConnection _streamingConnection;
@@ -55,14 +53,10 @@ public class DataLoader : MonoBehaviour {
     _streamingConnection.OnMessage += sceneController.listener;
   }
 
-  Vector3 vec3(List<float> values) {
-    return new Vector3(values[0], values[1], values[2]);
-  }
-
   void apply_transform(Transform utransform, SimTransform transform) {
-    utransform.localScale = vec3(transform.Scale);
-    utransform.localPosition = vec3(transform.Position);
-    utransform.localEulerAngles = vec3(transform.Rotation);
+    utransform.localScale = new Vector3(transform.Scale[0], transform.Scale[1], transform.Scale[2]);
+    utransform.localPosition = new Vector3(transform.Position[0], transform.Position[1], transform.Position[2]);
+    utransform.localRotation = new Quaternion(transform.Rotation[0], transform.Rotation[1], transform.Rotation[2], transform.Rotation[3]);
   }
 
   Transform create_joint(Transform root, SimJoint joint) {
@@ -81,10 +75,12 @@ public class DataLoader : MonoBehaviour {
 
   GameObject create_body(Transform root, SimBody body, string name = null) {
 
-    body.Joints.ForEach(joint => root = create_joint(root, joint)); // create joint chain
+    if (root != null)
+      body.Joints.ForEach(joint => root = create_joint(root, joint)); // create joint chain
 
     GameObject bodyRoot = new GameObject(name != null ? name : body.Name);
-    if (root != null) bodyRoot.transform.SetParent(root, false);
+    if (root != null) 
+      bodyRoot.transform.SetParent(root, false);
 
     body.Bodies.ForEach(body => create_body(bodyRoot.transform, body));
 
@@ -123,7 +119,7 @@ public class DataLoader : MonoBehaviour {
       if (visual.Material != null) 
         renderer.material = _assetHandler.GetMaterial(visual.Material).compiledMaterial;
       else {
-        renderer.material = new Material(_defaultMaterial);
+        renderer.material = new Material(Shader.Find("Standard"));
         renderer.material.SetColor("_Color", new Color(visual.Color[0], visual.Color[1], visual.Color[2], visual.Color[3]));
       }
 
