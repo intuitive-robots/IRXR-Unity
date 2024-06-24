@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class JointController : MonoBehaviour
 {
+  public string joint_name;
     static public Type GetJointType(string jointType) {
       switch (jointType) {
         case "HINGE": return typeof(HingeJointController);
@@ -28,22 +29,22 @@ class HingeJointController : JointController {
     [SerializeField] private float _velocity = 0.0f;
 
     public override void InitializeState(SimJoint data) {
-      _axis = new Vector3(data.Axis[0], data.Axis[1], data.Axis[2]);
-      _minRot = data.Minrot;
-      _maxRot = data.Maxrot;
+      _axis = new Vector3(data.axis[0], data.axis[1], data.axis[2]);
+      _minRot = data.minrot;
+      _maxRot = data.maxrot;
 
-      transform.Rotate(_axis, data.Initial);
+      transform.Rotate(_axis, data.initial);
     }
 
     
     public override void SetValue(List<float> value) {
       float new_pos = value[0];
-      if (new_pos > _maxRot || new_pos < _minRot) return;
+      // if (new_pos > _maxRot || new_pos < _minRot) return;
 
       float diff = new_pos - _value;
       _velocity = value[1];
       _value += diff;
-      transform.Rotate(_axis, diff); 
+      transform.Rotate(_axis, diff);
     }
 
     public void Update() {
@@ -63,12 +64,12 @@ class SlideJointController : JointController {
   [SerializeField] private float _value = 0.0f;
   [SerializeField] private float _velocity = 0.0f;
   public override void InitializeState(SimJoint data) {
-    _axis = new Vector3(data.Axis[0], data.Axis[1], data.Axis[2]);
+    _axis = new Vector3(data.axis[0], data.axis[1], data.axis[2]);
 
-    _minRot = data.Minrot;
-    _maxRot = data.Maxrot;
+    _minRot = data.minrot;
+    _maxRot = data.maxrot;
 
-    transform.Translate(_axis * data.Initial);
+    transform.Translate(_axis * data.initial);
   }
 
   

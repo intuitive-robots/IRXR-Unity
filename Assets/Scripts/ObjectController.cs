@@ -24,10 +24,11 @@ public class SceneController : MonoBehaviour
         
         joints = new Dictionary<string, JointController>();
         foreach(var joint in jointList) {
-            joints.Add(joint.name, joint);
+            joints.Add(joint.joint_name, joint);
+            Debug.Log($"joint: {joint.joint_name}");
         }
 
-        Name = body.Name;
+        Name = body.name;
     }
 
     public void listener(string message) {
@@ -43,11 +44,14 @@ public class SceneController : MonoBehaviour
 
         lastSimulationTimeStamp = jointValues.Time;
 
+        foreach (var (joint_name, joint) in joints)
+        {
+            Debug.Log($"tracked joint: {joint_name}");
+            // joint.SetValue(jointValues.Data[name]);
+        }
         foreach (var (name, new_values) in jointValues.Data) {
+            Debug.Log($"joint data: {name}");
             joints[name].SetValue(new_values);
         }
     }
-
-  
-
 }
