@@ -25,7 +25,7 @@ public class StreamingConnection : MonoBehaviour {
 
     _Address = $"tcp://{server_ip}:{server_port}";
     subscriberSocket.Connect(_Address);
-    subscriberSocket.SubscribeToAnyTopic();
+    subscriberSocket.Subscribe("STREAM");
 
     OnMessage -= OnMessage;
 

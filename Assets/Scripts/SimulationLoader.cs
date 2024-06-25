@@ -46,43 +46,25 @@ public class DataLoader : MonoBehaviour {
 
   void build_objects() {
     if (_scene != null) Destroy(_scene);
-    _scene = create_body(null, _data.WorldBody, "Scene-" + _data.Id);
-    var sceneController = _scene.AddComponent<SceneController>();
+    _scene = CreateBody(null, _data.WorldBody, "Scene-" + _data.Id);
     
-    sceneController.InitializeData(_data.WorldBody);
+    var sceneController = _scene.AddComponent<SceneController>();
     _streamingConnection.OnMessage += sceneController.listener;
   }
 
-  void apply_transform(Transform utransform, SimTransform transform) {
+  void ApplyTransform(Transform utransform, SimTransform transform) {
     utransform.localScale = new Vector3(transform.Scale[0], transform.Scale[1], transform.Scale[2]);
     utransform.localPosition = new Vector3(transform.Position[0], transform.Position[1], transform.Position[2]);
     utransform.localRotation = new Quaternion(transform.Rotation[0], transform.Rotation[1], transform.Rotation[2], transform.Rotation[3]);
   }
 
-  Transform create_joint(Transform root, SimJoint joint) {
-    
-    Type jointType = JointController.GetJointType(joint.Type);
-    GameObject jointRoot = new GameObject(joint.Name, jointType);
 
-    jointRoot.transform.SetParent(root, false);
-    apply_transform(jointRoot.transform, joint.Transform);
+  GameObject CreateBody(Transform root, SimBody body, string name = null) {
 
-    JointController jController = (JointController)jointRoot.GetComponent(jointType);
-    jController.InitializeState(joint);
-    return jointRoot.transform;
-  }
-
-
-  GameObject create_body(Transform root, SimBody body, string name = null) {
-
-    if (root != null)
-      body.Joints.ForEach(joint => root = create_joint(root, joint)); // create joint chain
 
     GameObject bodyRoot = new GameObject(name != null ? name : body.Name);
-    if (root != null) 
-      bodyRoot.transform.SetParent(root, false);
-
-    body.Bodies.ForEach(body => create_body(bodyRoot.transform, body));
+    if (root != null)  bodyRoot.transform.SetParent(root, false);
+    ApplyTransform(bodyRoot.transform, body.Trans);
 
     GameObject VisualContainer = new GameObject("Visuals");
     VisualContainer.transform.SetParent(bodyRoot.transform, false);
@@ -124,8 +106,10 @@ public class DataLoader : MonoBehaviour {
       }
 
       Visual.transform.SetParent(VisualContainer.transform, false);
-      apply_transform(Visual.transform, visual.Transform);
+      ApplyTransform(Visual.transform, visual.Transform);
     }
+    
+    body.Bodies.ForEach(body => CreateBody(bodyRoot.transform, body));
     return bodyRoot; 
   }
 }

@@ -18,22 +18,11 @@ public class SimVisual {
 
 public class SimBody {
   public string Name;
+
+  public SimTransform Trans;
   public List<SimVisual> Visuals; 
 
-  public List<SimJoint> Joints;
-
   public List<SimBody> Bodies;
-}
-
-
-public class SimJoint {
-  public string Type;
-  public string Name;
-  public float Initial;
-  public float Maxrot;
-  public float Minrot;
-  public List<float> Axis;
-  public SimTransform Transform;
 }
 
 public class SimScene {

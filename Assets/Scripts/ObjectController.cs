@@ -16,18 +16,14 @@ class SimulationStreamMessage {
 public class SceneController : MonoBehaviour
 {
     private float lastSimulationTimeStamp = 0.0f;
-    public string Name { get; private set; }
-    [SerializeField] private Dictionary<string, JointController> joints;
+    public Dictionary<string, Transform> gameObjects = new();
 
-    public void InitializeData(SimBody body) {
-        var jointList = new List<JointController>(transform.GetComponentsInChildren<JointController>());
+    public void Start() {
+        var objList = new List<Transform>(transform.GetComponentsInChildren<Transform>());
         
-        joints = new Dictionary<string, JointController>();
-        foreach(var joint in jointList) {
-            joints.Add(joint.name, joint);
+        foreach(var obj in objList) {
+            gameObjects.Add(obj.name, obj);
         }
-
-        Name = body.Name;
     }
 
     public void listener(string message) {
@@ -44,7 +40,8 @@ public class SceneController : MonoBehaviour
         lastSimulationTimeStamp = jointValues.Time;
 
         foreach (var (name, new_values) in jointValues.Data) {
-            joints[name].SetValue(new_values);
+            gameObjects[name].localPosition = new Vector3(new_values[0], new_values[1], new_values[2]);
+            gameObjects[name].localRotation = new Quaternion(new_values[3], new_values[4], new_values[5], new_values[6]);
         }
     }
 
