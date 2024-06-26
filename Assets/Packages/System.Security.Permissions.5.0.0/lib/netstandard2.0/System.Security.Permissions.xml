@@ -13,7 +13,7 @@
       <exception cref="T:System.ArgumentNullException">
         <paramref name="applicationIdentityFullName" /> is <see langword="null" />.</exception>
     </member>
-    <member name="M:System.ApplicationIdentity.System#Runtime#Serialization#ISerializable#GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+    <member name="M:System.ApplicationIdentity.System#Runtime#Serialization#ISerializable#GetObjectdata(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
       <summary>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the data needed to serialize the target object.</summary>
       <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data.</param>
       <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" />) structure for the serialization.</param>
@@ -103,316 +103,316 @@ The <see langword="version" /> attribute for the given <paramref name="securityE
       <summary>Creates and returns an object that implements the <see cref="T:System.Security.IPermission" /> interface.</summary>
       <returns>An object that implements <see cref="T:System.Security.IPermission" />.</returns>
     </member>
-    <member name="T:System.Data.Common.DBDataPermission">
+    <member name="T:System.data.Common.DBdataPermission">
       <summary>Enables a .NET Framework data provider to help ensure that a user has a security level adequate for accessing data.</summary>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.#ctor">
-      <summary>Initializes a new instance of a <see langword="DBDataPermission" /> class.</summary>
+    <member name="M:System.data.Common.DBdataPermission.#ctor">
+      <summary>Initializes a new instance of a <see langword="DBdataPermission" /> class.</summary>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.#ctor(System.Data.Common.DBDataPermission)">
-      <summary>Initializes a new instance of a <see langword="DBDataPermission" /> class using an existing <see langword="DBDataPermission" />.</summary>
-      <param name="permission">An existing <see langword="DBDataPermission" /> used to create a new <see langword="DBDataPermission" />.</param>
+    <member name="M:System.data.Common.DBdataPermission.#ctor(System.data.Common.DBdataPermission)">
+      <summary>Initializes a new instance of a <see langword="DBdataPermission" /> class using an existing <see langword="DBdataPermission" />.</summary>
+      <param name="permission">An existing <see langword="DBdataPermission" /> used to create a new <see langword="DBdataPermission" />.</param>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.#ctor(System.Data.Common.DBDataPermissionAttribute)">
-      <summary>Initializes a new instance of a <see langword="DBDataPermission" /> class with the specified <see langword="DBDataPermissionAttribute" />.</summary>
+    <member name="M:System.data.Common.DBdataPermission.#ctor(System.data.Common.DBdataPermissionAttribute)">
+      <summary>Initializes a new instance of a <see langword="DBdataPermission" /> class with the specified <see langword="DBdataPermissionAttribute" />.</summary>
       <param name="permissionAttribute">A security action associated with a custom security attribute.</param>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.#ctor(System.Security.Permissions.PermissionState)">
-      <summary>Initializes a new instance of a <see langword="DBDataPermission" /> class with the specified <see cref="T:System.Security.Permissions.PermissionState" /> value.</summary>
+    <member name="M:System.data.Common.DBdataPermission.#ctor(System.Security.Permissions.PermissionState)">
+      <summary>Initializes a new instance of a <see langword="DBdataPermission" /> class with the specified <see cref="T:System.Security.Permissions.PermissionState" /> value.</summary>
       <param name="state">One of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</param>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.#ctor(System.Security.Permissions.PermissionState,System.Boolean)">
-      <summary>Initializes a new instance of a <see langword="DBDataPermission" /> class with the specified <see cref="T:System.Security.Permissions.PermissionState" /> value, and a value indicating whether a blank password is allowed.</summary>
+    <member name="M:System.data.Common.DBdataPermission.#ctor(System.Security.Permissions.PermissionState,System.Boolean)">
+      <summary>Initializes a new instance of a <see langword="DBdataPermission" /> class with the specified <see cref="T:System.Security.Permissions.PermissionState" /> value, and a value indicating whether a blank password is allowed.</summary>
       <param name="state">One of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</param>
       <param name="allowBlankPassword">
         <see langword="true" /> to indicate that a blank password is allowed; otherwise, <see langword="false" />.</param>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.Add(System.String,System.String,System.Data.KeyRestrictionBehavior)">
-      <summary>Adds access for the specified connection string to the existing state of the <see langword="DBDataPermission" />.</summary>
+    <member name="M:System.data.Common.DBdataPermission.Add(System.String,System.String,System.data.KeyRestrictionBehavior)">
+      <summary>Adds access for the specified connection string to the existing state of the <see langword="DBdataPermission" />.</summary>
       <param name="connectionString">A permitted connection string.</param>
       <param name="restrictions">String that identifies connection string parameters that are allowed or disallowed.</param>
-      <param name="behavior">One of the <see cref="T:System.Data.KeyRestrictionBehavior" /> properties.</param>
+      <param name="behavior">One of the <see cref="T:System.data.KeyRestrictionBehavior" /> properties.</param>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.Clear">
-      <summary>Removes all permissions that were previous added using the <see cref="M:System.Data.Common.DBDataPermission.Add(System.String,System.String,System.Data.KeyRestrictionBehavior)" /> method.</summary>
+    <member name="M:System.data.Common.DBdataPermission.Clear">
+      <summary>Removes all permissions that were previous added using the <see cref="M:System.data.Common.DBdataPermission.Add(System.String,System.String,System.data.KeyRestrictionBehavior)" /> method.</summary>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.Copy">
+    <member name="M:System.data.Common.DBdataPermission.Copy">
       <summary>Creates and returns an identical copy of the current permission object.</summary>
       <returns>A copy of the current permission object.</returns>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.CreateInstance">
-      <summary>Creates a new instance of the <see langword="DBDataPermission" /> class.</summary>
-      <returns>A new <see langword="DBDataPermission" /> object.</returns>
+    <member name="M:System.data.Common.DBdataPermission.CreateInstance">
+      <summary>Creates a new instance of the <see langword="DBdataPermission" /> class.</summary>
+      <returns>A new <see langword="DBdataPermission" /> object.</returns>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.FromXml(System.Security.SecurityElement)">
+    <member name="M:System.data.Common.DBdataPermission.FromXml(System.Security.SecurityElement)">
       <summary>Reconstructs a security object with a specified state from an XML encoding.</summary>
       <param name="securityElement">The XML encoding to use to reconstruct the security object.</param>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.Intersect(System.Security.IPermission)">
+    <member name="M:System.data.Common.DBdataPermission.Intersect(System.Security.IPermission)">
       <summary>Returns a new permission object representing the intersection of the current permission object and the specified permission object.</summary>
       <param name="target">A permission object to intersect with the current permission object. It must be of the same type as the current permission object.</param>
       <exception cref="T:System.ArgumentException">The <paramref name="target" /> parameter is not a null reference (<see langword="Nothing" /> in Visual Basic) and is not an instance of the same class as the current permission object.</exception>
       <returns>A new permission object that represents the intersection of the current permission object and the specified permission object. This new permission object is a null reference (<see langword="Nothing" /> in Visual Basic) if the intersection is empty.</returns>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.IsSubsetOf(System.Security.IPermission)">
+    <member name="M:System.data.Common.DBdataPermission.IsSubsetOf(System.Security.IPermission)">
       <summary>Returns a value indicating whether the current permission object is a subset of the specified permission object.</summary>
       <param name="target">A permission object that is to be tested for the subset relationship. This object must be of the same type as the current permission object.</param>
       <exception cref="T:System.ArgumentException">The <paramref name="target" /> parameter is an object that is not of the same type as the current permission object.</exception>
       <returns>
         <see langword="true" /> if the current permission object is a subset of the specified permission object, otherwise <see langword="false" />.</returns>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.IsUnrestricted">
+    <member name="M:System.data.Common.DBdataPermission.IsUnrestricted">
       <summary>Returns a value indicating whether the permission can be represented as unrestricted without any knowledge of the permission semantics.</summary>
       <returns>
         <see langword="true" /> if the permission can be represented as unrestricted.</returns>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.ToXml">
+    <member name="M:System.data.Common.DBdataPermission.ToXml">
       <summary>Creates an XML encoding of the security object and its current state.</summary>
       <returns>An XML encoding of the security object, including any state information.</returns>
     </member>
-    <member name="M:System.Data.Common.DBDataPermission.Union(System.Security.IPermission)">
+    <member name="M:System.data.Common.DBdataPermission.Union(System.Security.IPermission)">
       <summary>Returns a new permission object that is the union of the current and specified permission objects.</summary>
       <param name="target">A permission object to combine with the current permission object. It must be of the same type as the current permission object.</param>
       <exception cref="T:System.ArgumentException">The <paramref name="target" /> object is not the same type as the current permission object.</exception>
       <returns>A new permission object that represents the union of the current permission object and the specified permission object.</returns>
     </member>
-    <member name="P:System.Data.Common.DBDataPermission.AllowBlankPassword">
+    <member name="P:System.data.Common.DBdataPermission.AllowBlankPassword">
       <summary>Gets a value indicating whether a blank password is allowed.</summary>
       <returns>
         <see langword="true" /> if a blank password is allowed, otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="T:System.Data.Common.DBDataPermissionAttribute">
+    <member name="T:System.data.Common.DBdataPermissionAttribute">
       <summary>Associates a security action with a custom security attribute.</summary>
     </member>
-    <member name="M:System.Data.Common.DBDataPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.Common.DBDataPermissionAttribute" />.</summary>
+    <member name="M:System.data.Common.DBdataPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.Common.DBdataPermissionAttribute" />.</summary>
       <param name="action">One of the security action values representing an action that can be performed by declarative security.</param>
     </member>
-    <member name="M:System.Data.Common.DBDataPermissionAttribute.ShouldSerializeConnectionString">
+    <member name="M:System.data.Common.DBdataPermissionAttribute.ShouldSerializeConnectionString">
       <summary>Identifies whether the attribute should serialize the connection string.</summary>
       <returns>
         <see langword="true" /> if the attribute should serialize the connection string; otherwise <see langword="false" />.</returns>
     </member>
-    <member name="M:System.Data.Common.DBDataPermissionAttribute.ShouldSerializeKeyRestrictions">
+    <member name="M:System.data.Common.DBdataPermissionAttribute.ShouldSerializeKeyRestrictions">
       <summary>Identifies whether the attribute should serialize the set of key restrictions.</summary>
       <returns>
         <see langword="true" /> if the attribute should serialize the set of key restrictions; otherwise <see langword="false" />.</returns>
     </member>
-    <member name="P:System.Data.Common.DBDataPermissionAttribute.AllowBlankPassword">
+    <member name="P:System.data.Common.DBdataPermissionAttribute.AllowBlankPassword">
       <summary>Gets or sets a value indicating whether a blank password is allowed.</summary>
       <returns>
         <see langword="true" /> if a blank password is allowed; otherwise <see langword="false" />.</returns>
     </member>
-    <member name="P:System.Data.Common.DBDataPermissionAttribute.ConnectionString">
+    <member name="P:System.data.Common.DBdataPermissionAttribute.ConnectionString">
       <summary>Gets or sets a permitted connection string.</summary>
       <returns>A permitted connection string.</returns>
     </member>
-    <member name="P:System.Data.Common.DBDataPermissionAttribute.KeyRestrictionBehavior">
-      <summary>Identifies whether the list of connection string parameters identified by the <see cref="P:System.Data.Common.DBDataPermissionAttribute.KeyRestrictions" /> property are the only connection string parameters allowed.</summary>
-      <returns>One of the <see cref="T:System.Data.KeyRestrictionBehavior" /> values.</returns>
+    <member name="P:System.data.Common.DBdataPermissionAttribute.KeyRestrictionBehavior">
+      <summary>Identifies whether the list of connection string parameters identified by the <see cref="P:System.data.Common.DBdataPermissionAttribute.KeyRestrictions" /> property are the only connection string parameters allowed.</summary>
+      <returns>One of the <see cref="T:System.data.KeyRestrictionBehavior" /> values.</returns>
     </member>
-    <member name="P:System.Data.Common.DBDataPermissionAttribute.KeyRestrictions">
+    <member name="P:System.data.Common.DBdataPermissionAttribute.KeyRestrictions">
       <summary>Gets or sets connection string parameters that are allowed or disallowed.</summary>
       <returns>One or more connection string parameters that are allowed or disallowed.</returns>
     </member>
-    <member name="T:System.Data.Odbc.OdbcPermission">
-      <summary>Enables the .NET Framework Data Provider for ODBC to help make sure that a user has a security level sufficient to access an ODBC data source. This class cannot be inherited.</summary>
+    <member name="T:System.data.Odbc.OdbcPermission">
+      <summary>Enables the .NET Framework data Provider for ODBC to help make sure that a user has a security level sufficient to access an ODBC data source. This class cannot be inherited.</summary>
     </member>
-    <member name="M:System.Data.Odbc.OdbcPermission.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcPermission" /> class.</summary>
+    <member name="M:System.data.Odbc.OdbcPermission.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.data.Odbc.OdbcPermission" /> class.</summary>
     </member>
-    <member name="M:System.Data.Odbc.OdbcPermission.#ctor(System.Security.Permissions.PermissionState)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcPermission" /> class with one of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</summary>
+    <member name="M:System.data.Odbc.OdbcPermission.#ctor(System.Security.Permissions.PermissionState)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.Odbc.OdbcPermission" /> class with one of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</summary>
       <param name="state">One of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</param>
     </member>
-    <member name="M:System.Data.Odbc.OdbcPermission.#ctor(System.Security.Permissions.PermissionState,System.Boolean)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcPermission" /> class.</summary>
+    <member name="M:System.data.Odbc.OdbcPermission.#ctor(System.Security.Permissions.PermissionState,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.Odbc.OdbcPermission" /> class.</summary>
       <param name="state">One of the <see langword="System.Security.Permissions.PermissionState" /> values.</param>
       <param name="allowBlankPassword">Indicates whether a blank password is allowed.</param>
     </member>
-    <member name="M:System.Data.Odbc.OdbcPermission.Add(System.String,System.String,System.Data.KeyRestrictionBehavior)">
+    <member name="M:System.data.Odbc.OdbcPermission.Add(System.String,System.String,System.data.KeyRestrictionBehavior)">
       <summary>Adds access for the specified connection string to the existing state of the permission.</summary>
       <param name="connectionString">A permitted connection string.</param>
       <param name="restrictions">String that identifies connection string parameters that are allowed or disallowed.</param>
-      <param name="behavior">One of the <see cref="T:System.Data.KeyRestrictionBehavior" /> values.</param>
+      <param name="behavior">One of the <see cref="T:System.data.KeyRestrictionBehavior" /> values.</param>
     </member>
-    <member name="M:System.Data.Odbc.OdbcPermission.Copy">
-      <summary>Returns the <see cref="T:System.Data.Odbc.OdbcPermission" /> as an <see cref="T:System.Security.IPermission" />.</summary>
+    <member name="M:System.data.Odbc.OdbcPermission.Copy">
+      <summary>Returns the <see cref="T:System.data.Odbc.OdbcPermission" /> as an <see cref="T:System.Security.IPermission" />.</summary>
       <returns>A copy of the current permission object.</returns>
     </member>
-    <member name="T:System.Data.Odbc.OdbcPermissionAttribute">
+    <member name="T:System.data.Odbc.OdbcPermissionAttribute">
       <summary>Associates a security action with a custom security attribute.</summary>
     </member>
-    <member name="M:System.Data.Odbc.OdbcPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcPermissionAttribute" /> class with one of the <see cref="T:System.Security.Permissions.SecurityAction" /> values.</summary>
+    <member name="M:System.data.Odbc.OdbcPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.Odbc.OdbcPermissionAttribute" /> class with one of the <see cref="T:System.Security.Permissions.SecurityAction" /> values.</summary>
       <param name="action">One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values representing an action that can be performed by using declarative security.</param>
     </member>
-    <member name="M:System.Data.Odbc.OdbcPermissionAttribute.CreatePermission">
-      <summary>Returns an <see cref="T:System.Data.Odbc.OdbcPermission" /> object that is configured according to the attribute properties.</summary>
-      <returns>An <see cref="T:System.Data.Odbc.OdbcPermission" /> object.</returns>
+    <member name="M:System.data.Odbc.OdbcPermissionAttribute.CreatePermission">
+      <summary>Returns an <see cref="T:System.data.Odbc.OdbcPermission" /> object that is configured according to the attribute properties.</summary>
+      <returns>An <see cref="T:System.data.Odbc.OdbcPermission" /> object.</returns>
     </member>
-    <member name="T:System.Data.OleDb.OleDbPermission">
-      <summary>Enables the .NET Framework Data Provider for OLE DB to help make sure that a user has a security level sufficient to access an OLE DB data source.</summary>
+    <member name="T:System.data.OleDb.OleDbPermission">
+      <summary>Enables the .NET Framework data Provider for OLE DB to help make sure that a user has a security level sufficient to access an OLE DB data source.</summary>
     </member>
-    <member name="M:System.Data.OleDb.OleDbPermission.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbPermission" /> class.</summary>
+    <member name="M:System.data.OleDb.OleDbPermission.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.data.OleDb.OleDbPermission" /> class.</summary>
     </member>
-    <member name="M:System.Data.OleDb.OleDbPermission.#ctor(System.Security.Permissions.PermissionState)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbPermission" /> class.</summary>
+    <member name="M:System.data.OleDb.OleDbPermission.#ctor(System.Security.Permissions.PermissionState)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.OleDb.OleDbPermission" /> class.</summary>
       <param name="state">One of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</param>
     </member>
-    <member name="M:System.Data.OleDb.OleDbPermission.#ctor(System.Security.Permissions.PermissionState,System.Boolean)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbPermission" /> class.</summary>
+    <member name="M:System.data.OleDb.OleDbPermission.#ctor(System.Security.Permissions.PermissionState,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.OleDb.OleDbPermission" /> class.</summary>
       <param name="state">One of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</param>
       <param name="allowBlankPassword">Indicates whether a blank password is allowed.</param>
     </member>
-    <member name="M:System.Data.OleDb.OleDbPermission.Copy">
-      <summary>Returns the <see cref="T:System.Data.OleDb.OleDbPermission" /> as an <see cref="T:System.Security.IPermission" />.</summary>
+    <member name="M:System.data.OleDb.OleDbPermission.Copy">
+      <summary>Returns the <see cref="T:System.data.OleDb.OleDbPermission" /> as an <see cref="T:System.Security.IPermission" />.</summary>
       <returns>A copy of the current permission object.</returns>
     </member>
-    <member name="P:System.Data.OleDb.OleDbPermission.Provider">
+    <member name="P:System.data.OleDb.OleDbPermission.Provider">
       <summary>This property has been marked as obsolete. Setting this property will have no effect.</summary>
       <returns>This property has been marked as obsolete. Setting this property will have no effect.</returns>
     </member>
-    <member name="T:System.Data.OleDb.OleDbPermissionAttribute">
+    <member name="T:System.data.OleDb.OleDbPermissionAttribute">
       <summary>Associates a security action with a custom security attribute.</summary>
     </member>
-    <member name="M:System.Data.OleDb.OleDbPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbPermissionAttribute" /> class.</summary>
+    <member name="M:System.data.OleDb.OleDbPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.OleDb.OleDbPermissionAttribute" /> class.</summary>
       <param name="action">One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values representing an action that can be performed by using declarative security.</param>
     </member>
-    <member name="M:System.Data.OleDb.OleDbPermissionAttribute.CreatePermission">
-      <summary>Returns an <see cref="T:System.Data.OleDb.OleDbPermission" /> object that is configured according to the attribute properties.</summary>
-      <returns>An <see cref="T:System.Data.OleDb.OleDbPermission" /> object.</returns>
+    <member name="M:System.data.OleDb.OleDbPermissionAttribute.CreatePermission">
+      <summary>Returns an <see cref="T:System.data.OleDb.OleDbPermission" /> object that is configured according to the attribute properties.</summary>
+      <returns>An <see cref="T:System.data.OleDb.OleDbPermission" /> object.</returns>
     </member>
-    <member name="P:System.Data.OleDb.OleDbPermissionAttribute.Provider">
+    <member name="P:System.data.OleDb.OleDbPermissionAttribute.Provider">
       <summary>Gets or sets a comma-delimited string that contains a list of supported providers.</summary>
       <returns>A comma-delimited list of providers allowed by the security policy.</returns>
     </member>
-    <member name="T:System.Data.OracleClient.OraclePermission">
-      <summary>Enables the .NET Framework Data Provider for Oracle to help ensure that a user has a security level adequate to access an Oracle database.</summary>
+    <member name="T:System.data.OracleClient.OraclePermission">
+      <summary>Enables the .NET Framework data Provider for Oracle to help ensure that a user has a security level adequate to access an Oracle database.</summary>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermission.#ctor(System.Security.Permissions.PermissionState)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.OracleClient.OraclePermission" /> class with one of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</summary>
+    <member name="M:System.data.OracleClient.OraclePermission.#ctor(System.Security.Permissions.PermissionState)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.OracleClient.OraclePermission" /> class with one of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</summary>
       <param name="state">One of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</param>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermission.Add(System.String,System.String,System.Data.KeyRestrictionBehavior)">
+    <member name="M:System.data.OracleClient.OraclePermission.Add(System.String,System.String,System.data.KeyRestrictionBehavior)">
       <summary>Creates a new set of permissions.</summary>
       <param name="connectionString">The connection string.</param>
       <param name="restrictions">The key restrictions.</param>
-      <param name="behavior">One of the <see cref="T:System.Data.KeyRestrictionBehavior" /> enumerations.</param>
+      <param name="behavior">One of the <see cref="T:System.data.KeyRestrictionBehavior" /> enumerations.</param>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermission.Copy">
+    <member name="M:System.data.OracleClient.OraclePermission.Copy">
       <summary>When implemented by a derived class, creates and returns an identical copy of the current permission object.</summary>
       <returns>A copy of the current permission object.</returns>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermission.FromXml(System.Security.SecurityElement)">
+    <member name="M:System.data.OracleClient.OraclePermission.FromXml(System.Security.SecurityElement)">
       <summary>When overridden in a derived class, reconstructs a security object with a specified state from an XML encoding.</summary>
       <param name="securityElement">A <see cref="T:System.Security.SecurityElement" /> expression.</param>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermission.Intersect(System.Security.IPermission)">
+    <member name="M:System.data.OracleClient.OraclePermission.Intersect(System.Security.IPermission)">
       <summary>When implemented by a derived class, creates and returns a permission that is the intersection of the current permission and the specified permission.</summary>
       <param name="target">A permission to intersect with the current permission. It must be of the same type as the current permission.</param>
       <returns>A new permission that represents the intersection of the current permission and the specified permission. This new permission is <see langword="null" /> if the intersection is empty.</returns>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermission.IsSubsetOf(System.Security.IPermission)">
+    <member name="M:System.data.OracleClient.OraclePermission.IsSubsetOf(System.Security.IPermission)">
       <summary>When implemented by a derived class, determines whether the current permission is a subset of the specified permission.</summary>
       <param name="target">A permission that is to be tested for the subset relationship. This permission must be of the same type as the current permission.</param>
       <returns>
         <see langword="true" /> if the current permission is a subset of the specified permission; otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermission.IsUnrestricted">
+    <member name="M:System.data.OracleClient.OraclePermission.IsUnrestricted">
       <summary>Returns a value indicating whether the permission can be represented as unrestricted without any knowledge of the permission semantics.</summary>
       <returns>
         <see langword="true" /> if the permission can be represented as unrestricted.</returns>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermission.ToXml">
+    <member name="M:System.data.OracleClient.OraclePermission.ToXml">
       <summary>Creates an XML encoding of the security object and its current state.</summary>
       <returns>An XML encoding of the security object, including any state information.</returns>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermission.Union(System.Security.IPermission)">
+    <member name="M:System.data.OracleClient.OraclePermission.Union(System.Security.IPermission)">
       <summary>Creates a permission that is the union of the current permission and the specified permission.</summary>
       <param name="target">A permission to combine with the current permission. It must be of the same type as the current permission.</param>
       <returns>A new permission that represents the union of the current permission and the specified permission.</returns>
     </member>
-    <member name="P:System.Data.OracleClient.OraclePermission.AllowBlankPassword">
+    <member name="P:System.data.OracleClient.OraclePermission.AllowBlankPassword">
       <summary>Gets a value indicating whether a blank password is allowed.</summary>
       <returns>
         <see langword="true" /> if a blank password is allowed, otherwise <see langword="false" />.</returns>
     </member>
-    <member name="T:System.Data.OracleClient.OraclePermissionAttribute">
+    <member name="T:System.data.OracleClient.OraclePermissionAttribute">
       <summary>Associates a security action with a custom security attribute.</summary>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.OracleClient.OraclePermissionAttribute" /> class.</summary>
+    <member name="M:System.data.OracleClient.OraclePermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.OracleClient.OraclePermissionAttribute" /> class.</summary>
       <param name="action">One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values representing an action that can be performed using declarative security.</param>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermissionAttribute.CreatePermission">
-      <summary>Returns an <see cref="T:System.Data.OracleClient.OraclePermission" /> object that is configured according to the attribute properties.</summary>
-      <returns>An <see cref="T:System.Data.OracleClient.OraclePermission" /> object.</returns>
+    <member name="M:System.data.OracleClient.OraclePermissionAttribute.CreatePermission">
+      <summary>Returns an <see cref="T:System.data.OracleClient.OraclePermission" /> object that is configured according to the attribute properties.</summary>
+      <returns>An <see cref="T:System.data.OracleClient.OraclePermission" /> object.</returns>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermissionAttribute.ShouldSerializeConnectionString">
+    <member name="M:System.data.OracleClient.OraclePermissionAttribute.ShouldSerializeConnectionString">
       <summary>Identifies whether the attribute should serialize the connection string.</summary>
       <returns>
         <see langword="true" /> if the attribute should serialize the connection string; otherwise <see langword="false" />.</returns>
     </member>
-    <member name="M:System.Data.OracleClient.OraclePermissionAttribute.ShouldSerializeKeyRestrictions">
+    <member name="M:System.data.OracleClient.OraclePermissionAttribute.ShouldSerializeKeyRestrictions">
       <summary>Identifies whether the attribute should serialize the set of key restrictions.</summary>
       <returns>
         <see langword="true" /> if the attribute should serialize the set of key restrictions, otherwise <see langword="false" />.</returns>
     </member>
-    <member name="P:System.Data.OracleClient.OraclePermissionAttribute.AllowBlankPassword">
+    <member name="P:System.data.OracleClient.OraclePermissionAttribute.AllowBlankPassword">
       <summary>Gets or sets a value indicating whether a blank password is allowed.</summary>
       <returns>
         <see langword="true" /> if a blank password is allowed, otherwise <see langword="false" />.</returns>
     </member>
-    <member name="P:System.Data.OracleClient.OraclePermissionAttribute.ConnectionString">
+    <member name="P:System.data.OracleClient.OraclePermissionAttribute.ConnectionString">
       <summary>Gets or sets a permitted connection string.</summary>
       <returns>A permitted connection string.</returns>
     </member>
-    <member name="P:System.Data.OracleClient.OraclePermissionAttribute.KeyRestrictionBehavior">
-      <summary>Identifies whether the list of connection string parameters identified by the <see cref="P:System.Data.OracleClient.OraclePermissionAttribute.KeyRestrictions" /> property are the only connection string parameters allowed.</summary>
-      <returns>One of the <see cref="P:System.Data.OracleClient.OraclePermissionAttribute.KeyRestrictionBehavior" /> values.</returns>
+    <member name="P:System.data.OracleClient.OraclePermissionAttribute.KeyRestrictionBehavior">
+      <summary>Identifies whether the list of connection string parameters identified by the <see cref="P:System.data.OracleClient.OraclePermissionAttribute.KeyRestrictions" /> property are the only connection string parameters allowed.</summary>
+      <returns>One of the <see cref="P:System.data.OracleClient.OraclePermissionAttribute.KeyRestrictionBehavior" /> values.</returns>
     </member>
-    <member name="P:System.Data.OracleClient.OraclePermissionAttribute.KeyRestrictions">
+    <member name="P:System.data.OracleClient.OraclePermissionAttribute.KeyRestrictions">
       <summary>Gets or sets connection string parameters that are allowed or disallowed.</summary>
       <returns>One or more connection string parameters that are allowed or disallowed.</returns>
     </member>
-    <member name="T:System.Data.SqlClient.SqlClientPermission">
-      <summary>Enables the .NET Framework Data Provider for SQL Server to help make sure that a user has a security level sufficient to access a data source.</summary>
+    <member name="T:System.data.SqlClient.SqlClientPermission">
+      <summary>Enables the .NET Framework data Provider for SQL Server to help make sure that a user has a security level sufficient to access a data source.</summary>
     </member>
-    <member name="M:System.Data.SqlClient.SqlClientPermission.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlClientPermission" /> class.</summary>
+    <member name="M:System.data.SqlClient.SqlClientPermission.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.data.SqlClient.SqlClientPermission" /> class.</summary>
     </member>
-    <member name="M:System.Data.SqlClient.SqlClientPermission.#ctor(System.Security.Permissions.PermissionState)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlClientPermission" /> class.</summary>
+    <member name="M:System.data.SqlClient.SqlClientPermission.#ctor(System.Security.Permissions.PermissionState)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.SqlClient.SqlClientPermission" /> class.</summary>
       <param name="state">One of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</param>
     </member>
-    <member name="M:System.Data.SqlClient.SqlClientPermission.#ctor(System.Security.Permissions.PermissionState,System.Boolean)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlClientPermission" /> class.</summary>
+    <member name="M:System.data.SqlClient.SqlClientPermission.#ctor(System.Security.Permissions.PermissionState,System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.SqlClient.SqlClientPermission" /> class.</summary>
       <param name="state">One of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</param>
       <param name="allowBlankPassword">Indicates whether a blank password is allowed.</param>
     </member>
-    <member name="M:System.Data.SqlClient.SqlClientPermission.Add(System.String,System.String,System.Data.KeyRestrictionBehavior)">
-      <summary>Adds a new connection string and a set of restricted keywords to the <see cref="T:System.Data.SqlClient.SqlClientPermission" /> object.</summary>
+    <member name="M:System.data.SqlClient.SqlClientPermission.Add(System.String,System.String,System.data.KeyRestrictionBehavior)">
+      <summary>Adds a new connection string and a set of restricted keywords to the <see cref="T:System.data.SqlClient.SqlClientPermission" /> object.</summary>
       <param name="connectionString">The connection string.</param>
       <param name="restrictions">The key restrictions.</param>
-      <param name="behavior">One of the <see cref="T:System.Data.KeyRestrictionBehavior" /> enumerations.</param>
+      <param name="behavior">One of the <see cref="T:System.data.KeyRestrictionBehavior" /> enumerations.</param>
     </member>
-    <member name="M:System.Data.SqlClient.SqlClientPermission.Copy">
-      <summary>Returns the <see cref="T:System.Data.SqlClient.SqlClientPermission" /> as an <see cref="T:System.Security.IPermission" />.</summary>
+    <member name="M:System.data.SqlClient.SqlClientPermission.Copy">
+      <summary>Returns the <see cref="T:System.data.SqlClient.SqlClientPermission" /> as an <see cref="T:System.Security.IPermission" />.</summary>
       <returns>A copy of the current permission object.</returns>
     </member>
-    <member name="T:System.Data.SqlClient.SqlClientPermissionAttribute">
+    <member name="T:System.data.SqlClient.SqlClientPermissionAttribute">
       <summary>Associates a security action with a custom security attribute.</summary>
     </member>
-    <member name="M:System.Data.SqlClient.SqlClientPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
-      <summary>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlClientPermissionAttribute" /> class.</summary>
+    <member name="M:System.data.SqlClient.SqlClientPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
+      <summary>Initializes a new instance of the <see cref="T:System.data.SqlClient.SqlClientPermissionAttribute" /> class.</summary>
       <param name="action">One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values representing an action that can be performed by using declarative security.</param>
     </member>
-    <member name="M:System.Data.SqlClient.SqlClientPermissionAttribute.CreatePermission">
-      <summary>Returns a <see cref="T:System.Data.SqlClient.SqlClientPermission" /> object that is configured according to the attribute properties.</summary>
-      <returns>A <see cref="T:System.Data.SqlClient.SqlClientPermission" /> object.</returns>
+    <member name="M:System.data.SqlClient.SqlClientPermissionAttribute.CreatePermission">
+      <summary>Returns a <see cref="T:System.data.SqlClient.SqlClientPermission" /> object that is configured according to the attribute properties.</summary>
+      <returns>A <see cref="T:System.data.SqlClient.SqlClientPermission" /> object.</returns>
     </member>
     <member name="T:System.Diagnostics.EventLogPermission">
       <summary>Controls code access permissions for event logging.</summary>
@@ -1833,26 +1833,26 @@ The parameter's version number is not supported.</exception>
       <exception cref="T:System.ArgumentException">The name is <see langword="null" /> or is an empty string ("").</exception>
       <returns>The name of the named permission set.</returns>
     </member>
-    <member name="T:System.Security.Permissions.DataProtectionPermission">
+    <member name="T:System.Security.Permissions.dataProtectionPermission">
       <summary>Controls the ability to access encrypted data and memory. This class cannot be inherited.</summary>
     </member>
-    <member name="M:System.Security.Permissions.DataProtectionPermission.#ctor(System.Security.Permissions.DataProtectionPermissionFlags)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Permissions.DataProtectionPermission" /> class with the specified permission flags.</summary>
-      <param name="flag">A bitwise combination of the <see cref="T:System.Security.Permissions.DataProtectionPermissionFlags" /> values.</param>
+    <member name="M:System.Security.Permissions.dataProtectionPermission.#ctor(System.Security.Permissions.dataProtectionPermissionFlags)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Permissions.dataProtectionPermission" /> class with the specified permission flags.</summary>
+      <param name="flag">A bitwise combination of the <see cref="T:System.Security.Permissions.dataProtectionPermissionFlags" /> values.</param>
       <exception cref="T:System.ArgumentException">
-        <paramref name="flag" /> is not a valid combination of the <see cref="T:System.Security.Permissions.DataProtectionPermissionFlags" /> values.</exception>
+        <paramref name="flag" /> is not a valid combination of the <see cref="T:System.Security.Permissions.dataProtectionPermissionFlags" /> values.</exception>
     </member>
-    <member name="M:System.Security.Permissions.DataProtectionPermission.#ctor(System.Security.Permissions.PermissionState)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Permissions.DataProtectionPermission" /> class with the specified permission state.</summary>
+    <member name="M:System.Security.Permissions.dataProtectionPermission.#ctor(System.Security.Permissions.PermissionState)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Permissions.dataProtectionPermission" /> class with the specified permission state.</summary>
       <param name="state">One of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</param>
       <exception cref="T:System.ArgumentException">
         <paramref name="state" /> is not a valid <see cref="T:System.Security.Permissions.PermissionState" /> value.</exception>
     </member>
-    <member name="M:System.Security.Permissions.DataProtectionPermission.Copy">
+    <member name="M:System.Security.Permissions.dataProtectionPermission.Copy">
       <summary>Creates and returns an identical copy of the current permission.</summary>
       <returns>A copy of the current permission.</returns>
     </member>
-    <member name="M:System.Security.Permissions.DataProtectionPermission.FromXml(System.Security.SecurityElement)">
+    <member name="M:System.Security.Permissions.dataProtectionPermission.FromXml(System.Security.SecurityElement)">
       <summary>Reconstructs a permission with a specific state from an XML encoding.</summary>
       <param name="securityElement">A <see cref="T:System.Security.SecurityElement" /> that contains the XML encoding used to reconstruct the permission.</param>
       <exception cref="T:System.ArgumentNullException">
@@ -1864,14 +1864,14 @@ The parameter's version number is not supported.</exception>
   
  The version number of <paramref name="securityElement" /> is not supported.</exception>
     </member>
-    <member name="M:System.Security.Permissions.DataProtectionPermission.Intersect(System.Security.IPermission)">
+    <member name="M:System.Security.Permissions.dataProtectionPermission.Intersect(System.Security.IPermission)">
       <summary>Creates and returns a permission that is the intersection of the current permission and the specified permission.</summary>
       <param name="target">A permission to intersect with the current permission. It must be the same type as the current permission.</param>
       <exception cref="T:System.ArgumentException">
         <paramref name="target" /> is not <see langword="null" /> and does not specify a permission of the same type as the current permission.</exception>
       <returns>A new permission that represents the intersection of the current permission and the specified permission. This new permission is <see langword="null" /> if the intersection is empty.</returns>
     </member>
-    <member name="M:System.Security.Permissions.DataProtectionPermission.IsSubsetOf(System.Security.IPermission)">
+    <member name="M:System.Security.Permissions.dataProtectionPermission.IsSubsetOf(System.Security.IPermission)">
       <summary>Determines whether the current permission is a subset of the specified permission.</summary>
       <param name="target">A permission to test for the subset relationship. This permission must be the same type as the current permission.</param>
       <exception cref="T:System.ArgumentException">
@@ -1879,81 +1879,81 @@ The parameter's version number is not supported.</exception>
       <returns>
         <see langword="true" /> if the current permission is a subset of the specified permission; otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="M:System.Security.Permissions.DataProtectionPermission.IsUnrestricted">
+    <member name="M:System.Security.Permissions.dataProtectionPermission.IsUnrestricted">
       <summary>Returns a value indicating whether the current permission is unrestricted.</summary>
       <returns>
         <see langword="true" /> if the current permission is unrestricted; otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="M:System.Security.Permissions.DataProtectionPermission.ToXml">
+    <member name="M:System.Security.Permissions.dataProtectionPermission.ToXml">
       <summary>Creates an XML encoding of the permission and its current state.</summary>
       <returns>An XML encoding of the permission, including state information.</returns>
     </member>
-    <member name="M:System.Security.Permissions.DataProtectionPermission.Union(System.Security.IPermission)">
+    <member name="M:System.Security.Permissions.dataProtectionPermission.Union(System.Security.IPermission)">
       <summary>Creates a permission that is the union of the current permission and the specified permission.</summary>
       <param name="target">A permission to combine with the current permission. It must be of the same type as the current permission.</param>
       <exception cref="T:System.ArgumentException">
         <paramref name="target" /> is not <see langword="null" /> and does not specify a permission of the same type as the current permission.</exception>
       <returns>A new permission that represents the union of the current permission and the specified permission.</returns>
     </member>
-    <member name="P:System.Security.Permissions.DataProtectionPermission.Flags">
+    <member name="P:System.Security.Permissions.dataProtectionPermission.Flags">
       <summary>Gets or sets the data and memory protection flags.</summary>
-      <exception cref="T:System.ArgumentException">The specified value is not a valid combination of the <see cref="T:System.Security.Permissions.DataProtectionPermissionFlags" /> values.</exception>
-      <returns>A bitwise combination of the <see cref="T:System.Security.Permissions.DataProtectionPermissionFlags" /> values.</returns>
+      <exception cref="T:System.ArgumentException">The specified value is not a valid combination of the <see cref="T:System.Security.Permissions.dataProtectionPermissionFlags" /> values.</exception>
+      <returns>A bitwise combination of the <see cref="T:System.Security.Permissions.dataProtectionPermissionFlags" /> values.</returns>
     </member>
-    <member name="T:System.Security.Permissions.DataProtectionPermissionAttribute">
-      <summary>Allows security actions for <see cref="T:System.Security.Permissions.DataProtectionPermission" /> to be applied to code using declarative security. This class cannot be inherited.</summary>
+    <member name="T:System.Security.Permissions.dataProtectionPermissionAttribute">
+      <summary>Allows security actions for <see cref="T:System.Security.Permissions.dataProtectionPermission" /> to be applied to code using declarative security. This class cannot be inherited.</summary>
     </member>
-    <member name="M:System.Security.Permissions.DataProtectionPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Permissions.DataProtectionPermissionAttribute" /> class with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.</summary>
+    <member name="M:System.Security.Permissions.dataProtectionPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Permissions.dataProtectionPermissionAttribute" /> class with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.</summary>
       <param name="action">One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values.</param>
     </member>
-    <member name="M:System.Security.Permissions.DataProtectionPermissionAttribute.CreatePermission">
-      <summary>Creates and returns a new <see cref="T:System.Security.Permissions.DataProtectionPermission" />.</summary>
-      <returns>A <see cref="T:System.Security.Permissions.DataProtectionPermission" /> that corresponds to the attribute.</returns>
+    <member name="M:System.Security.Permissions.dataProtectionPermissionAttribute.CreatePermission">
+      <summary>Creates and returns a new <see cref="T:System.Security.Permissions.dataProtectionPermission" />.</summary>
+      <returns>A <see cref="T:System.Security.Permissions.dataProtectionPermission" /> that corresponds to the attribute.</returns>
     </member>
-    <member name="P:System.Security.Permissions.DataProtectionPermissionAttribute.Flags">
+    <member name="P:System.Security.Permissions.dataProtectionPermissionAttribute.Flags">
       <summary>Gets or sets the data protection permissions.</summary>
-      <returns>A bitwise combination of the <see cref="T:System.Security.Permissions.DataProtectionPermissionFlags" /> values. The default is <see cref="F:System.Security.Permissions.DataProtectionPermissionFlags.NoFlags" />.</returns>
+      <returns>A bitwise combination of the <see cref="T:System.Security.Permissions.dataProtectionPermissionFlags" /> values. The default is <see cref="F:System.Security.Permissions.dataProtectionPermissionFlags.NoFlags" />.</returns>
     </member>
-    <member name="P:System.Security.Permissions.DataProtectionPermissionAttribute.ProtectData">
-      <summary>Gets or sets a value indicating whether data can be encrypted using the <see cref="T:System.Security.Cryptography.ProtectedData" /> class.</summary>
+    <member name="P:System.Security.Permissions.dataProtectionPermissionAttribute.Protectdata">
+      <summary>Gets or sets a value indicating whether data can be encrypted using the <see cref="T:System.Security.Cryptography.Protecteddata" /> class.</summary>
       <returns>
         <see langword="true" /> if data can be encrypted; otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="P:System.Security.Permissions.DataProtectionPermissionAttribute.ProtectMemory">
+    <member name="P:System.Security.Permissions.dataProtectionPermissionAttribute.ProtectMemory">
       <summary>Gets or sets a value indicating whether memory can be encrypted using the <see cref="T:System.Security.Cryptography.ProtectedMemory" /> class.</summary>
       <returns>
         <see langword="true" /> if memory can be encrypted; otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="P:System.Security.Permissions.DataProtectionPermissionAttribute.UnprotectData">
-      <summary>Gets or sets a value indicating whether data can be unencrypted using the <see cref="T:System.Security.Cryptography.ProtectedData" /> class.</summary>
+    <member name="P:System.Security.Permissions.dataProtectionPermissionAttribute.Unprotectdata">
+      <summary>Gets or sets a value indicating whether data can be unencrypted using the <see cref="T:System.Security.Cryptography.Protecteddata" /> class.</summary>
       <returns>
         <see langword="true" /> if data can be unencrypted; otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="P:System.Security.Permissions.DataProtectionPermissionAttribute.UnprotectMemory">
+    <member name="P:System.Security.Permissions.dataProtectionPermissionAttribute.UnprotectMemory">
       <summary>Gets or sets a value indicating whether memory can be unencrypted using the <see cref="T:System.Security.Cryptography.ProtectedMemory" /> class.</summary>
       <returns>
         <see langword="true" /> if memory can be unencrypted; otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="T:System.Security.Permissions.DataProtectionPermissionFlags">
+    <member name="T:System.Security.Permissions.dataProtectionPermissionFlags">
       <summary>Specifies the access permissions for encrypting data and memory.</summary>
     </member>
-    <member name="F:System.Security.Permissions.DataProtectionPermissionFlags.AllFlags">
+    <member name="F:System.Security.Permissions.dataProtectionPermissionFlags.AllFlags">
       <summary>The ability to encrypt data, encrypt memory, unencrypt data, and unencrypt memory.</summary>
     </member>
-    <member name="F:System.Security.Permissions.DataProtectionPermissionFlags.NoFlags">
+    <member name="F:System.Security.Permissions.dataProtectionPermissionFlags.NoFlags">
       <summary>No protection abilities.</summary>
     </member>
-    <member name="F:System.Security.Permissions.DataProtectionPermissionFlags.ProtectData">
+    <member name="F:System.Security.Permissions.dataProtectionPermissionFlags.Protectdata">
       <summary>The ability to encrypt data.</summary>
     </member>
-    <member name="F:System.Security.Permissions.DataProtectionPermissionFlags.ProtectMemory">
+    <member name="F:System.Security.Permissions.dataProtectionPermissionFlags.ProtectMemory">
       <summary>The ability to encrypt memory.</summary>
     </member>
-    <member name="F:System.Security.Permissions.DataProtectionPermissionFlags.UnprotectData">
+    <member name="F:System.Security.Permissions.dataProtectionPermissionFlags.Unprotectdata">
       <summary>The ability to unencrypt data.</summary>
     </member>
-    <member name="F:System.Security.Permissions.DataProtectionPermissionFlags.UnprotectMemory">
+    <member name="F:System.Security.Permissions.dataProtectionPermissionFlags.UnprotectMemory">
       <summary>The ability to unencrypt memory.</summary>
     </member>
     <member name="T:System.Security.Permissions.EnvironmentPermission">
@@ -2628,13 +2628,13 @@ The parameter's version number is not supported.</exception>
       <summary>Storage is isolated first by user and then by code assembly. Storage is also isolated by computer. This provides a data store for the assembly that is accessible in any domain context. The per-assembly data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</summary>
     </member>
     <member name="F:System.Security.Permissions.IsolatedStorageContainment.DomainIsolationByMachine">
-      <summary>Storage is isolated first by computer and then by domain and assembly. Data can only be accessed within the context of the same application and only when run on the same computer. This is helpful when a third-party assembly wants to keep a private data store.</summary>
+      <summary>Storage is isolated first by computer and then by domain and assembly. data can only be accessed within the context of the same application and only when run on the same computer. This is helpful when a third-party assembly wants to keep a private data store.</summary>
     </member>
     <member name="F:System.Security.Permissions.IsolatedStorageContainment.DomainIsolationByRoamingUser">
-      <summary>Storage is isolated first by user and then by domain and assembly. Storage will roam if Windows user data roaming is enabled. Data can only be accessed within the context of the same application and only when run by the same user. This is helpful when a third-party assembly wants to keep a private data store.</summary>
+      <summary>Storage is isolated first by user and then by domain and assembly. Storage will roam if Windows user data roaming is enabled. data can only be accessed within the context of the same application and only when run by the same user. This is helpful when a third-party assembly wants to keep a private data store.</summary>
     </member>
     <member name="F:System.Security.Permissions.IsolatedStorageContainment.DomainIsolationByUser">
-      <summary>Storage is isolated first by user and then by domain and assembly. Storage is also isolated by computer. Data can only be accessed within the context of the same application and only when run by the same user. This is helpful when a third-party assembly wants to keep a private data store.</summary>
+      <summary>Storage is isolated first by user and then by domain and assembly. Storage is also isolated by computer. data can only be accessed within the context of the same application and only when run by the same user. This is helpful when a third-party assembly wants to keep a private data store.</summary>
     </member>
     <member name="F:System.Security.Permissions.IsolatedStorageContainment.None">
       <summary>Use of isolated storage is not allowed.</summary>
@@ -5614,7 +5614,7 @@ The parameter's version number is not supported.</exception>
       <exception cref="T:System.Security.SecurityException">The hash value for the assembly cannot be generated.</exception>
       <returns>A byte array that represents the hash value for the assembly.</returns>
     </member>
-    <member name="M:System.Security.Policy.Hash.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+    <member name="M:System.Security.Policy.Hash.GetObjectdata(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
       <summary>Gets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the parameter name and additional exception information.</summary>
       <param name="info">The object that holds the serialized object data.</param>
       <param name="context">The contextual information about the source or destination.</param>
@@ -5684,7 +5684,7 @@ The parameter's version number is not supported.</exception>
       <summary>Runs when the entire object graph has been deserialized.</summary>
       <param name="sender">The object that initiated the callback. The functionality for this parameter is not currently implemented.</param>
     </member>
-    <member name="M:System.Security.Policy.HashMembershipCondition.System#Runtime#Serialization#ISerializable#GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+    <member name="M:System.Security.Policy.HashMembershipCondition.System#Runtime#Serialization#ISerializable#GetObjectdata(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
       <summary>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data needed to serialize the target object.</summary>
       <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data.</param>
       <param name="context">The destination <see cref="T:System.Runtime.Serialization.StreamingContext" /> for this serialization.</param>

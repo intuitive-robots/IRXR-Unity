@@ -7,28 +7,28 @@ using UnityEngine;
 public class SimAsset {
   public string Tag;
 
-  public string DataID;
+  public string dataID;
 }
 
 public class SimMeshData {
-  public int[] Indices;
+  public int[] indices;
 
-  public Vector3[] Vertices;
+  public Vector3[] vertices;
 
-  public Vector3[] Normals;
+  public Vector3[] normals;
 
-  public Vector2[] UVs;
+  public Vector2[] uvs;
 
 }
 
 public class SimMesh : SimAsset {
-  public List<int> IndicesLayout;
+  public List<int> indicesLayout;
 
-  public List<int> VerticesLayout;
+  public List<int> verticesLayout;
 
-  public List<int> NormalsLayout;
+  public List<int> normalsLayout;
 
-  public List<int> UvLayout;
+  public List<int> uvLayout;
 
   [JsonIgnore]
   public Mesh compiledMesh;
@@ -41,13 +41,13 @@ public class SimMesh : SimAsset {
 
 
 public class SimMaterial : SimAsset {
-  public List<float> Color;
-  public List<float> EmissionColor;
-  public float Specular;
-  public float Shininess;
-  public float Reflectance;
-  public string Texture;
-  public List<float> TexSize;
+  public List<float> color;
+  public List<float> emissionColor;
+  public float specular;
+  public float shininess;
+  public float reflectance;
+  public string texture;
+  public List<float> textureSize;
 
   [JsonIgnore]
   public Material compiledMaterial;
@@ -55,14 +55,14 @@ public class SimMaterial : SimAsset {
 
 public class SimTexture  : SimAsset { 
 
-  public int Width;
+  public int width;
 
-  public int Height;
+  public int height;
 
-  public string TexType;
+  public string texType;
   
   [JsonIgnore]
-  public byte[] Data;
+  public byte[] textureData;
 
   [JsonIgnore]
   public Texture compiledTexture;
@@ -78,7 +78,7 @@ public class AssetHandler : MonoBehaviour
   private Dictionary<string, SimTexture> _textures;
   
   private Dictionary<string, Mesh> _cachedMeshes;
-  private Dictionary<string, Texture> _cachedTextures;
+  private Dictionary<string, Texture> _cachedtextures;
 
   private List<(SimAsset, Action<SimAsset>)> _todo;
 
@@ -88,7 +88,7 @@ public class AssetHandler : MonoBehaviour
     _textures = new();
     _todo = new();
 
-    _cachedTextures = new();
+    _cachedtextures = new();
     _cachedMeshes = new();
   }
   public void LoadAssets(SimScene assets) {
@@ -100,31 +100,31 @@ public class AssetHandler : MonoBehaviour
     assets.materials.ForEach(LoadMaterial);
     
     _textures.Clear();
-    assets.textures.ForEach(LoadTexture);
+    assets.textures.ForEach(Loadtexture);
   }
 
   public SimMesh GetMesh(string tag) => _meshes[tag];
-  public SimTexture GetTexture(string tag) => _textures[tag];
+  public SimTexture Gettexture(string tag) => _textures[tag];
   public SimMaterial GetMaterial(string tag) => _materials[tag];
   public void Process() => _todo.ForEach(entry => entry.Item2.Invoke(entry.Item1));
 
   
   private void LoadMesh(SimMesh mesh) {
 
-    if (_cachedMeshes.TryGetValue(mesh.DataID, out Mesh cached)) {
+    if (_cachedMeshes.TryGetValue(mesh.dataID, out Mesh cached)) {
       mesh.compiledMesh = cached;
       _meshes.Add(mesh.Tag, mesh);
       return;
     }
 
-    Span<byte> data = _serviceConnection.request_bytes("ASSET_DATA:" + mesh.DataID).ToArray();
+    Span<byte> data = _serviceConnection.RequestBytes("ASSET:" + mesh.dataID).ToArray();
 
     mesh.rawData = new SimMeshData
     {
-      Indices = MemoryMarshal.Cast<byte, int>(data.Slice(mesh.IndicesLayout[0], mesh.IndicesLayout[1] * sizeof(int))).ToArray(),
-      Vertices = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.VerticesLayout[0], mesh.VerticesLayout[1] * sizeof(float))).ToArray(),
-      Normals = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.NormalsLayout[0], mesh.NormalsLayout[1] * sizeof(float))).ToArray(), 
-      UVs = MemoryMarshal.Cast<byte, Vector2>(data.Slice(mesh.UvLayout[0], mesh.UvLayout[1] * sizeof(float))).ToArray()
+      indices = MemoryMarshal.Cast<byte, int>(data.Slice(mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
+      vertices = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.verticesLayout[0], mesh.verticesLayout[1] * sizeof(float))).ToArray(),
+      normals = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.normalsLayout[0], mesh.normalsLayout[1] * sizeof(float))).ToArray(), 
+      uvs = MemoryMarshal.Cast<byte, Vector2>(data.Slice(mesh.uvLayout[0], mesh.uvLayout[1] * sizeof(float))).ToArray()
     };
     
     _todo.Add((mesh, ProcessMesh));
@@ -133,11 +133,11 @@ public class AssetHandler : MonoBehaviour
 
   private void LoadMaterial(SimMaterial material) => _todo.Add((material, ProcessMaterial));
 
-  private void LoadTexture(SimTexture texture) {
-    if (_cachedTextures.TryGetValue(texture.DataID, out Texture cached)){
+  private void Loadtexture(SimTexture texture) {
+    if (_cachedtextures.TryGetValue(texture.dataID, out Texture cached)){
       texture.compiledTexture = cached;
     } else {
-      texture.Data = _serviceConnection.request_bytes("ASSET_DATA:" + texture.DataID).ToArray();
+      texture.textureData = _serviceConnection.RequestBytes("ASSET:" + texture.dataID).ToArray();
     }
 
     _textures.Add(texture.Tag, texture);
@@ -148,14 +148,15 @@ public class AssetHandler : MonoBehaviour
 
     mesh.compiledMesh = new Mesh{
       name = mesh.Tag,
-      vertices = mesh.rawData.Vertices,
-      normals = mesh.rawData.Normals,
-      triangles = mesh.rawData.Indices,
-      uv = mesh.rawData.UVs,
+      vertices = mesh.rawData.vertices,
+      normals = mesh.rawData.normals,
+      triangles = mesh.rawData.indices,
+      uv = mesh.rawData.uvs,
     };
-    mesh.compiledMesh.RecalculateNormals();
+    // TODO: Check if we need it
+    // mesh.compiledMesh.RecalculateNormals();
     
-    _cachedMeshes[mesh.DataID] = mesh.compiledMesh;
+    _cachedMeshes[mesh.dataID] = mesh.compiledMesh;
     _meshes[mesh.Tag] = mesh;
   }
 
@@ -164,32 +165,32 @@ public class AssetHandler : MonoBehaviour
 
     Material mat = new Material(Shader.Find("Standard"));
 
-    mat.SetColor("_Color", new Color(material.Color[0], material.Color[1], material.Color[2], material.Color[3]));
-    mat.SetColor("_EmissionColor", new Color(material.EmissionColor[0], material.EmissionColor[1], material.EmissionColor[2], material.EmissionColor[3]));
-    mat.SetFloat("_SpecularHighlights", material.Specular);
-    mat.SetFloat("_Smoothness", material.Shininess);
-    mat.SetFloat("_GlossyReflections", material.Reflectance);
+    mat.SetColor("_Color", new Color(material.color[0], material.color[1], material.color[2], material.color[3]));
+    mat.SetColor("_emissionColor", new Color(material.emissionColor[0], material.emissionColor[1], material.emissionColor[2], material.emissionColor[3]));
+    mat.SetFloat("_specularHighlights", material.specular);
+    mat.SetFloat("_Smoothness", material.shininess);
+    mat.SetFloat("_GlossyReflections", material.reflectance);
 
 
-    if (material.Texture != null) {
-      SimTexture texture = _textures[material.Texture];
-      if (texture.compiledTexture == null) ProcessTexture(texture);
+    if (material.texture != null) {
+      SimTexture texture = _textures[material.texture];
+      if (texture.compiledTexture == null) Processtexture(texture);
       mat.mainTexture = texture.compiledTexture;
-      mat.mainTextureScale = new Vector2(material.TexSize[0], material.TexSize[1]);
+      mat.mainTextureScale = new Vector2(material.textureSize[0], material.textureSize[1]);
     }
 
     material.compiledMaterial = mat;
     _materials[material.Tag] = material;
   }
 
-  public void ProcessTexture(SimAsset asset) {
-    SimTexture texture = (SimTexture)asset;
+  public void Processtexture(SimAsset asset) {
+    SimTexture simTexture = (SimTexture)asset;
 
-    var tex = new Texture2D(texture.Width, texture.Height, TextureFormat.RGBA32, false);
-    tex.LoadRawTextureData(texture.Data);
+    var tex = new Texture2D(simTexture.width, simTexture.height, TextureFormat.RGBA32, false);
+    tex.LoadRawTextureData(simTexture.textureData);
     tex.Apply();
 
-    texture.compiledTexture = tex;
-    _cachedTextures[texture.DataID] = texture.compiledTexture;
+    simTexture.compiledTexture = tex;
+    _cachedtextures[simTexture.dataID] = simTexture.compiledTexture;
   }
 }

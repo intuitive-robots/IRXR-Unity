@@ -34,9 +34,6 @@ public class SimBody {
   public string name;
   public SimTransform trans;
   public List<SimVisual> visuals; 
-
-  public SimJoint joint;
-
   public List<SimBody> children;
 }
 

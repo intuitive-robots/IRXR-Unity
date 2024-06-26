@@ -1091,7 +1091,7 @@
       <returns>A copy of the value in a newly allocated, precisely sized, array.</returns>
     </member>
     <member name="M:System.Formats.Asn1.AsnReader.ReadSequence(System.Nullable{System.Formats.Asn1.Asn1Tag})">
-      <summary>Reads the next value as a SEQUENCE or SEQUENCE-OF with the specified tag and returns the result as a new reader positioned at the first value in the sequence (or with <see cref="P:System.Formats.Asn1.AsnReader.HasData" /> == <see langword="false" />).</summary>
+      <summary>Reads the next value as a SEQUENCE or SEQUENCE-OF with the specified tag and returns the result as a new reader positioned at the first value in the sequence (or with <see cref="P:System.Formats.Asn1.AsnReader.Hasdata" /> == <see langword="false" />).</summary>
       <param name="expectedTag">The tag to check for before reading, or <see langword="null" /> for the default tag (Universal 16).</param>
       <exception cref="T:System.Formats.Asn1.AsnContentException">the next value does not have the correct tag.
              -or- 
@@ -1100,10 +1100,10 @@
                the contents are not valid under the current encoding rules.</exception>
       <exception cref="T:System.ArgumentException">
         <paramref name="expectedTag" />.<see cref="P:System.Formats.Asn1.Asn1Tag.TagClass" /> is <see cref="F:System.Formats.Asn1.TagClass.Universal" />, but <paramref name="expectedTag" />.<see cref="P:System.Formats.Asn1.Asn1Tag.TagValue" /> is not correct for the method.</exception>
-      <returns>A new reader positioned at the first value in the sequence (or with <see cref="P:System.Formats.Asn1.AsnReader.HasData" /> == <see langword="false" />).</returns>
+      <returns>A new reader positioned at the first value in the sequence (or with <see cref="P:System.Formats.Asn1.AsnReader.Hasdata" /> == <see langword="false" />).</returns>
     </member>
     <member name="M:System.Formats.Asn1.AsnReader.ReadSetOf(System.Boolean,System.Nullable{System.Formats.Asn1.Asn1Tag})">
-      <summary>Reads the next value as a SET-OF with the specified tag and returns the result as a new reader positioned at the first value in the set-of (or with <see cref="P:System.Formats.Asn1.AsnReader.HasData" /> == <see langword="false" />).</summary>
+      <summary>Reads the next value as a SET-OF with the specified tag and returns the result as a new reader positioned at the first value in the set-of (or with <see cref="P:System.Formats.Asn1.AsnReader.Hasdata" /> == <see langword="false" />).</summary>
       <param name="skipSortOrderValidation">
         <see langword="true" /> to always accept the data in the order it is presented, <see langword="false" /> to verify that the data is sorted correctly when the encoding rules say sorting was required (CER and DER).</param>
       <param name="expectedTag">The tag to check for before reading, or <see langword="null" /> for the default tag (Universal 17).</param>
@@ -1114,10 +1114,10 @@
                the contents are not valid under the current encoding rules.</exception>
       <exception cref="T:System.ArgumentException">
         <paramref name="expectedTag" />.<see cref="P:System.Formats.Asn1.Asn1Tag.TagClass" /> is <see cref="F:System.Formats.Asn1.TagClass.Universal" />, but <paramref name="expectedTag" />.<see cref="P:System.Formats.Asn1.Asn1Tag.TagValue" /> is not correct for the method.</exception>
-      <returns>A new reader positioned at the first value in the set-of (or with <see cref="P:System.Formats.Asn1.AsnReader.HasData" /> == <see langword="false" />).</returns>
+      <returns>A new reader positioned at the first value in the set-of (or with <see cref="P:System.Formats.Asn1.AsnReader.Hasdata" /> == <see langword="false" />).</returns>
     </member>
     <member name="M:System.Formats.Asn1.AsnReader.ReadSetOf(System.Nullable{System.Formats.Asn1.Asn1Tag})">
-      <summary>Reads the next value as a SET-OF with the specified tag and returns the result as a new reader positioned at the first value in the set-of (or with <see cref="P:System.Formats.Asn1.AsnReader.HasData" /> == <see langword="false" />), using the <see cref="P:System.Formats.Asn1.AsnReaderOptions.SkipSetSortOrderVerification" /> value from the constructor (default <see langword="false" />).</summary>
+      <summary>Reads the next value as a SET-OF with the specified tag and returns the result as a new reader positioned at the first value in the set-of (or with <see cref="P:System.Formats.Asn1.AsnReader.Hasdata" /> == <see langword="false" />), using the <see cref="P:System.Formats.Asn1.AsnReaderOptions.SkipSetSortOrderVerification" /> value from the constructor (default <see langword="false" />).</summary>
       <param name="expectedTag">The tag to check for before reading, or <see langword="null" /> for the default tag (Universal 17).</param>
       <exception cref="T:System.Formats.Asn1.AsnContentException">the next value does not have the correct tag.
              -or- 
@@ -1126,7 +1126,7 @@
                the contents are not valid under the current encoding rules.</exception>
       <exception cref="T:System.ArgumentException">
         <paramref name="expectedTag" />.<see cref="P:System.Formats.Asn1.Asn1Tag.TagClass" /> is <see cref="F:System.Formats.Asn1.TagClass.Universal" />, but <paramref name="expectedTag" />.<see cref="P:System.Formats.Asn1.Asn1Tag.TagValue" /> is not correct for the method.</exception>
-      <returns>A new reader positioned at the first value in the set-of (or with <see cref="P:System.Formats.Asn1.AsnReader.HasData" /> == <see langword="false" />).</returns>
+      <returns>A new reader positioned at the first value in the set-of (or with <see cref="P:System.Formats.Asn1.AsnReader.Hasdata" /> == <see langword="false" />).</returns>
     </member>
     <member name="M:System.Formats.Asn1.AsnReader.ReadUtcTime(System.Int32,System.Nullable{System.Formats.Asn1.Asn1Tag})">
       <summary>Reads the next value as a UTCTime with a specified tag.</summary>
@@ -1154,7 +1154,7 @@
       <returns>The decoded value.</returns>
     </member>
     <member name="M:System.Formats.Asn1.AsnReader.ThrowIfNotEmpty">
-      <summary>Throws a standardized <see cref="T:System.Formats.Asn1.AsnContentException" /> if the reader has remaining data, performs no function if <see cref="P:System.Formats.Asn1.AsnReader.HasData" /> returns <see langword="false" />.</summary>
+      <summary>Throws a standardized <see cref="T:System.Formats.Asn1.AsnContentException" /> if the reader has remaining data, performs no function if <see cref="P:System.Formats.Asn1.AsnReader.Hasdata" /> returns <see langword="false" />.</summary>
     </member>
     <member name="M:System.Formats.Asn1.AsnReader.TryReadBitString(System.Span{System.Byte},System.Int32@,System.Int32@,System.Nullable{System.Formats.Asn1.Asn1Tag})">
       <summary>Reads the next value as a BIT STRING with a specified tag, copying the value into a provided destination buffer.</summary>
@@ -1321,7 +1321,7 @@
       <returns>
         <see langword="false" /> and does not advance the reader if the value is not between <see cref="F:System.UInt64.MinValue" /> and <see cref="F:System.UInt64.MaxValue" />, inclusive; otherwise <see langword="true" /> is returned and the reader advances.</returns>
     </member>
-    <member name="P:System.Formats.Asn1.AsnReader.HasData">
+    <member name="P:System.Formats.Asn1.AsnReader.Hasdata">
       <summary>Gets an indication of whether the reader has remaining data available to process.</summary>
       <returns>
         <see langword="true" /> if there is more data available for the reader to process; otherwise, <see langword="false" />.</returns>

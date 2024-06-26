@@ -11,8 +11,8 @@
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> class using an attribute represented by the specified <see cref="T:System.Security.Cryptography.Oid" /> object.</summary>
       <param name="oid">The attribute to store in this <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> object.</param>
     </member>
-    <member name="M:System.Security.Cryptography.CryptographicAttributeObject.#ctor(System.Security.Cryptography.Oid,System.Security.Cryptography.AsnEncodedDataCollection)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> class using an attribute represented by the specified <see cref="T:System.Security.Cryptography.Oid" /> object and the set of values associated with that attribute represented by the specified <see cref="T:System.Security.Cryptography.AsnEncodedDataCollection" /> collection.</summary>
+    <member name="M:System.Security.Cryptography.CryptographicAttributeObject.#ctor(System.Security.Cryptography.Oid,System.Security.Cryptography.AsnEncodeddataCollection)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> class using an attribute represented by the specified <see cref="T:System.Security.Cryptography.Oid" /> object and the set of values associated with that attribute represented by the specified <see cref="T:System.Security.Cryptography.AsnEncodeddataCollection" /> collection.</summary>
       <param name="oid">The attribute to store in this <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> object.</param>
       <param name="values">The set of values associated with the attribute represented by the <paramref name="oid" /> parameter.</param>
       <exception cref="T:System.InvalidOperationException">The collection contains duplicate items.</exception>
@@ -22,7 +22,7 @@
       <returns>The object identifier for the attribute.</returns>
     </member>
     <member name="P:System.Security.Cryptography.CryptographicAttributeObject.Values">
-      <summary>Gets the <see cref="T:System.Security.Cryptography.AsnEncodedDataCollection" /> collection that contains the set of values that are associated with the attribute.</summary>
+      <summary>Gets the <see cref="T:System.Security.Cryptography.AsnEncodeddataCollection" /> collection that contains the set of values that are associated with the attribute.</summary>
       <returns>The set of values that is associated with the attribute.</returns>
     </member>
     <member name="T:System.Security.Cryptography.CryptographicAttributeObjectCollection">
@@ -35,11 +35,11 @@
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.CryptographicAttributeObjectCollection" /> class, adding a specified <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> to the collection.</summary>
       <param name="attribute">A <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> object that is added to the collection.</param>
     </member>
-    <member name="M:System.Security.Cryptography.CryptographicAttributeObjectCollection.Add(System.Security.Cryptography.AsnEncodedData)">
-      <summary>Adds the specified <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object to the collection.</summary>
-      <param name="asnEncodedData">The <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object to add to the collection.</param>
+    <member name="M:System.Security.Cryptography.CryptographicAttributeObjectCollection.Add(System.Security.Cryptography.AsnEncodeddata)">
+      <summary>Adds the specified <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object to the collection.</summary>
+      <param name="asnEncodeddata">The <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object to add to the collection.</param>
       <exception cref="T:System.ArgumentNullException">
-        <paramref name="asnEncodedData" /> is <see langword="null" />.</exception>
+        <paramref name="asnEncodeddata" /> is <see langword="null" />.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
       <returns>
         <see langword="true" /> if the method returns the zero-based index of the added item; otherwise, <see langword="false" />.</returns>
@@ -48,7 +48,7 @@
       <summary>Adds the specified <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> object to the collection.</summary>
       <param name="attribute">The <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> object to add to the collection.</param>
       <exception cref="T:System.ArgumentNullException">
-        <paramref name="asnEncodedData" /> is <see langword="null" />.</exception>
+        <paramref name="asnEncodeddata" /> is <see langword="null" />.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
       <exception cref="T:System.InvalidOperationException">The specified item already exists in the collection.</exception>
       <returns>
@@ -375,7 +375,7 @@ The <paramref name="recipientIdentifierType" /> value is not supported.</excepti
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.ContentInfo.#ctor(System.Security.Cryptography.Oid,System.Byte[])">
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.ContentInfo.#ctor(System.Security.Cryptography.Oid,System.Byte[])" /> constructor  creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> class by using the specified content type and an array of byte values as the data.</summary>
-      <param name="contentType">An <see cref="T:System.Security.Cryptography.Oid" /> object that contains an <c>object identifier</c> (OID) that specifies the content type of the content. This can be data, digestedData, encryptedData, envelopedData, hashedData, signedAndEnvelopedData, or signedData.  For more information, see  Remarks.</param>
+      <param name="contentType">An <see cref="T:System.Security.Cryptography.Oid" /> object that contains an <c>object identifier</c> (OID) that specifies the content type of the content. This can be data, digesteddata, encrypteddata, envelopeddata, hasheddata, signedAndEnvelopeddata, or signeddata.  For more information, see  Remarks.</param>
       <param name="content">An array of byte values that represents the data from which to create the <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> object.</param>
       <exception cref="T:System.ArgumentNullException">A null reference  was passed to a method that does not accept it as a valid argument.</exception>
     </member>
@@ -421,13 +421,13 @@ The <paramref name="recipientIdentifierType" /> value is not supported.</excepti
       <exception cref="T:System.ArgumentNullException">The <paramref name="contentInfo" /> or <paramref name="encryptionAlgorithm" /> parameter is <see langword="null" />.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.EnvelopedCms.Decode(System.Byte[])">
-      <summary>Decodes an array of bytes as a CMS/PKCS#7 EnvelopedData message.</summary>
+      <summary>Decodes an array of bytes as a CMS/PKCS#7 Envelopeddata message.</summary>
       <param name="encodedMessage">The byte array containing the sequence of bytes to decode.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="encodedMessage" /> parameter is <see langword="null" />.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="encodedMessage" /> parameter was not successfully decoded.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.EnvelopedCms.Decode(System.ReadOnlySpan{System.Byte})">
-      <summary>Decodes the provided data as a CMS/PKCS#7 EnvelopedData message.</summary>
+      <summary>Decodes the provided data as a CMS/PKCS#7 Envelopeddata message.</summary>
       <param name="encodedMessage">The data to decode.</param>
       <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="encodedMessage" /> parameter was not successfully decoded.</exception>
     </member>
@@ -1081,33 +1081,33 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
     <member name="M:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject.#ctor(System.Security.Cryptography.AsnEncodedData)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject" /> class using a specified <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object as its attribute type and value.</summary>
-      <param name="asnEncodedData">An object that contains the PKCS #9 attribute type and value to use.</param>
-      <exception cref="T:System.ArgumentException">The length of the <paramref name="Value" /> member of the <paramref name="Oid" /> member of <paramref name="asnEncodedData" /> is zero.</exception>
-      <exception cref="T:System.ArgumentNullException">The <paramref name="Oid" /> member of <paramref name="asnEncodedData" /> is <see langword="null" />.  
+    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject.#ctor(System.Security.Cryptography.AsnEncodeddata)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject" /> class using a specified <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object as its attribute type and value.</summary>
+      <param name="asnEncodeddata">An object that contains the PKCS #9 attribute type and value to use.</param>
+      <exception cref="T:System.ArgumentException">The length of the <paramref name="Value" /> member of the <paramref name="Oid" /> member of <paramref name="asnEncodeddata" /> is zero.</exception>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="Oid" /> member of <paramref name="asnEncodeddata" /> is <see langword="null" />.  
   
  -or-  
   
- The <paramref name="Value" /> member of the <paramref name="Oid" /> member of <paramref name="asnEncodedData" /> is <see langword="null" />.</exception>
+ The <paramref name="Value" /> member of the <paramref name="Oid" /> member of <paramref name="asnEncodeddata" /> is <see langword="null" />.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject.#ctor(System.Security.Cryptography.Oid,System.Byte[])">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject" /> class using a specified <see cref="T:System.Security.Cryptography.Oid" /> object as the attribute type and a specified ASN.1 encoded data as the attribute value.</summary>
       <param name="oid">An object that represents the PKCS #9 attribute type.</param>
-      <param name="encodedData">An array of byte values that represents the PKCS #9 attribute value.</param>
+      <param name="encodeddata">An array of byte values that represents the PKCS #9 attribute value.</param>
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject.#ctor(System.String,System.Byte[])">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject" /> class using a specified string representation of an object identifier (OID) as the attribute type and a specified ASN.1 encoded data as the attribute value.</summary>
       <param name="oid">The string representation of an OID that represents the PKCS #9 attribute type.</param>
-      <param name="encodedData">An array of byte values that contains the PKCS #9 attribute value.</param>
+      <param name="encodeddata">An array of byte values that contains the PKCS #9 attribute value.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject.CopyFrom(System.Security.Cryptography.AsnEncodedData)">
-      <summary>Copies a PKCS #9 attribute type and value for this <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject" /> from the specified <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object.</summary>
-      <param name="asnEncodedData">An object that contains the PKCS #9 attribute type and value to use.</param>
+    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject.CopyFrom(System.Security.Cryptography.AsnEncodeddata)">
+      <summary>Copies a PKCS #9 attribute type and value for this <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject" /> from the specified <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object.</summary>
+      <param name="asnEncodeddata">An object that contains the PKCS #9 attribute type and value to use.</param>
       <exception cref="T:System.ArgumentException">
-        <paramref name="asnEncodeData" /> does not represent a compatible attribute type.</exception>
+        <paramref name="asnEncodedata" /> does not represent a compatible attribute type.</exception>
       <exception cref="T:System.ArgumentNullException">
-        <paramref name="asnEncodedData" /> is <see langword="null" />.</exception>
+        <paramref name="asnEncodeddata" /> is <see langword="null" />.</exception>
     </member>
     <member name="P:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject.Oid">
       <summary>Gets an <see cref="T:System.Security.Cryptography.Oid" /> object that represents the type of attribute associated with this <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9AttributeObject" /> object.</summary>
@@ -1119,9 +1119,9 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
     <member name="M:System.Security.Cryptography.Pkcs.Pkcs9ContentType.#ctor">
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.Pkcs9ContentType.#ctor" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9ContentType" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9ContentType.CopyFrom(System.Security.Cryptography.AsnEncodedData)">
-      <summary>Copies information from an <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object.</summary>
-      <param name="asnEncodedData">The <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object from which to copy information.</param>
+    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9ContentType.CopyFrom(System.Security.Cryptography.AsnEncodeddata)">
+      <summary>Copies information from an <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object.</summary>
+      <param name="asnEncodeddata">The <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object from which to copy information.</param>
     </member>
     <member name="P:System.Security.Cryptography.Pkcs.Pkcs9ContentType.ContentType">
       <summary>The <see cref="P:System.Security.Cryptography.Pkcs.Pkcs9ContentType.ContentType" /> property gets an <see cref="T:System.Security.Cryptography.Oid" /> object that contains the content type.</summary>
@@ -1141,9 +1141,9 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.Pkcs9DocumentDescription.#ctor(System.String)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9DocumentDescription" /> class by using the specified description of the content of a CMS/PKCS #7 message.</summary>
       <param name="documentDescription">An instance of the <see cref="T:System.String" /> class that specifies the description for the CMS/PKCS #7 message.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9DocumentDescription.CopyFrom(System.Security.Cryptography.AsnEncodedData)">
-      <summary>Copies information from an <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object.</summary>
-      <param name="asnEncodedData">The <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object from which to copy information.</param>
+    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9DocumentDescription.CopyFrom(System.Security.Cryptography.AsnEncodeddata)">
+      <summary>Copies information from an <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object.</summary>
+      <param name="asnEncodeddata">The <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object from which to copy information.</param>
     </member>
     <member name="P:System.Security.Cryptography.Pkcs.Pkcs9DocumentDescription.DocumentDescription">
       <summary>The <see cref="P:System.Security.Cryptography.Pkcs.Pkcs9DocumentDescription.DocumentDescription" /> property retrieves the document description.</summary>
@@ -1163,9 +1163,9 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.Pkcs9DocumentName.#ctor(System.String)" /> constructor creates an instance of the  <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9DocumentName" /> class by using the specified name for the CMS/PKCS #7 message.</summary>
       <param name="documentName">A  <see cref="T:System.String" /> object that specifies the name for the CMS/PKCS #7 message.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9DocumentName.CopyFrom(System.Security.Cryptography.AsnEncodedData)">
-      <summary>Copies information from an <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object.</summary>
-      <param name="asnEncodedData">The <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object from which to copy information.</param>
+    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9DocumentName.CopyFrom(System.Security.Cryptography.AsnEncodeddata)">
+      <summary>Copies information from an <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object.</summary>
+      <param name="asnEncodeddata">The <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object from which to copy information.</param>
     </member>
     <member name="P:System.Security.Cryptography.Pkcs.Pkcs9DocumentName.DocumentName">
       <summary>The <see cref="P:System.Security.Cryptography.Pkcs.Pkcs9DocumentName.DocumentName" /> property retrieves the document name.</summary>
@@ -1195,9 +1195,9 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
     <member name="M:System.Security.Cryptography.Pkcs.Pkcs9MessageDigest.#ctor">
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.Pkcs9MessageDigest.#ctor" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9MessageDigest" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9MessageDigest.CopyFrom(System.Security.Cryptography.AsnEncodedData)">
-      <summary>Copies information from an <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object.</summary>
-      <param name="asnEncodedData">The <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object from which to copy information.</param>
+    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9MessageDigest.CopyFrom(System.Security.Cryptography.AsnEncodeddata)">
+      <summary>Copies information from an <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object.</summary>
+      <param name="asnEncodeddata">The <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object from which to copy information.</param>
     </member>
     <member name="P:System.Security.Cryptography.Pkcs.Pkcs9MessageDigest.MessageDigest">
       <summary>The <see cref="P:System.Security.Cryptography.Pkcs.Pkcs9MessageDigest.MessageDigest" /> property retrieves the message digest.</summary>
@@ -1217,9 +1217,9 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.Pkcs9SigningTime.#ctor(System.DateTime)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.Pkcs9SigningTime" /> class by using the specified signing date and time.</summary>
       <param name="signingTime">A <see cref="T:System.DateTime" /> structure that represents the signing date and time of the signature.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9SigningTime.CopyFrom(System.Security.Cryptography.AsnEncodedData)">
-      <summary>Copies information from a <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object.</summary>
-      <param name="asnEncodedData">The <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object from which to copy information.</param>
+    <member name="M:System.Security.Cryptography.Pkcs.Pkcs9SigningTime.CopyFrom(System.Security.Cryptography.AsnEncodeddata)">
+      <summary>Copies information from a <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object.</summary>
+      <param name="asnEncodeddata">The <see cref="T:System.Security.Cryptography.AsnEncodeddata" /> object from which to copy information.</param>
     </member>
     <member name="P:System.Security.Cryptography.Pkcs.Pkcs9SigningTime.SigningTime">
       <summary>The <see cref="P:System.Security.Cryptography.Pkcs.Pkcs9SigningTime.SigningTime" /> property retrieves a <see cref="T:System.DateTime" /> structure that represents the date and time that the message was signed.</summary>
@@ -1337,7 +1337,7 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
     <member name="T:System.Security.Cryptography.Pkcs.Rfc3161TimestampRequest">
       <summary>Represents a time-stamping request from IETF RFC 3161.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.Rfc3161TimestampRequest.CreateFromData(System.ReadOnlySpan{System.Byte},System.Security.Cryptography.HashAlgorithmName,System.Security.Cryptography.Oid,System.Nullable{System.ReadOnlyMemory{System.Byte}},System.Boolean,System.Security.Cryptography.X509Certificates.X509ExtensionCollection)">
+    <member name="M:System.Security.Cryptography.Pkcs.Rfc3161TimestampRequest.CreateFromdata(System.ReadOnlySpan{System.Byte},System.Security.Cryptography.HashAlgorithmName,System.Security.Cryptography.Oid,System.Nullable{System.ReadOnlyMemory{System.Byte}},System.Boolean,System.Security.Cryptography.X509Certificates.X509ExtensionCollection)">
       <summary>Creates a timestamp request by hashing the provided data with a specified algorithm.</summary>
       <param name="data">The data to timestamp, which will be hashed by this method.</param>
       <param name="hashAlgorithm">The hash algorithm to use with this timestamp request.</param>
@@ -1471,7 +1471,7 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
       <returns>
         <see langword="true" /> if <paramref name="encodedBytes" /> was successfully interpreted as a time-stamp token; otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.Rfc3161TimestampToken.VerifySignatureForData(System.ReadOnlySpan{System.Byte},System.Security.Cryptography.X509Certificates.X509Certificate2@,System.Security.Cryptography.X509Certificates.X509Certificate2Collection)">
+    <member name="M:System.Security.Cryptography.Pkcs.Rfc3161TimestampToken.VerifySignatureFordata(System.ReadOnlySpan{System.Byte},System.Security.Cryptography.X509Certificates.X509Certificate2@,System.Security.Cryptography.X509Certificates.X509Certificate2Collection)">
       <summary>Verifies that the current token is a valid time-stamp token for the provided data.</summary>
       <param name="data">The data to verify against this time-stamp token.</param>
       <param name="signerCertificate">When this method returns, the certificate from the Timestamp Authority (TSA) which signed this token, or <see langword="null" /> if a signer certificate cannot be determined. This parameter is treated as uninitialized.</param>
@@ -1701,9 +1701,9 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
     <member name="T:System.Security.Cryptography.Pkcs.SignerInfo">
       <summary>The <see cref="T:System.Security.Cryptography.Pkcs.SignerInfo" /> class represents a signer associated with a <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> object that represents a CMS/PKCS #7 message.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.SignerInfo.AddUnsignedAttribute(System.Security.Cryptography.AsnEncodedData)">
+    <member name="M:System.Security.Cryptography.Pkcs.SignerInfo.AddUnsignedAttribute(System.Security.Cryptography.AsnEncodeddata)">
       <summary>Adds the specified attribute to the current document.</summary>
-      <param name="asnEncodedData">The ASN.1 encoded attribute to add to the document.</param>
+      <param name="asnEncodeddata">The ASN.1 encoded attribute to add to the document.</param>
       <exception cref="T:System.Security.Cryptography.CryptographicException">Cannot find the original signer.
         
  -or-
@@ -1756,9 +1756,9 @@ ASN1 corrupted data.</exception>
       <exception cref="T:System.ArgumentOutOfRangeException">The value of an argument was outside the allowable range of values as defined by the called method.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.SignerInfo.RemoveUnsignedAttribute(System.Security.Cryptography.AsnEncodedData)">
+    <member name="M:System.Security.Cryptography.Pkcs.SignerInfo.RemoveUnsignedAttribute(System.Security.Cryptography.AsnEncodeddata)">
       <summary>Removes the specified attribute from the current document.</summary>
-      <param name="asnEncodedData">The ASN.1 encoded attribute to remove from the document.</param>
+      <param name="asnEncodeddata">The ASN.1 encoded attribute to remove from the document.</param>
       <exception cref="T:System.Security.Cryptography.CryptographicException">Cannot find the original signer.
 
  -or-

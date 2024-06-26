@@ -1369,7 +1369,7 @@ This instance represents only a public key.</exception>
       <exception cref="T:System.PlatformNotSupportedException">
         <paramref name="parameters" /> references a curve that is not supported by this platform.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.ECDsaCng.SignData(System.Byte[])">
+    <member name="M:System.Security.Cryptography.ECDsaCng.Signdata(System.Byte[])">
       <summary>Generates a signature for the specified data.</summary>
       <param name="data">The message data to be signed.</param>
       <exception cref="T:System.ArgumentNullException">
@@ -1377,7 +1377,7 @@ This instance represents only a public key.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">The key information that is associated with the instance does not have a private key.</exception>
       <returns>A digital signature for the specified data.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.ECDsaCng.SignData(System.Byte[],System.Int32,System.Int32)">
+    <member name="M:System.Security.Cryptography.ECDsaCng.Signdata(System.Byte[],System.Int32,System.Int32)">
       <summary>Generates a digital signature for the specified length of data, beginning at the specified offset.</summary>
       <param name="data">The message data to be signed.</param>
       <param name="offset">The location in the string at which to start signing.</param>
@@ -1389,7 +1389,7 @@ This instance represents only a public key.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">The key information that is associated with the instance does not have a private key.</exception>
       <returns>A digital signature for the specified length of data.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.ECDsaCng.SignData(System.IO.Stream)">
+    <member name="M:System.Security.Cryptography.ECDsaCng.Signdata(System.IO.Stream)">
       <summary>Generates a signature for the specified data stream, reading to the end of the stream.</summary>
       <param name="data">The data stream to be signed.</param>
       <exception cref="T:System.ArgumentNullException">
@@ -1413,7 +1413,7 @@ This instance represents only a public key.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">All other errors.</exception>
       <returns>A string object that contains the key information, serialized to an XML string according to the requested format.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.ECDsaCng.VerifyData(System.Byte[],System.Byte[])">
+    <member name="M:System.Security.Cryptography.ECDsaCng.Verifydata(System.Byte[],System.Byte[])">
       <summary>Verifies the digital signature of the specified data.</summary>
       <param name="data">The data that was signed.</param>
       <param name="signature">The signature to be verified.</param>
@@ -1422,7 +1422,7 @@ This instance represents only a public key.</exception>
       <returns>
         <see langword="true" /> if the signature is valid; otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.ECDsaCng.VerifyData(System.Byte[],System.Int32,System.Int32,System.Byte[])">
+    <member name="M:System.Security.Cryptography.ECDsaCng.Verifydata(System.Byte[],System.Int32,System.Int32,System.Byte[])">
       <summary>Verifies a signature for the specified length of data, beginning at the specified offset.</summary>
       <param name="data">The data that was signed.</param>
       <param name="offset">The location in the data at which the signed data begins.</param>
@@ -1439,7 +1439,7 @@ This instance represents only a public key.</exception>
       <returns>
         <see langword="true" /> if the signature is valid; otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.ECDsaCng.VerifyData(System.IO.Stream,System.Byte[])">
+    <member name="M:System.Security.Cryptography.ECDsaCng.Verifydata(System.IO.Stream,System.Byte[])">
       <summary>Verifies the digital signature of the specified data stream, reading to the end of the stream.</summary>
       <param name="data">The data stream that was signed.</param>
       <param name="signature">The signature to be verified.</param>
@@ -1599,7 +1599,7 @@ This instance represents only a public key.</exception>
       <returns>An array that contains the key sizes supported by the algorithm.</returns>
     </member>
     <member name="T:System.Security.Cryptography.TripleDESCng">
-      <summary>Provides a Cryptography Next Generation (CNG) implementation of the Triple Data Encryption Standard (3DES) algorithm.</summary>
+      <summary>Provides a Cryptography Next Generation (CNG) implementation of the Triple data Encryption Standard (3DES) algorithm.</summary>
     </member>
     <member name="M:System.Security.Cryptography.TripleDESCng.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.TripleDESCng" /> class with an ephemeral key.</summary>

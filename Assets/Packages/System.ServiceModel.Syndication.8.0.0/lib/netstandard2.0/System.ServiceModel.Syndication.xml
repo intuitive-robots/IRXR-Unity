@@ -1245,7 +1245,7 @@
     <member name="M:System.ServiceModel.Syndication.SyndicationElementExtension.GetObject``1">
       <summary>Gets the object that represents the element extension.</summary>
       <typeparam name="TExtension">The type of the extension to retrieve.</typeparam>
-      <exception cref="T:System.Runtime.Serialization.InvalidDataContractException">The type is not a valid data contract.</exception>
+      <exception cref="T:System.Runtime.Serialization.InvaliddataContractException">The type is not a valid data contract.</exception>
       <exception cref="T:System.Runtime.Serialization.SerializationException">The input XML cannot be deserialized into the requested type.</exception>
       <returns>An object of the specified type that contains the element extension.</returns>
     </member>
@@ -1253,7 +1253,7 @@
       <summary>Gets the object that represents the element extension.</summary>
       <param name="serializer">The <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> to use.</param>
       <typeparam name="TExtension">The type of the extension to retrieve.</typeparam>
-      <exception cref="T:System.Runtime.Serialization.InvalidDataContractException">The type is not a valid data contract.</exception>
+      <exception cref="T:System.Runtime.Serialization.InvaliddataContractException">The type is not a valid data contract.</exception>
       <exception cref="T:System.Runtime.Serialization.SerializationException">The input XML cannot be deserialized into the requested type.</exception>
       <returns>An object of the specified type that contains the element extension.</returns>
     </member>
@@ -1287,7 +1287,7 @@
       <summary>Adds the specified <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> object to the collection.</summary>
       <param name="extension">The <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> object to add.</param>
     </member>
-    <member name="M:System.ServiceModel.Syndication.SyndicationElementExtensionCollection.Add(System.Object,System.Runtime.Serialization.DataContractSerializer)">
+    <member name="M:System.ServiceModel.Syndication.SyndicationElementExtensionCollection.Add(System.Object,System.Runtime.Serialization.dataContractSerializer)">
       <summary>Adds the specified object to the collection using the specified data contract serializer.</summary>
       <param name="dataContractExtension">The object to add to the collection.</param>
       <param name="serializer">The serializer to use.</param>
@@ -1323,7 +1323,7 @@
       <param name="extensionName">The name of the element extension.</param>
       <param name="extensionNamespace">The namespace of the element extension.</param>
       <typeparam name="TExtension">The type of the extension to read.</typeparam>
-      <exception cref="T:System.Runtime.Serialization.InvalidDataContractException">The type is not a valid data contract.</exception>
+      <exception cref="T:System.Runtime.Serialization.InvaliddataContractException">The type is not a valid data contract.</exception>
       <exception cref="T:System.Runtime.Serialization.SerializationException">The input XML cannot be deserialized into the requested type.</exception>
       <returns>A collection of element extension objects.</returns>
     </member>
@@ -1333,7 +1333,7 @@
       <param name="extensionNamespace">The namespace of the element extension.</param>
       <param name="serializer">The <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> to use.</param>
       <typeparam name="TExtension">The type of the extension to read.</typeparam>
-      <exception cref="T:System.Runtime.Serialization.InvalidDataContractException">The type is not a valid data contract.</exception>
+      <exception cref="T:System.Runtime.Serialization.InvaliddataContractException">The type is not a valid data contract.</exception>
       <exception cref="T:System.Runtime.Serialization.SerializationException">The input XML cannot be deserialized into the requested type.</exception>
       <returns>A collection of element extension objects.</returns>
     </member>
@@ -1818,8 +1818,8 @@
       <param name="writer">The <see cref="T:System.Xml.XmlWriter" /> to write the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> to.</param>
     </member>
     <member name="P:System.ServiceModel.Syndication.SyndicationFeedFormatter.DateTimeParser">
-      <summary>Delegate that is used by the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> class for converting <see cref="T:System.ServiceModel.Syndication.XmlDateTimeData" /> string data to <see cref="T:System.DateTimeOffset" />.</summary>
-      <returns>The <see cref="T:System.ServiceModel.Syndication.TryParseDateTimeCallback" /> that is used for converting string data from <see cref="T:System.ServiceModel.Syndication.XmlDateTimeData" /> to a <see cref="T:System.DateTimeOffset" /> instance.</returns>
+      <summary>Delegate that is used by the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> class for converting <see cref="T:System.ServiceModel.Syndication.XmlDateTimedata" /> string data to <see cref="T:System.DateTimeOffset" />.</summary>
+      <returns>The <see cref="T:System.ServiceModel.Syndication.TryParseDateTimeCallback" /> that is used for converting string data from <see cref="T:System.ServiceModel.Syndication.XmlDateTimedata" /> to a <see cref="T:System.DateTimeOffset" /> instance.</returns>
     </member>
     <member name="P:System.ServiceModel.Syndication.SyndicationFeedFormatter.Feed">
       <summary>Gets the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> associated with the formatter.</summary>
@@ -2480,8 +2480,8 @@
       <summary>XML (not escaped)</summary>
     </member>
     <member name="T:System.ServiceModel.Syndication.TryParseDateTimeCallback">
-      <summary>A delegate type that is used by the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> class for converting <see cref="T:System.ServiceModel.Syndication.XmlDateTimeData" /> string data to <see cref="T:System.DateTimeOffset" />.</summary>
-      <param name="data">The raw date string contained in <see cref="T:System.ServiceModel.Syndication.XmlDateTimeData" /> to convert to a <see cref="T:System.DateTimeOffset" />.</param>
+      <summary>A delegate type that is used by the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> class for converting <see cref="T:System.ServiceModel.Syndication.XmlDateTimedata" /> string data to <see cref="T:System.DateTimeOffset" />.</summary>
+      <param name="data">The raw date string contained in <see cref="T:System.ServiceModel.Syndication.XmlDateTimedata" /> to convert to a <see cref="T:System.DateTimeOffset" />.</param>
       <param name="dateTimeOffset">The resulting <see cref="T:System.DateTimeOffset" />.</param>
       <returns>A boolean value indicating whether or not the input string was successfully parsed.</returns>
     </member>
@@ -2585,20 +2585,20 @@
       <summary>Gets or sets the title of the <see cref="T:System.ServiceModel.Syndication.Workspace" /> instance.</summary>
       <returns>The title of the <see cref="T:System.ServiceModel.Syndication.Workspace" /> instance.</returns>
     </member>
-    <member name="T:System.ServiceModel.Syndication.XmlDateTimeData">
+    <member name="T:System.ServiceModel.Syndication.XmlDateTimedata">
       <summary>A struct that contains a raw string representation of a timestamp from a syndication feed.</summary>
     </member>
-    <member name="M:System.ServiceModel.Syndication.XmlDateTimeData.#ctor(System.String,System.Xml.XmlQualifiedName)">
-      <summary>Sets the <see cref="T:System.ServiceModel.Syndication.XmlDateTimeData.DateTimeString" /> and <see cref="T:System.ServiceModel.Syndication.XmlDateTimeData.ElementQualifiedName" /> properties using the given parameters.</summary>
+    <member name="M:System.ServiceModel.Syndication.XmlDateTimedata.#ctor(System.String,System.Xml.XmlQualifiedName)">
+      <summary>Sets the <see cref="T:System.ServiceModel.Syndication.XmlDateTimedata.DateTimeString" /> and <see cref="T:System.ServiceModel.Syndication.XmlDateTimedata.ElementQualifiedName" /> properties using the given parameters.</summary>
       <param name="dateTimeString">The raw string representation of the timestamp.</param>
       <param name="elementQualifiedName">The qualified name of the XML element that originally contained the raw timestamp string.</param>
     </member>
-    <member name="P:System.ServiceModel.Syndication.XmlDateTimeData.DateTimeString">
-      <summary>Gets the <see cref="T:System.ServiceModel.Syndication.XmlDateTimeData.DateTimeString" /> property.</summary>
+    <member name="P:System.ServiceModel.Syndication.XmlDateTimedata.DateTimeString">
+      <summary>Gets the <see cref="T:System.ServiceModel.Syndication.XmlDateTimedata.DateTimeString" /> property.</summary>
       <returns>The raw string representation of the timestamp.</returns>
     </member>
-    <member name="P:System.ServiceModel.Syndication.XmlDateTimeData.ElementQualifiedName">
-      <summary>Gets the <see cref="T:System.ServiceModel.Syndication.XmlDateTimeData.ElementQualifiedName" /> property.</summary>
+    <member name="P:System.ServiceModel.Syndication.XmlDateTimedata.ElementQualifiedName">
+      <summary>Gets the <see cref="T:System.ServiceModel.Syndication.XmlDateTimedata.ElementQualifiedName" /> property.</summary>
       <returns>The qualified name of the XML element that originally contained the raw timestamp string.</returns>
     </member>
     <member name="T:System.ServiceModel.Syndication.XmlSyndicationContent">
@@ -2669,25 +2669,25 @@
       <summary>Gets the type of the XML syndication content.</summary>
       <returns>The XML syndication content type.</returns>
     </member>
-    <member name="T:System.ServiceModel.Syndication.XmlUriData">
+    <member name="T:System.ServiceModel.Syndication.XmlUridata">
       <summary>A struct that contains a raw string representation of a Uri from a syndication feed.</summary>
     </member>
-    <member name="M:System.ServiceModel.Syndication.XmlUriData.#ctor(System.String,System.UriKind,System.Xml.XmlQualifiedName)">
+    <member name="M:System.ServiceModel.Syndication.XmlUridata.#ctor(System.String,System.UriKind,System.Xml.XmlQualifiedName)">
       <summary>Sets the UriString, UriKind, and ElementQualifiedName properties using the given parameters.</summary>
       <param name="uriString">The raw string representation of the Uri.</param>
       <param name="uriKind">A <see cref="T:System.UriKind" /> enum value indicating whether the Uri given is relative or absolute.</param>
       <param name="elementQualifiedName">The qualified name of the XML element that originally contained the raw Uri string.</param>
     </member>
-    <member name="P:System.ServiceModel.Syndication.XmlUriData.ElementQualifiedName">
-      <summary>Gets the <see cref="T:System.ServiceModel.Syndication.XmlUriData.ElementQualifiedName" /> property.</summary>
+    <member name="P:System.ServiceModel.Syndication.XmlUridata.ElementQualifiedName">
+      <summary>Gets the <see cref="T:System.ServiceModel.Syndication.XmlUridata.ElementQualifiedName" /> property.</summary>
       <returns>The qualified name of the XML element that originally contained the raw Uri string.</returns>
     </member>
-    <member name="P:System.ServiceModel.Syndication.XmlUriData.UriKind">
-      <summary>Gets the <see cref="T:System.ServiceModel.Syndication.XmlUriData.UriKind" /> property.</summary>
-      <returns>A <see cref="T:System.UriKind" /> enum value indicating whether the raw Uri string contained in <see cref="T:System.ServiceModel.Syndication.XmlUriData.UriString" /> is relative or absolute.</returns>
+    <member name="P:System.ServiceModel.Syndication.XmlUridata.UriKind">
+      <summary>Gets the <see cref="T:System.ServiceModel.Syndication.XmlUridata.UriKind" /> property.</summary>
+      <returns>A <see cref="T:System.UriKind" /> enum value indicating whether the raw Uri string contained in <see cref="T:System.ServiceModel.Syndication.XmlUridata.UriString" /> is relative or absolute.</returns>
     </member>
-    <member name="P:System.ServiceModel.Syndication.XmlUriData.UriString">
-      <summary>Gets the <see cref="T:System.ServiceModel.Syndication.XmlUriData.UriString" /> property.</summary>
+    <member name="P:System.ServiceModel.Syndication.XmlUridata.UriString">
+      <summary>Gets the <see cref="T:System.ServiceModel.Syndication.XmlUridata.UriString" /> property.</summary>
       <returns>The raw Uri string obtained from the XML of a syndication item.</returns>
     </member>
   </members>

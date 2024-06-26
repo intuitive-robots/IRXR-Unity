@@ -27,20 +27,17 @@ public class Discovery : MonoBehaviour
     void Update()
     {
         if (_discoveryClient.Available == 0) return; // there's no message to read
-
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
         byte[] result = _discoveryClient.Receive(ref endPoint);
         string message =  Encoding.UTF8.GetString(result);
 
-        if (!message.StartsWith("HDAR")) return; // not the right tag
+        if (!message.StartsWith("SimPub")) return; // not the right tag
 
         var split = message.Split(":", 3);
 
-        string new_id = split[1];
+        if (split[1] == id) return; // same id
 
-        if (new_id == id) return; // same id 
-
-        id = new_id;
+        id = split[1];
 
         string info = split[2];
         _informations = JsonConvert.DeserializeObject<Dictionary<string, string>>(info);
@@ -53,21 +50,17 @@ public class Discovery : MonoBehaviour
         _discoveryClient.Dispose();
     }
 
-    public bool has_discovered() {
+    public bool HasDiscovered() {
         return _serverIP != null;
     }
 
-    public string get_server_ip() {
+    public string GetServerIp() {
         return _serverIP;
     }
 
-    public int get_streaming_port() {
-        int.TryParse(_informations["STREAMING"], out int result);
+    public int GetServivePort(string service) {
+        int.TryParse(_informations[service], out int result);
         return result;
     }
 
-    public int get_service_port() {
-        int.TryParse(_informations["SERVICE"], out int result);
-        return result;
-    }
 }

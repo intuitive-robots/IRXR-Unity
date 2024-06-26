@@ -38,8 +38,8 @@ When using NuGet 3.x this package requires at least version 3.4.</description>
       <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.6.1" />
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.1" />
       <frameworkAssembly assemblyName="System.Configuration" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Data.OracleClient" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.data" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.data.OracleClient" targetFramework=".NETFramework4.6.1" />
       <frameworkAssembly assemblyName="System.Drawing" targetFramework=".NETFramework4.6.1" />
       <frameworkAssembly assemblyName="System.Net" targetFramework=".NETFramework4.6.1" />
       <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.6.1" />

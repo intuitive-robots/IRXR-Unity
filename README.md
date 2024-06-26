@@ -85,11 +85,11 @@ Please contact me (xinkai.jiang@kit.edu) if you have question.
 
 The [HDAR](https://github.com/intuitive-robots/HDAR) applicatin is used to create human demonstration by Augmented Reality.
 
-This application supports our paper ["A Comprehensive User Study on Augmented Reality-Based Data Collection Interfaces for Robot Learning"](https://intuitive-robots.github.io/HDAR-Simulator/), which was published on HRI2024. If you find our work useful, please consider citing.
+This application supports our paper ["A Comprehensive User Study on Augmented Reality-Based data Collection Interfaces for Robot Learning"](https://intuitive-robots.github.io/HDAR-Simulator/), which was published on HRI2024. If you find our work useful, please consider citing.
 
 ```latex
 @inproceedings{jiang2024comprehensive,
-title={A Comprehensive User Study on Augmented Reality-Based Data Collection Interfaces for Robot Learning},
+title={A Comprehensive User Study on Augmented Reality-Based data Collection Interfaces for Robot Learning},
 author={Jiang, Xinkai and Mattes, Paul and Jia, Xiaogang and Schreiber, Nicolas and Neumann, Gerhard and Lioutikov, Rudolf},
 booktitle={Proceedings of the 2024 ACM/IEEE International Conference on Human-Robot Interaction},
 pages={333--342},

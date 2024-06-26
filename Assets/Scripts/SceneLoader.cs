@@ -2,8 +2,8 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-
-public class DataLoader : MonoBehaviour {
+// TODO: Singleton Pattern
+public class SceneLoader : MonoBehaviour {
 
   [SerializeField] ServiceConnection _connection;
 
@@ -11,9 +11,10 @@ public class DataLoader : MonoBehaviour {
 
   [SerializeField] AssetHandler _assetHandler;
 
-  GameObject _scene;
+  GameObject _simSceneObj;
 
-  SimScene _data;
+  SimScene _simScene;
+  Dictionary<string, Transform> _simObjTrans = new Dictionary<string, Transform>();
 
   private System.Diagnostics.Stopwatch _watch;
  
@@ -23,20 +24,22 @@ public class DataLoader : MonoBehaviour {
 
 
   void LoadScene() {
-    var local_watch = new System.Diagnostics.Stopwatch(); // Dont include System.Diagnostics, Debug becomes disambiguous
-
+    Debug.Log("Loading Scene");
+    var local_watch = new System.Diagnostics.Stopwatch(); // Don't include System.Diagnostics, Debug becomes disambiguous
     local_watch.Start();
-    string asset_info = _connection.request_string("SCENE_INFO");
-    _data = JsonConvert.DeserializeObject<SimScene>(asset_info);
-    _assetHandler.LoadAssets(_data);
+    string asset_info = _connection.RequestString("SCENE");
+    _simScene = JsonConvert.DeserializeObject<SimScene>(asset_info);
+    _assetHandler.LoadAssets(_simScene);
     _watch = local_watch;
+    Debug.Log("Scene has been loaded");
   }
 
   void Update() {
 
     if (_watch == null) return;
 
-    _assetHandler.Process(); // Compile Meshes, Textures and Materials can only be done on the main thread
+    // TODO: Do it in the background
+    _assetHandler.Process(); // Compile Meshes, textures and Materials can only be done on the main thread
     BuildObjects(); // Build the scene objects, also only on the main thread
 
     _watch.Stop();
@@ -45,53 +48,28 @@ public class DataLoader : MonoBehaviour {
   }
 
   void BuildObjects() {
-    if (_scene != null) Destroy(_scene);
-    _scene = CreateObject(null, _data.root);
+    if (_simSceneObj != null) Destroy(_simSceneObj);
+    _simSceneObj = CreateObject(null, _simScene.root);
 
-    var sceneController = _scene.AddComponent<SceneController>();
-    
-    sceneController.InitializeData(_data.root);
+    SceneController sceneController = _simSceneObj.AddComponent<SceneController>();
+    sceneController.StartUpdate(_simObjTrans);
     _streamingConnection.OnMessage += sceneController.listener;
   }
 
-  // Vector3 List2Vector3(List<float> values) {
-  //   return new Vector3(values[0], values[1], values[2]);
-  // }
 
   void ApplyTransform(Transform utransform, SimTransform trans) {
     utransform.localPosition = trans.GetPos();
     utransform.localRotation = trans.GetRot();
-    // utransform.localEulerAngles = List2Vector3(trans.rot);
     utransform.localScale = trans.GetScale();
   }
 
-  // Transform CreateJoint(Transform root, SimJoint joint) {
-    
-  //   Type jointType = JointController.GetJointType(joint.type);
-  //   GameObject jointRoot = new GameObject(joint.name, jointType);
 
-  //   jointRoot.transform.SetParent(root, false);
-  //   ApplyTransform(jointRoot.transform, joint.trans);
-
-  //   JointController jController = (JointController)jointRoot.GetComponent(jointType);
-  //   jController.InitializeState(joint);
-  //   return jointRoot.transform;
-  // }
-
-  void CreateJoint(GameObject obj, SimJoint joint) {
-    
-    Type jointType = JointController.GetJointType(joint.type);
-    JointController jController = (JointController)obj.AddComponent(jointType);
-    jController.joint_name = joint.name;
-    jController.InitializeState(joint);
-  }
-
-  GameObject CreateBody(Transform root, SimBody body, string name = null) {
+  GameObject CreateObject(Transform root, SimBody body, string name = null) {
 
 
-    GameObject bodyRoot = new GameObject(name != null ? name : body.Name);
+    GameObject bodyRoot = new GameObject(name != null ? name : body.name);
     if (root != null)  bodyRoot.transform.SetParent(root, false);
-    ApplyTransform(bodyRoot.transform, body.Trans);
+    ApplyTransform(bodyRoot.transform, body.trans);
 
     GameObject VisualContainer = new GameObject("Visuals");
     VisualContainer.transform.SetParent(bodyRoot.transform, false);
@@ -132,15 +110,15 @@ public class DataLoader : MonoBehaviour {
         renderer.material = _assetHandler.GetMaterial(visual.material).compiledMaterial;
       else {
         renderer.material = new Material(Shader.Find("Standard"));
-        renderer.material.SetColor("_Color", new Color(visual.Color[0], visual.Color[1], visual.Color[2], visual.Color[3]));
+        renderer.material.SetColor("_Color", new Color(visual.color[0], visual.color[1], visual.color[2], visual.color[3]));
       }
 
       visualObj.transform.SetParent(VisualContainer.transform, false);
-      Debug.Log(body.name);
       ApplyTransform(visualObj.transform, visual.trans);
     }
     
-    body.Bodies.ForEach(body => CreateBody(bodyRoot.transform, body));
-    return bodyRoot; 
+    body.children.ForEach(body => CreateObject(bodyRoot.transform, body));
+    _simObjTrans.Add(body.name, bodyRoot.transform);
+    return bodyRoot;
   }
 }

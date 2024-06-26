@@ -74,7 +74,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 .vscode
-Assets/Tree_Textures
+Assets/Tree_textures
 
 # This .gitignore file should be placed at the root of your Unity project directory
 #

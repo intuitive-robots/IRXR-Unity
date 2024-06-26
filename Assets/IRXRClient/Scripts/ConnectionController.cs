@@ -22,9 +22,9 @@ public class ConnectionController : MonoBehaviour {
   }
 
   void OnDiscovery() {
-    Debug.Log($"Discovered server {discovery.get_server_ip()}");
-    serviceConnection.connect(discovery.get_server_ip(), discovery.get_service_port());
-    streamingConnection.connect(discovery.get_server_ip(), discovery.get_streaming_port());
+    Debug.Log($"Discovered server {discovery.GetServerIp()}");
+    serviceConnection.Connect(discovery.GetServerIp(), discovery.GetServivePort("SERVICE"));
+    streamingConnection.Connect(discovery.GetServerIp(), discovery.GetServivePort("STREAMING"));
   }
 
   void OnApplicationQuit() {

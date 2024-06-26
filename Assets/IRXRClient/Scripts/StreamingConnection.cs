@@ -16,26 +16,26 @@ public class StreamingConnection : MonoBehaviour {
     subscriberSocket = new SubscriberSocket();
   }
 
-  public void connect(string server_ip, int server_port) {
+  public void Connect(string serverIp, int serverPort) {
 
     if (_Address != null) {
       subscriberSocket.Disconnect(_Address);
       while (subscriberSocket.HasIn) subscriberSocket.SkipFrame();
     }
 
-    _Address = $"tcp://{server_ip}:{server_port}";
+    _Address = $"tcp://{serverIp}:{serverPort}";
     subscriberSocket.Connect(_Address);
-    subscriberSocket.Subscribe("STREAM");
+    // subscriberSocket.Subscribe("SceneUpdate");
+    subscriberSocket.Subscribe("");
 
     OnMessage -= OnMessage;
-
-
     Debug.Log("Connected streaming socket to " + _Address);
   }
 
   public void Update() {
+    Debug.Log(subscriberSocket.HasIn);
     if (!subscriberSocket.HasIn) return;
-
+    Debug.Log("Received message");
     string message = subscriberSocket.ReceiveFrameString();
     OnMessage?.Invoke(message);
   }
