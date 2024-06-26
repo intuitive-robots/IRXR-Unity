@@ -18,11 +18,11 @@ public class DataLoader : MonoBehaviour {
   private System.Diagnostics.Stopwatch _watch;
  
   void Start() {
-    _connection.OnServiceConnection += load_scene;
+    _connection.OnServiceConnection += LoadScene;
   }
 
 
-  void load_scene() {
+  void LoadScene() {
     var local_watch = new System.Diagnostics.Stopwatch(); // Dont include System.Diagnostics, Debug becomes disambiguous
 
     local_watch.Start();
@@ -36,28 +36,55 @@ public class DataLoader : MonoBehaviour {
 
     if (_watch == null) return;
 
-    _assetHandler.Process(); // Compile Meshes, Textures and Materials (can only be done on the main thread)
-    build_objects(); // Build the scene objects, also only on the main thread
+    _assetHandler.Process(); // Compile Meshes, Textures and Materials can only be done on the main thread
+    BuildObjects(); // Build the scene objects, also only on the main thread
 
     _watch.Stop();
     Debug.Log($"Loaded Scene in {_watch.ElapsedMilliseconds} ms");
     _watch = null;
   }
 
-  void build_objects() {
+  void BuildObjects() {
     if (_scene != null) Destroy(_scene);
-    _scene = CreateBody(null, _data.WorldBody, "Scene-" + _data.Id);
-    
+    _scene = CreateObject(null, _data.root);
+
     var sceneController = _scene.AddComponent<SceneController>();
+    
+    sceneController.InitializeData(_data.root);
     _streamingConnection.OnMessage += sceneController.listener;
   }
 
-  void ApplyTransform(Transform utransform, SimTransform transform) {
-    utransform.localScale = new Vector3(transform.Scale[0], transform.Scale[1], transform.Scale[2]);
-    utransform.localPosition = new Vector3(transform.Position[0], transform.Position[1], transform.Position[2]);
-    utransform.localRotation = new Quaternion(transform.Rotation[0], transform.Rotation[1], transform.Rotation[2], transform.Rotation[3]);
+  // Vector3 List2Vector3(List<float> values) {
+  //   return new Vector3(values[0], values[1], values[2]);
+  // }
+
+  void ApplyTransform(Transform utransform, SimTransform trans) {
+    utransform.localPosition = trans.GetPos();
+    utransform.localRotation = trans.GetRot();
+    // utransform.localEulerAngles = List2Vector3(trans.rot);
+    utransform.localScale = trans.GetScale();
   }
 
+  // Transform CreateJoint(Transform root, SimJoint joint) {
+    
+  //   Type jointType = JointController.GetJointType(joint.type);
+  //   GameObject jointRoot = new GameObject(joint.name, jointType);
+
+  //   jointRoot.transform.SetParent(root, false);
+  //   ApplyTransform(jointRoot.transform, joint.trans);
+
+  //   JointController jController = (JointController)jointRoot.GetComponent(jointType);
+  //   jController.InitializeState(joint);
+  //   return jointRoot.transform;
+  // }
+
+  void CreateJoint(GameObject obj, SimJoint joint) {
+    
+    Type jointType = JointController.GetJointType(joint.type);
+    JointController jController = (JointController)obj.AddComponent(jointType);
+    jController.joint_name = joint.name;
+    jController.InitializeState(joint);
+  }
 
   GameObject CreateBody(Transform root, SimBody body, string name = null) {
 
@@ -69,44 +96,48 @@ public class DataLoader : MonoBehaviour {
     GameObject VisualContainer = new GameObject("Visuals");
     VisualContainer.transform.SetParent(bodyRoot.transform, false);
 
-    foreach (SimVisual visual in body.Visuals) { 
-      GameObject Visual;     
-      switch (visual.Type) {
+    foreach (SimVisual visual in body.visuals) { 
+      GameObject visualObj;
+      switch (visual.type) {
         case "MESH": {
-          SimMesh asset = _assetHandler.GetMesh(visual.Mesh);
-          Visual = new GameObject(asset.Tag, typeof(MeshFilter), typeof(MeshRenderer));
-          Visual.GetComponent<MeshFilter>().mesh = asset.compiledMesh; 
+          SimMesh asset = _assetHandler.GetMesh(visual.mesh);
+          visualObj = new GameObject(asset.Tag, typeof(MeshFilter), typeof(MeshRenderer));
+          visualObj.GetComponent<MeshFilter>().mesh = asset.compiledMesh; 
           break;
         }
-        case "BOX":
-          Visual = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        case "CUBE":
+          visualObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
           break;
         case "PLANE":
-          Visual = GameObject.CreatePrimitive(PrimitiveType.Plane);    
+          visualObj = GameObject.CreatePrimitive(PrimitiveType.Plane);    
           break;
         case "CYLINDER":
-          Visual = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+          visualObj = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
           break;
         case "CAPSULE":
-          Visual = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+          visualObj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
           break;
         case "SPHERE":
-          Visual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+          visualObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
           break;
         default:
-          throw new Exception("Invalid visual, " + visual.Type);
+          Debug.LogWarning("Invalid visual, " + visual.type + body.name);
+          visualObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+          break;
+          // throw new Exception("Invalid visual, " + visual.type);
       }
 
-      Renderer renderer = Visual.GetComponent<Renderer>();
-      if (visual.Material != null) 
-        renderer.material = _assetHandler.GetMaterial(visual.Material).compiledMaterial;
+      Renderer renderer = visualObj.GetComponent<Renderer>();
+      if (visual.material != null) 
+        renderer.material = _assetHandler.GetMaterial(visual.material).compiledMaterial;
       else {
         renderer.material = new Material(Shader.Find("Standard"));
         renderer.material.SetColor("_Color", new Color(visual.Color[0], visual.Color[1], visual.Color[2], visual.Color[3]));
       }
 
-      Visual.transform.SetParent(VisualContainer.transform, false);
-      ApplyTransform(Visual.transform, visual.Transform);
+      visualObj.transform.SetParent(VisualContainer.transform, false);
+      Debug.Log(body.name);
+      ApplyTransform(visualObj.transform, visual.trans);
     }
     
     body.Bodies.ForEach(body => CreateBody(bodyRoot.transform, body));

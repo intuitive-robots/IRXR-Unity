@@ -39,12 +39,14 @@ public class SceneController : MonoBehaviour
 
         lastSimulationTimeStamp = jointValues.Time;
 
+        foreach (var (joint_name, joint) in joints)
+        {
+            Debug.Log($"tracked joint: {joint_name}");
+            // joint.SetValue(jointValues.Data[name]);
+        }
         foreach (var (name, new_values) in jointValues.Data) {
             gameObjects[name].localPosition = new Vector3(new_values[0], new_values[1], new_values[2]);
             gameObjects[name].localRotation = new Quaternion(new_values[3], new_values[4], new_values[5], new_values[6]);
         }
     }
-
-  
-
 }

@@ -1,38 +1,53 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class SimTransform {
-  public List<float> Position;
-  public List<float> Rotation;
-  public List<float> Scale;
+  public List<float> pos;
+  public List<float> rot;
+  public List<float> scale;
+
+  public Vector3 GetPos() {
+    return new Vector3(pos[0], pos[1], pos[2]);
+  }
+
+  public Quaternion GetRot() {
+    return new Quaternion(rot[0], rot[1], rot[2], rot[3]);
+  }
+
+  public Vector3 GetScale() {
+    return new Vector3(scale[0], scale[1], scale[2]);
+  }
+
 }
 
 public class SimVisual {
-  public string Name;
-  public string Type;
-  public string Mesh;
-  public string Material;
-  public SimTransform Transform;
-  public List<float> Color;
+  // public string name;
+  public string type;
+  public string mesh;
+  public string material;
+  public SimTransform trans;
+  public List<float> color;
 }
 
 
 public class SimBody {
-  public string Name;
+  public string name;
+  public SimTransform trans;
+  public List<SimVisual> visuals; 
 
-  public SimTransform Trans;
-  public List<SimVisual> Visuals; 
+  public SimJoint joint;
 
-  public List<SimBody> Bodies;
+  public List<SimBody> children;
 }
 
 public class SimScene {
-  public string Id;
+  public string id;
   
-  public SimBody WorldBody;
+  public SimBody root;
 
-  public List<SimMesh> Meshes;
+  public List<SimMesh> meshes;
 
-  public List<SimMaterial> Materials;
+  public List<SimMaterial> materials;
 
-  public List<SimTexture> Textures;
+  public List<SimTexture> textures;
 }

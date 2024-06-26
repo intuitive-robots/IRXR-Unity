@@ -94,13 +94,13 @@ public class AssetHandler : MonoBehaviour
   public void LoadAssets(SimScene assets) {
 
     _meshes.Clear();
-    assets.Meshes.ForEach(LoadMesh);
+    assets.meshes.ForEach(LoadMesh);
     
     _materials.Clear();
-    assets.Materials.ForEach(LoadMaterial);
+    assets.materials.ForEach(LoadMaterial);
     
     _textures.Clear();
-    assets.Textures.ForEach(LoadTexture);
+    assets.textures.ForEach(LoadTexture);
   }
 
   public SimMesh GetMesh(string tag) => _meshes[tag];
@@ -116,7 +116,6 @@ public class AssetHandler : MonoBehaviour
       _meshes.Add(mesh.Tag, mesh);
       return;
     }
-
 
     Span<byte> data = _serviceConnection.request_bytes("ASSET_DATA:" + mesh.DataID).ToArray();
 
@@ -154,10 +153,12 @@ public class AssetHandler : MonoBehaviour
       triangles = mesh.rawData.Indices,
       uv = mesh.rawData.UVs,
     };
+    mesh.compiledMesh.RecalculateNormals();
     
     _cachedMeshes[mesh.DataID] = mesh.compiledMesh;
     _meshes[mesh.Tag] = mesh;
   }
+
   public void ProcessMaterial(SimAsset asset) {
     SimMaterial material = (SimMaterial)asset;
 
