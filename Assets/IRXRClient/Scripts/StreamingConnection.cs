@@ -33,9 +33,7 @@ public class StreamingConnection : MonoBehaviour {
   }
 
   public void Update() {
-    Debug.Log(subscriberSocket.HasIn);
     if (!subscriberSocket.HasIn) return;
-    Debug.Log("Received message");
     string message = subscriberSocket.ReceiveFrameString();
     OnMessage?.Invoke(message);
   }
