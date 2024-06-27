@@ -20,7 +20,7 @@ public class Discovery : MonoBehaviour
     private Dictionary<string, string> _informations;
 
     void Awake() {
-        _discoveryClient = new UdpClient(5520);
+        _discoveryClient = new UdpClient(7720);
     }
 
   

@@ -18,6 +18,7 @@ public class ConnectionController : MonoBehaviour {
   }
 
   void Start() {
+    Debug.Log("Started server");
     discovery.DiscoveryCompleted += OnDiscovery;
   }
 
