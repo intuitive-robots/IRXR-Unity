@@ -25,7 +25,6 @@ public class StreamingConnection : MonoBehaviour {
 
     _Address = $"tcp://{serverIp}:{serverPort}";
     subscriberSocket.Connect(_Address);
-    // subscriberSocket.Subscribe("SceneUpdate");
     subscriberSocket.Subscribe("");
 
     OnMessage -= OnMessage;
@@ -34,8 +33,8 @@ public class StreamingConnection : MonoBehaviour {
 
   public void Update() {
     if (!subscriberSocket.HasIn) return;
-    string message = subscriberSocket.ReceiveFrameString();
-    OnMessage?.Invoke(message);
+    string messageReceived = subscriberSocket.ReceiveFrameString();
+    OnMessage?.Invoke(messageReceived);
   }
 
   void OnApplicationQuit() {

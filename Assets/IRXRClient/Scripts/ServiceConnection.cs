@@ -7,13 +7,6 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json.Schema;
 
-/*
-DOCS:
-- https://netmq.readthedocs.io/en/latest/request-response/
-
-Note to self: no async with netmq - DOES NOT WORK 
-
-*/
 public class ServiceConnection : MonoBehaviour {
 
   public Action OnServiceConnection; 
@@ -41,7 +34,6 @@ public class ServiceConnection : MonoBehaviour {
   }
 
   public string RequestString(string requestString) {
-    Debug.Log("Requesting: " + requestString);
     requestSocket.SendFrame(requestString);
     string result = requestSocket.ReceiveFrameString(out bool more);
     while(more) result += requestSocket.ReceiveFrameString(out more);

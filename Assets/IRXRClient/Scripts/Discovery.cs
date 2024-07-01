@@ -8,11 +8,12 @@ using System.Collections.Generic;
 
 public class Discovery : MonoBehaviour
 {
-    public delegate void DiscoveryCompletedEventHandler();
+    public delegate void DiscoveryEventHandler();
 
-    public event DiscoveryCompletedEventHandler DiscoveryCompleted;
+    public event DiscoveryEventHandler OnDiscoveryCompleted;
+    public event DiscoveryEventHandler OnNewDiscovery;
 
-    private string id = "";
+    private string _id = null;
     private string _serverIP;
 
     private UdpClient _discoveryClient;
@@ -20,10 +21,9 @@ public class Discovery : MonoBehaviour
     private Dictionary<string, string> _informations;
 
     void Awake() {
-        _discoveryClient = new UdpClient(5520);
+        _discoveryClient = new UdpClient(7720);
     }
 
-  
     void Update()
     {
         if (_discoveryClient.Available == 0) return; // there's no message to read
@@ -35,15 +35,17 @@ public class Discovery : MonoBehaviour
 
         var split = message.Split(":", 3);
 
-        if (split[1] == id) return; // same id
+        if (split[1] == _id) return; // same id
 
-        id = split[1];
-
+        if (_id != null && _id == split[1]) {
+            OnNewDiscovery.Invoke();
+            return;
+        }
+        _id = split[1];
         string info = split[2];
         _informations = JsonConvert.DeserializeObject<Dictionary<string, string>>(info);
         _serverIP = endPoint.Address.ToString();
-
-        DiscoveryCompleted.Invoke();
+        OnDiscoveryCompleted.Invoke();
     }
 
     void OnApplicationQuit() {

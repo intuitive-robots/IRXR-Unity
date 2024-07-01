@@ -18,7 +18,7 @@ public class ConnectionController : MonoBehaviour {
   }
 
   void Start() {
-    discovery.DiscoveryCompleted += OnDiscovery;
+    discovery.OnDiscoveryCompleted += OnDiscovery;
   }
 
   void OnDiscovery() {
