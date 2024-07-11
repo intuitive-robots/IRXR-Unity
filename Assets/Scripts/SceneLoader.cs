@@ -47,7 +47,7 @@ public class SceneLoader : MonoBehaviour {
     _watch.Stop();
     Debug.Log($"Loaded Scene in {_watch.ElapsedMilliseconds} ms");
     _watch = null;
-  }
+    }
 
   void BuildObjects() {
     if (_simSceneObj != null) Destroy(_simSceneObj);
