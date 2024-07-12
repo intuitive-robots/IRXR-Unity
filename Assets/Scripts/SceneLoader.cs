@@ -8,6 +8,7 @@ using Oculus.Interaction;
 // TODO: Singleton Pattern
 public class SceneLoader : MonoBehaviour {
 
+  [SerializeField] SceneController _sceneController;
   [SerializeField] Material _defaultMaterial;
   [SerializeField] ServiceConnection _connection;
 
@@ -53,14 +54,10 @@ public class SceneLoader : MonoBehaviour {
 
   void BuildObjects() {
     if (_simSceneObj != null) Destroy(_simSceneObj);
-    _simSceneObj = CreateObject(null, _simScene.root);
+    _simSceneObj = CreateObject(_sceneController.transform, _simScene.root);
 
-    // here make grabbable 
-    _makeGrabbable(_simSceneObj);
-
-    SceneController sceneController = _simSceneObj.AddComponent<SceneController>();
-    sceneController.StartUpdate(_simObjTrans);
-    _streamingConnection.OnMessage += sceneController.listener;
+    _sceneController.StartUpdate(_simObjTrans);
+    _streamingConnection.OnMessage += _sceneController.listener;
   }
 
 
@@ -70,63 +67,12 @@ public class SceneLoader : MonoBehaviour {
     utransform.localScale = trans.GetScale();
   }
 
-    private void _makeGrabbable(GameObject go)
-    {   // rigidbody
-        Rigidbody rb = go.AddComponent<Rigidbody>();
-        rb.isKinematic = true;
-        rb.useGravity = false;
 
 
-        // box collider
-        BoxCollider bc = go.AddComponent<BoxCollider>();
-        bc.size.Set(2, 2, 2);
-
-
-        // grab free transofrmer + constraints
-        GrabFreeTransformer gft = go.AddComponent<GrabFreeTransformer>();
-        TransformerUtils.RotationConstraints rotationConstraints =
-        new TransformerUtils.RotationConstraints()
-        {
-            XAxis = new TransformerUtils.ConstrainedAxis(),
-            YAxis = new TransformerUtils.ConstrainedAxis(),
-            ZAxis = new TransformerUtils.ConstrainedAxis()
-        };
-
-        rotationConstraints.XAxis.ConstrainAxis = true;
-        rotationConstraints.YAxis.ConstrainAxis = false;
-        rotationConstraints.ZAxis.ConstrainAxis = true;
-
-        gft.InjectOptionalRotationConstraints(rotationConstraints);
-
-
-        // grabbable
-        Grabbable grabbable = go.AddComponent<Grabbable>();
-        grabbable.MaxGrabPoints = -1;
-        grabbable.InjectOptionalOneGrabTransformer(gft);
-
-
-        // collider surface 
-        ColliderSurface cs = go.AddComponent<ColliderSurface>();
-        cs.InjectCollider(bc);
-
-
-        // movement provider
-        MoveFromTargetProvider mp = go.AddComponent<MoveFromTargetProvider>();
-
-
-        // ray interactable
-        RayInteractable ri = go.AddComponent<RayInteractable>();
-        ri.InjectOptionalPointableElement(grabbable);
-        ri.InjectSurface(cs);
-        ri.InjectOptionalMovementProvider(mp);
-    }
-
-
-    GameObject CreateObject(Transform root, SimBody body, string name = null) {
-
+  GameObject CreateObject(Transform root, SimBody body, string name = null) {
 
     GameObject bodyRoot = new GameObject(name != null ? name : body.name);
-    if (root != null)  bodyRoot.transform.SetParent(root, false);
+    bodyRoot.transform.SetParent(root, false);
     ApplyTransform(bodyRoot.transform, body.trans);
 
     GameObject VisualContainer = new GameObject("Visuals");
