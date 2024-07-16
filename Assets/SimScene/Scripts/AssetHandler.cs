@@ -68,7 +68,7 @@ public class SimTexture  : SimAsset {
   public Texture compiledTexture;
 }
 
-
+// TODO: Merge the AssetHandler and the SceneLoader because AssetHandler has no update function
 public class AssetHandler : MonoBehaviour
 {
   [SerializeField] private ServiceConnection _serviceConnection;

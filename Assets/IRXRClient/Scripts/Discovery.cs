@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Collections.Generic;
 
-
+// TODO: Merge Discovery and ConnectionController
 public class Discovery : MonoBehaviour
 {
     public delegate void DiscoveryEventHandler();
