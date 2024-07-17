@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class SimTransform {
   public List<float> pos;
@@ -39,15 +40,13 @@ public class SimBody {
 
 public class SimScene {
   public string id;
-  // public SimBody root;
-  public List<SimBody> bodies;
+  public SimBody root;
   public List<SimMesh> meshes;
   public List<SimMaterial> materials;
   public List<SimTexture> textures;
 }
 
 public class SimAsset {
-  public string tag;
   public string id;
 }
 
@@ -59,6 +58,7 @@ public class SimMeshData {
 }
 
 public class SimMesh : SimAsset {
+  public string dataHash;
   public List<int> indicesLayout;
 
   public List<int> verticesLayout;
@@ -76,6 +76,7 @@ public class SimMesh : SimAsset {
 }
 
 public class SimMaterial : SimAsset {
+  public string dataHash;
   public List<float> color;
   public List<float> emissionColor;
   public float specular;
@@ -89,12 +90,12 @@ public class SimMaterial : SimAsset {
 }
 
 public class SimTexture  : SimAsset { 
-
+  public string dataHash;
   public int width;
 
   public int height;
 
-  public string texType;
+  public string texureType;
   
   [JsonIgnore]
   public byte[] textureData;
