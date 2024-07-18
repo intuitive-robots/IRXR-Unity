@@ -16,10 +16,9 @@ public class SceneLoader : MonoBehaviour {
 
   [SerializeField] AssetHandler _assetHandler;
 
-  GameObject _simSceneObj;
-
-  SimScene _simScene;
-  Dictionary<string, Transform> _simObjTrans = new Dictionary<string, Transform>();
+  private GameObject _simSceneObj;
+  private SimScene _simScene;
+  private Dictionary<string, Transform> _simObjTrans = new Dictionary<string, Transform>();
 
   private System.Diagnostics.Stopwatch _watch;
  
@@ -53,11 +52,20 @@ public class SceneLoader : MonoBehaviour {
     }
 
   void BuildObjects() {
+<<<<<<< HEAD:Assets/Scripts/SceneLoader.cs
     if (_simSceneObj != null) Destroy(_simSceneObj);
     _simSceneObj = CreateObject(_sceneController.transform, _simScene.root);
 
     _sceneController.StartUpdate(_simObjTrans);
     _streamingConnection.OnMessage += _sceneController.listener;
+=======
+    ClearScene();
+
+    _simSceneObj = CreateObject(gameObject.transform, _simScene.root);
+    SceneController sceneController = _simSceneObj.AddComponent<SceneController>();
+    sceneController.StartUpdate(_simObjTrans);
+    _streamingConnection.OnMessage += sceneController.listener;
+>>>>>>> meta-quest3-dev:Assets/SimScene/Scripts/SceneLoader.cs
   }
 
 
@@ -127,4 +135,10 @@ public class SceneLoader : MonoBehaviour {
     _simObjTrans.Add(body.name, bodyRoot.transform);
     return bodyRoot;
   }
+
+  void ClearScene() {
+    if (_simSceneObj != null) Destroy(_simSceneObj);
+    _simObjTrans.Clear();
+  }
+
 }

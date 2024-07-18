@@ -32,7 +32,6 @@ public class SceneController : MonoBehaviour
             lastSimulationTimeStamp = 0.0f;
             return;
         }
-
         StreamMessage streamMsg = JsonConvert.DeserializeObject<StreamMessage>(message);
 
         if (streamMsg.time < lastSimulationTimeStamp) return;
