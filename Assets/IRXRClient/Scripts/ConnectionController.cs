@@ -18,12 +18,7 @@ public class ConnectionController : MonoBehaviour {
   }
 
   void Start() {
-<<<<<<< HEAD
-    Debug.Log("Started server");
-    discovery.DiscoveryCompleted += OnDiscovery;
-=======
     discovery.OnDiscoveryCompleted += OnDiscovery;
->>>>>>> meta-quest3-dev
   }
 
   void OnDiscovery() {
