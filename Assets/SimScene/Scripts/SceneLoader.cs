@@ -2,9 +2,14 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Oculus.Interaction.Surfaces;
+using Oculus.Interaction;
+
 // TODO: Singleton Pattern
 public class SceneLoader : MonoBehaviour {
 
+  [SerializeField] SceneController _sceneController;
+  [SerializeField] Material _defaultMaterial;
   [SerializeField] ServiceConnection _connection;
 
   [SerializeField] StreamingConnection _streamingConnection;
@@ -44,15 +49,14 @@ public class SceneLoader : MonoBehaviour {
     _watch.Stop();
     Debug.Log($"Loaded Scene in {_watch.ElapsedMilliseconds} ms");
     _watch = null;
-  }
+    }
 
   void BuildObjects() {
     ClearScene();
 
-    _simSceneObj = CreateObject(gameObject.transform, _simScene.root);
-    SceneController sceneController = _simSceneObj.AddComponent<SceneController>();
-    sceneController.StartUpdate(_simObjTrans);
-    _streamingConnection.OnMessage += sceneController.listener;
+    _simSceneObj = CreateObject(_sceneController.transform, _simScene.root);
+    _sceneController.StartUpdate(_simObjTrans);
+        _streamingConnection.OnMessage += _sceneController.listener;
   }
 
 
@@ -63,11 +67,11 @@ public class SceneLoader : MonoBehaviour {
   }
 
 
+
   GameObject CreateObject(Transform root, SimBody body, string name = null) {
 
-
     GameObject bodyRoot = new GameObject(name != null ? name : body.name);
-    if (root != null)  bodyRoot.transform.SetParent(root, false);
+    bodyRoot.transform.SetParent(root, false);
     ApplyTransform(bodyRoot.transform, body.trans);
 
     GameObject VisualContainer = new GameObject("Visuals");
@@ -108,7 +112,7 @@ public class SceneLoader : MonoBehaviour {
       if (visual.material != null) 
         renderer.material = _assetHandler.GetMaterial(visual.material).compiledMaterial;
       else {
-        renderer.material = new Material(Shader.Find("Standard"));
+        renderer.material = new Material(_defaultMaterial);
         renderer.material.SetColor("_Color", new Color(visual.color[0], visual.color[1], visual.color[2], visual.color[3]));
       }
 
@@ -117,6 +121,8 @@ public class SceneLoader : MonoBehaviour {
     }
     
     body.children.ForEach(body => CreateObject(bodyRoot.transform, body));
+    if (_simObjTrans.ContainsKey(body.name)) 
+      _simObjTrans.Remove(body.name);
     _simObjTrans.Add(body.name, bodyRoot.transform);
     return bodyRoot;
   }
