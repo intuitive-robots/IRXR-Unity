@@ -13,6 +13,7 @@ class StreamMessage {
 
 public class SceneController : MonoBehaviour
 {
+    private GameObject _client;
     private float lastSimulationTimeStamp = 0.0f;
     public Dictionary<string, Transform> _objectsTrans;
     public Transform _trans;
@@ -20,10 +21,15 @@ public class SceneController : MonoBehaviour
     public void StartUpdate(Dictionary<string, Transform> objectsTrans) {
         _trans = gameObject.transform;
         _objectsTrans = objectsTrans;
+        _client = IRXRNetManager.Instance.gameObject;
+        IRXRNetManager netManager = _client.GetComponent<IRXRNetManager>();
+        StreamReceiver streamingReceiver = _client.GetComponent<StreamReceiver>();
+        streamingReceiver.RegisterTopicCallback("SceneUpdate", Subscribe);
+        netManager.OnDiscoveryCompleted += streamingReceiver.Connect;
     }
 
-    public void listener(string message) {
-
+    public void Subscribe(string message) {
+        // TODO: not sure it is ok???
         if (string.Compare(message, "END") == 0) {
             lastSimulationTimeStamp = 0.0f;
             return;
@@ -33,7 +39,7 @@ public class SceneController : MonoBehaviour
         if (streamMsg.time < lastSimulationTimeStamp) return;
         lastSimulationTimeStamp = streamMsg.time;
         foreach (var (name, value) in streamMsg.updateData) {
-            _objectsTrans[name].position = new Vector3(value[0], value[1], value[2]) - _trans.position;
+            _objectsTrans[name].position = new Vector3(value[0], value[1], value[2]) + _trans.position;
             _objectsTrans[name].rotation = new Quaternion(value[3], value[4], value[5], value[6]) * _trans.rotation;
         }
     }
