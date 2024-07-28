@@ -22,6 +22,7 @@ public class SceneController : MonoBehaviour
     private GameObject _client;
     private float lastSimulationTimeStamp = 0.0f;
     public Dictionary<string, Transform> _objectsTrans;
+    public Transform _trans;
 
     public void StartUpdate(Dictionary<string, Transform> objectsTrans) {
         _objectsTrans = objectsTrans;

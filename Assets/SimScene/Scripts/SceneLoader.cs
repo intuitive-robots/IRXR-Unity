@@ -164,7 +164,7 @@ public class SceneLoader : MonoBehaviour {
         renderer.material = GetMaterial(visual.material).compiledMaterial;
       }
       else {
-        renderer.material = new Material(_defaultMaterial);
+        renderer.material = new Material(Shader.Find("Standard"));
         renderer.material.SetColor("_Color", new Color(visual.color[0], visual.color[1], visual.color[2], visual.color[3]));
       }
 
