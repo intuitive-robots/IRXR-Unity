@@ -23,7 +23,7 @@ public class SceneController : MonoBehaviour
         _objectsTrans = objectsTrans;
         _client = IRXRNetManager.Instance.gameObject;
         IRXRNetManager netManager = _client.GetComponent<IRXRNetManager>();
-        StreamingReceiver streamingReceiver = _client.GetComponent<StreamingReceiver>();
+        StreamReceiver streamingReceiver = _client.GetComponent<StreamReceiver>();
         streamingReceiver.RegisterTopicCallback("SceneUpdate", Subscribe);
         netManager.OnDiscoveryCompleted += streamingReceiver.Connect;
     }

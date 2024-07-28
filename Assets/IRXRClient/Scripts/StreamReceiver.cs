@@ -4,7 +4,8 @@ using NetMQ;
 using NetMQ.Sockets;
 using System.Collections.Generic;
 
-public class StreamingReceiver : MonoBehaviour {
+[RequireComponent(typeof(IRXRNetManager))]
+public class StreamReceiver : MonoBehaviour {
 
   private SubscriberSocket _subSocket;
   private string _Address;
@@ -17,7 +18,7 @@ public class StreamingReceiver : MonoBehaviour {
 
   void Start() {
     _netManager = gameObject.GetComponent<IRXRNetManager>();
-    _subSocket = (SubscriberSocket)_netManager.CreateSocket(new SubscriberSocket());
+    _subSocket = _netManager.CreateSubscriberSocket();
     _netManager.OnDiscoveryCompleted += Connect;
   }
 

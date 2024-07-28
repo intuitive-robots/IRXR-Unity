@@ -1,5 +1,6 @@
 
 using NetMQ;
+using NetMQ.Sockets;
 using UnityEngine;
 using System;
 using System.Net;
@@ -77,6 +78,30 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   }
 
   public NetMQSocket CreateSocket(NetMQSocket socket) {
+    _sockets.Add(socket);
+    return socket;
+  }
+
+  public SubscriberSocket CreateSubscriberSocket() {
+    SubscriberSocket socket = new SubscriberSocket();
+    _sockets.Add(socket);
+    return socket; 
+  }
+
+  public RequestSocket CreateRequestSocket() {
+    RequestSocket socket = new RequestSocket();
+    _sockets.Add(socket);
+    return socket;
+  }
+
+  public PublisherSocket CreatePublisherSocket() {
+    PublisherSocket socket = new PublisherSocket();
+    _sockets.Add(socket);
+    return socket;
+  }
+
+  public ResponseSocket CreateResponseSocket() {
+    ResponseSocket socket = new ResponseSocket();
     _sockets.Add(socket);
     return socket;
   }
