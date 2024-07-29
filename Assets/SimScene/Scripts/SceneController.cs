@@ -25,6 +25,7 @@ public class SceneController : MonoBehaviour
     public Transform _trans;
 
     public void StartUpdate(Dictionary<string, Transform> objectsTrans) {
+        _trans = gameObject.transform;
         _objectsTrans = objectsTrans;
         _client = IRXRNetManager.Instance.gameObject;
         IRXRNetManager netManager = _client.GetComponent<IRXRNetManager>();

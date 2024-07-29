@@ -1,14 +1,13 @@
-using System;
 using UnityEngine;
 using NetMQ;
 using NetMQ.Sockets;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 [RequireComponent(typeof(IRXRNetManager))]
 public class StreamPublisher : MonoBehaviour {
 
-  private PublisherSocket _pubSocket;
-  private IRXRNetManager _netManager;
+  protected PublisherSocket _pubSocket;
+  protected IRXRNetManager _netManager;
   [SerializeField] private string port;
   [SerializeField] private string topic;
 
@@ -17,5 +16,12 @@ public class StreamPublisher : MonoBehaviour {
     _pubSocket = _netManager.CreatePublisherSocket();
     _pubSocket.Bind($"tcp://*:{port}");
   }
+
+  public void Publish(object data) {
+    string msg = JsonConvert.SerializeObject(data);
+    _pubSocket.SendMoreFrame(topic).SendFrame(msg);
+    
+  }
+
 
 }
