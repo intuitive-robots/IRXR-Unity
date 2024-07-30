@@ -22,11 +22,23 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   private Dictionary<string, string> _informations;
 
-  private List<NetMQSocket> _sockets = new List<NetMQSocket>();
+  private List<NetMQSocket> _sockets;
+
+  private SubscriberSocket _subSocket;
+  private PublisherSocket _pubSocket;
+  private RequestSocket _reqSocket;
+  private ResponseSocket _resSocket;
 
   void Awake() {
     AsyncIO.ForceDotNet.Force();
     _discoveryClient = new UdpClient(7720);
+    _sockets = new List<NetMQSocket>();
+    _reqSocket = new RequestSocket();
+    _resSocket = new ResponseSocket();
+    _subSocket = new SubscriberSocket();
+    _pubSocket = new PublisherSocket();
+    _pubSocket.Bind("tcp://*:7723");
+    _sockets = new List<NetMQSocket> { _reqSocket, _resSocket, _subSocket, _pubSocket };
   }
 
   void Start() {
@@ -77,33 +89,20 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
       return result;
   }
 
-  public NetMQSocket CreateSocket(NetMQSocket socket) {
-    _sockets.Add(socket);
-    return socket;
+  public SubscriberSocket GetSubscriberSocket() {
+    return _subSocket;
   }
 
-  public SubscriberSocket CreateSubscriberSocket() {
-    SubscriberSocket socket = new SubscriberSocket();
-    _sockets.Add(socket);
-    return socket; 
+  public RequestSocket GetRequestSocket() {
+    return _reqSocket;
   }
 
-  public RequestSocket CreateRequestSocket() {
-    RequestSocket socket = new RequestSocket();
-    _sockets.Add(socket);
-    return socket;
+  public PublisherSocket GetPublisherSocket() {
+    return _pubSocket;
   }
 
-  public PublisherSocket CreatePublisherSocket() {
-    PublisherSocket socket = new PublisherSocket();
-    _sockets.Add(socket);
-    return socket;
-  }
-
-  public ResponseSocket CreateResponseSocket() {
-    ResponseSocket socket = new ResponseSocket();
-    _sockets.Add(socket);
-    return socket;
+  public ResponseSocket GetResponseSocket() {
+    return _resSocket;
   }
 
 }

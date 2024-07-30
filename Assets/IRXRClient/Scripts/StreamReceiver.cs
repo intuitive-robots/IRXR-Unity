@@ -18,7 +18,7 @@ public class StreamReceiver : MonoBehaviour {
 
   void Start() {
     _netManager = gameObject.GetComponent<IRXRNetManager>();
-    _subSocket = _netManager.CreateSubscriberSocket();
+    _subSocket = _netManager.GetSubscriberSocket();
     _netManager.OnDiscoveryCompleted += Connect;
   }
 
