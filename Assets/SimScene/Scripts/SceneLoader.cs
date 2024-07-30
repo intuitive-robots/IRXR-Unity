@@ -9,6 +9,7 @@ public class SceneLoader : MonoBehaviour {
 
   private Action _updateAction;
   public Action OnSceneLoaded;
+  public Action OnSceneCleared;
   private RequestSender reqSender;
 
   private GameObject _simSceneObj;
@@ -39,6 +40,7 @@ public class SceneLoader : MonoBehaviour {
     reqSender.OnServiceConnection += DownloadScene;
     _updateAction = () => { };
     OnSceneLoaded += () => Debug.Log("Scene Loaded");
+    OnSceneCleared += () => Debug.Log("Scene Cleared");
   }
 
   void BuildScene() {
@@ -47,8 +49,6 @@ public class SceneLoader : MonoBehaviour {
     Debug.Log("Building Scene");
     ProcessAsset(); // Compile Meshes, textures and Materials can only be done on the main thread
     _simSceneObj = CreateObject(gameObject.transform, _simScene.root);
-    SceneController sceneController = _simSceneObj.AddComponent<SceneController>();
-    sceneController.StartUpdate(_simObjTrans);
     local_watch.Stop();
     Debug.Log($"Building Scene in {local_watch.ElapsedMilliseconds} ms");
     _updateAction -= BuildScene;
@@ -120,8 +120,6 @@ public class SceneLoader : MonoBehaviour {
 
 
   GameObject CreateObject(Transform root, SimBody body, string name = null) {
-
-
     GameObject bodyRoot = new GameObject(name != null ? name : body.name);
     if (root != null)  bodyRoot.transform.SetParent(root, false);
     ApplyTransform(bodyRoot.transform, body.trans);
@@ -178,11 +176,12 @@ public class SceneLoader : MonoBehaviour {
   }
 
   void ClearScene() {
-    SceneController sceneController = GetComponent<SceneController>();
-    if (sceneController != null)
-    {
-        Destroy(sceneController);
-    }
+    // SceneController sceneController = GetComponent<SceneController>();
+    // if (sceneController != null)
+    // {
+    //     Destroy(sceneController);
+    // }
+    OnSceneCleared.Invoke();
     if (_simSceneObj != null) Destroy(_simSceneObj);
     _simObjTrans.Clear();
     _simMeshes.Clear();
@@ -247,6 +246,10 @@ public class SceneLoader : MonoBehaviour {
 
     simTexture.compiledTexture = tex;
     _cachedTextures[simTexture.dataHash] = simTexture.compiledTexture;
+  }
+
+  public Dictionary<string, Transform> GetObjectsTrans() {
+    return _simObjTrans;
   }
 
 }
