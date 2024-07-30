@@ -24,31 +24,26 @@ public class MetaQuest3InputData
 public class MetaQuest3InputStreamer : StreamPublisher
 {
 
-    [SerializeField] GameObject root;
-    private Transform _trans;
-
-    void Start() {
-        _trans = root.transform;
-    }
+    [SerializeField] private Transform trackingSpace;
+    [SerializeField] private Transform rootTrans;
 
     void Update() {
         MetaQuest3InputData inputData = new MetaQuest3InputData();
-        Vector3 leftPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
-        // leftPos = leftPos - _trans.position;
-        leftPos = _trans.InverseTransformPoint(leftPos);
+        Vector3 leftPos = trackingSpace.TransformPoint(OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch));
+        leftPos = rootTrans.InverseTransformPoint(leftPos);
         inputData.left_pos = new List<float> {leftPos.z, -leftPos.x, leftPos.y};
-        Quaternion leftRot = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
-        leftRot = leftRot * Quaternion.Inverse(_trans.rotation);
+        Quaternion leftRot = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch) * trackingSpace.rotation;
+        leftRot = leftRot * Quaternion.Inverse(rootTrans.rotation);
         inputData.left_rot = new List<float> {-leftRot.z, leftRot.x, -leftRot.y, leftRot.w};
         inputData.left_index_trigger = OVRInput.Get(OVRInput.RawButton.LIndexTrigger);
         inputData.left_hand_trigger = OVRInput.Get(OVRInput.RawButton.LHandTrigger);
 
-        Vector3 rightPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
-        rightPos = rightPos - _trans.position;
-        inputData.right_pos = new List<float> {rightPos.x, rightPos.y, rightPos.z};
-        Quaternion rightRot = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
-        rightRot = rightRot * Quaternion.Inverse(_trans.rotation);
-        inputData.right_rot = new List<float> {rightRot.x, rightRot.y, rightRot.z, rightRot.w};
+        Vector3 rightPos =  trackingSpace.TransformPoint(OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch));
+        rightPos = rootTrans.InverseTransformPoint(rightPos);
+        inputData.right_pos = new List<float> {rightPos.z, -rightPos.x, rightPos.y};
+        Quaternion rightRot = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch) * trackingSpace.rotation;
+        rightRot = rightRot * Quaternion.Inverse(rootTrans.rotation);
+        inputData.right_rot = new List<float> {-rightRot.z, rightRot.x, -rightRot.y, rightRot.w};
         inputData.right_index_trigger = OVRInput.Get(OVRInput.RawButton.RIndexTrigger);
         inputData.right_hand_trigger = OVRInput.Get(OVRInput.RawButton.RHandTrigger);
 

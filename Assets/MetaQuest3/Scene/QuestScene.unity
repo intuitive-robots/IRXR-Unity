@@ -216,6 +216,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!4 &708146189 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2483171112402191008, guid: f54012181eacade4ea242c65f804720f, type: 3}
+  m_PrefabInstance: {fileID: 2068617464}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1103928887
 GameObject:
   m_ObjectHideFlags: 0
@@ -301,9 +306,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8952cff8c752b574aa5278895ac3177f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  port: 7721
   topic: MetaQuest3/InputData
-  root: {fileID: 1970156647}
+  trackingSpace: {fileID: 708146189}
+  rootTrans: {fileID: 1970156649}
 --- !u!1 &1970156647
 GameObject:
   m_ObjectHideFlags: 0
