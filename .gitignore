@@ -154,3 +154,7 @@ crashlytics-build.properties
 
 # macOS
 .DS_Store
+
+# GameCI / Github Workflows 
+/[Aa]rtifacts/
+/[Cc]odeCoverage/
