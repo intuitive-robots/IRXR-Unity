@@ -39,8 +39,8 @@ public class SceneController : MonoBehaviour
         if (streamMsg.time < lastSimulationTimeStamp) return;
         lastSimulationTimeStamp = streamMsg.time;
         foreach (var (name, value) in streamMsg.updateData) {
-            _objectsTrans[name].position = new Vector3(value[0], value[1], value[2]) + _trans.position;
-            _objectsTrans[name].rotation = new Quaternion(value[3], value[4], value[5], value[6]) * _trans.rotation;
+            _objectsTrans[name].position = transform.TransformPoint(new Vector3(value[0], value[1], value[2]));
+            _objectsTrans[name].rotation = _trans.rotation * new Quaternion(value[3], value[4], value[5], value[6]);
         }
     }
 }
