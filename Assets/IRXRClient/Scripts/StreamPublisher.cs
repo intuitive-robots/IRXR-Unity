@@ -1,21 +1,24 @@
-using System;
 using UnityEngine;
 using NetMQ;
 using NetMQ.Sockets;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 [RequireComponent(typeof(IRXRNetManager))]
 public class StreamPublisher : MonoBehaviour {
 
-  private PublisherSocket _pubSocket;
-  private IRXRNetManager _netManager;
-  [SerializeField] private string port;
+  protected PublisherSocket _pubSocket;
+  protected IRXRNetManager _netManager;
   [SerializeField] private string topic;
 
   void Start() {
-    _netManager = gameObject.GetComponent<IRXRNetManager>();
-    _pubSocket = _netManager.CreatePublisherSocket();
-    _pubSocket.Bind($"tcp://*:{port}");
+    _pubSocket = IRXRNetManager.Instance.GetPublisherSocket();
+  }
+
+  public void Publish(object data) {
+    string msg = JsonConvert.SerializeObject(data);
+    msg = topic + ":" + msg;
+    _pubSocket.SendFrame(msg);
+    
   }
 
 }

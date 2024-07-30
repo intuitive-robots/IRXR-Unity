@@ -367,7 +367,7 @@ GameObject:
   - component: {fileID: 1019736215}
   - component: {fileID: 1019736216}
   m_Layer: 0
-  m_Name: SceneLoader
+  m_Name: SimScene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -385,9 +385,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f25e002b6045cf2c1b5bcda5d4b0dd28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _connection: {fileID: 1103928891}
-  _streamingConnection: {fileID: 1103928892}
-  _assetHandler: {fileID: 1019736215}
 --- !u!4 &1019736214
 Transform:
   m_ObjectHideFlags: 0
@@ -412,53 +409,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1019736212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ba2fba5adb83904fa2f6df26de37a0e, type: 3}
+  m_Script: {fileID: 11500000, guid: 43b973fe0a32ff894963acb23af7fd0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _serviceConnection: {fileID: 1103928891}
---- !u!114 &1019736216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1019736212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 062e5df03b27f0641b33d3ed013992a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &1075258906
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1075258907}
-  m_Layer: 0
-  m_Name: LeftHandAnchorDetached
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1075258907
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1075258906}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1665718414}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1103928887
 GameObject:
   m_ObjectHideFlags: 0
@@ -468,29 +421,16 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1103928889}
-  - component: {fileID: 1103928888}
   - component: {fileID: 1103928891}
   - component: {fileID: 1103928892}
   - component: {fileID: 1103928890}
   m_Layer: 0
-  m_Name: Connection
+  m_Name: IRXRClient
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1103928888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1103928887}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07f2b2d9a98079e46874c1cfe92fe468, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_IsActive: 1
 --- !u!4 &1103928889
 Transform:
   m_ObjectHideFlags: 0
@@ -518,9 +458,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ea543980d7f8014582c156390e33b5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  discovery: {fileID: 1103928888}
-  serviceConnection: {fileID: 1103928891}
-  streamingConnection: {fileID: 1103928892}
 --- !u!114 &1103928891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -533,6 +470,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b271b8ad6710f58479bebd7de90dbb75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isServiceConnected: 0
 --- !u!114 &1103928892
 MonoBehaviour:
   m_ObjectHideFlags: 0

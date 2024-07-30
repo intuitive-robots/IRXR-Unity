@@ -16,9 +16,8 @@ public class RequestSender : MonoBehaviour {
   public bool isServiceConnected = false;
 
   void Awake() {
-    AsyncIO.ForceDotNet.Force();
     _netManager = gameObject.GetComponent<IRXRNetManager>();
-    _requestSocket = (RequestSocket)_netManager.CreateSocket(new RequestSocket());
+    _requestSocket = _netManager.GetRequestSocket();
     _netManager.OnDiscoveryCompleted += Connect;
     isServiceConnected = false;
    }

@@ -23,13 +23,13 @@ If you are using Meta Quest 3, run
 ```bash
 git checkout meta-quest3-dev
 ```
-and the follow the [Meta Quest 3 deploy instruction](./Docs/1_HoloLens2.md). 
+and the follow the [Meta Quest 3 deploy instruction](./Docs/MetaQuest3Deploy.md). 
 
 If you are using Meta Quest 3, run
 ```bash
 git checkout hololens2-dev
 ```
-and the follow the [Meta Quest 3 deploy instruction](./Docs/1_HoloLens2.md). 
+and the follow the [HoloLens2 instruction](./Docs/HoloLens2Deploy.md). 
 
 
 ### Run your application
