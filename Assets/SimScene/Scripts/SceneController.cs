@@ -11,21 +11,32 @@ class StreamMessage {
     public float time;
 }
 
+[RequireComponent(typeof(SceneLoader))]
 public class SceneController : MonoBehaviour
 {
     private GameObject _client;
     private float lastSimulationTimeStamp = 0.0f;
     public Dictionary<string, Transform> _objectsTrans;
-    public Transform _trans;
+    private Transform _trans;
 
-    public void StartUpdate(Dictionary<string, Transform> objectsTrans) {
+    void Start() {
+        gameObject.GetComponent<SceneLoader>().OnSceneLoaded += StartUpdate;
+        gameObject.GetComponent<SceneLoader>().OnSceneCleared += StopUpdate;
+    }
+
+    public void StartUpdate() {
         _trans = gameObject.transform;
-        _objectsTrans = objectsTrans;
+        _objectsTrans = gameObject.GetComponent<SceneLoader>().GetObjectsTrans();
         _client = IRXRNetManager.Instance.gameObject;
         IRXRNetManager netManager = _client.GetComponent<IRXRNetManager>();
-        StreamReceiver streamingReceiver = _client.GetComponent<StreamReceiver>();
-        streamingReceiver.RegisterTopicCallback("SceneUpdate", Subscribe);
-        netManager.OnDiscoveryCompleted += streamingReceiver.Connect;
+        StreamReceiver streamReceiver = _client.GetComponent<StreamReceiver>();
+        streamReceiver.RegisterTopicCallback("SceneUpdate", Subscribe);
+        netManager.OnDiscoveryCompleted += streamReceiver.Connect;
+    }
+
+    public void StopUpdate() {
+        _client = IRXRNetManager.Instance.gameObject;
+        _client.GetComponent<StreamReceiver>().RegisterTopicCallback("SceneUpdate", null);
     }
 
     public void Subscribe(string message) {
