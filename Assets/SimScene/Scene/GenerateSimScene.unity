@@ -377,6 +377,7 @@ GameObject:
   - component: {fileID: 1103928891}
   - component: {fileID: 1103928892}
   - component: {fileID: 1103928890}
+  - component: {fileID: 1103928893}
   m_Layer: 0
   m_Name: IRXRClient
   m_TagString: Untagged
@@ -436,6 +437,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e83446e454ea134418d53860b41fa803, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1103928893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1103928887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b11c3fae2395e7ad5a59433f4d75b7e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  topic: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
