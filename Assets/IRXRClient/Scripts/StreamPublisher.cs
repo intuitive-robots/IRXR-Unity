@@ -12,6 +12,12 @@ public class StreamPublisher : MonoBehaviour {
 
   void Start() {
     _pubSocket = IRXRNetManager.Instance.GetPublisherSocket();
+    Application.logMessageReceived += HandleLog;
+  }
+
+  void HandleLog(string logString, string stackTrace, LogType type) {
+    string msg = "UnityLog" + ":" + logString;
+    _pubSocket.SendFrame(msg);
   }
 
   public void Publish(object data) {
