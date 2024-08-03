@@ -12,7 +12,7 @@ class StreamMessage {
 }
 
 [RequireComponent(typeof(SceneLoader))]
-public class SceneController : MonoBehaviour
+public class RigidObjectsController : MonoBehaviour
 {
     private GameObject _client;
     private float lastSimulationTimeStamp = 0.0f;
@@ -25,28 +25,18 @@ public class SceneController : MonoBehaviour
     }
 
     public void StartUpdate() {
+        Debug.Log("Start Update Scene");
         _trans = gameObject.transform;
         _objectsTrans = gameObject.GetComponent<SceneLoader>().GetObjectsTrans();
-        _client = IRXRNetManager.Instance.gameObject;
-        IRXRNetManager netManager = _client.GetComponent<IRXRNetManager>();
-        StreamReceiver streamReceiver = _client.GetComponent<StreamReceiver>();
-        streamReceiver.RegisterTopicCallback("SceneUpdate", Subscribe);
-        netManager.OnDiscoveryCompleted += streamReceiver.Connect;
+        IRXRNetManager.Instance.RegisterTopicCallback("SceneUpdate", Subscribe);
     }
 
     public void StopUpdate() {
-        _client = IRXRNetManager.Instance.gameObject;
-        _client.GetComponent<StreamReceiver>().RegisterTopicCallback("SceneUpdate", null);
+        IRXRNetManager.Instance.RegisterTopicCallback("SceneUpdate", null);
     }
 
     public void Subscribe(string message) {
-        // TODO: not sure it is ok???
-        if (string.Compare(message, "END") == 0) {
-            lastSimulationTimeStamp = 0.0f;
-            return;
-        }
         StreamMessage streamMsg = JsonConvert.DeserializeObject<StreamMessage>(message);
-
         if (streamMsg.time < lastSimulationTimeStamp) return;
         lastSimulationTimeStamp = streamMsg.time;
         foreach (var (name, value) in streamMsg.updateData) {
