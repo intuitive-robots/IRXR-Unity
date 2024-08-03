@@ -24,6 +24,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   public Action OnServiceConnection;
   public Action ConnectionSpin;
   private string _serverAddress;
+  private string _localAddress;
 
   private UdpClient _discoveryClient;
 
@@ -39,6 +40,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   private PublisherSocket _pubSocket;
   private RequestSocket _reqSocket;
   private ResponseSocket _resSocket;
+  private Dictionary<string, Action<string>> _serviceCallbacks;
 
   private float lastTimeStamp;
   private bool isConnected = false;
@@ -74,25 +76,14 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     byte[] result = _discoveryClient.Receive(ref endPoint);
     string message =  Encoding.UTF8.GetString(result);
 
-    // Debug.Log(_discoveryClient.LocalEndPoint.Address.ToString());
-    // Socket udpSocket = _discoveryClient.Client;
-    // byte[] buffer = new byte[1024];
-    // SocketFlags socketFlags = SocketFlags.None;
-    // EndPoint senderRemote = new IPEndPoint(IPAddress.Any, 0);
-    // IPPacketInformation packetInfo;
-    // int receivedBytes = udpSocket.ReceiveMessageFrom(buffer, 0, buffer.Length, ref socketFlags, ref senderRemote, out packetInfo);
-    // string receivedMessage = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
-    // Console.WriteLine($"Received message from {senderRemote}: {receivedMessage}");
-    // Console.WriteLine($"Received on interface: {packetInfo.Address}");
-
     if (!message.StartsWith("SimPub")) return; // not the right tag
     var split = message.Split(":", 2);
     string info = split[1];
     _informations = JsonConvert.DeserializeObject<DiscoveryMessage>(info);
     _serverAddress = endPoint.Address.ToString();
     if (lastTimeStamp + 2.0f < Time.realtimeSinceStartup) {
-      string localIpAddress = ((IPEndPoint)_discoveryClient.Client.LocalEndPoint).Address.ToString();
-      Debug.Log($"Discovered server at {endPoint.Address} with local IP {localIpAddress}");
+      _localAddress = GetLocalIPsInSameSubnet(_serverAddress);
+      Debug.Log($"Discovered server at {_serverAddress} with local IP {_localAddress}");
       OnNewServerDiscovered.Invoke();
       OnConnectionCompleted.Invoke();
       isConnected = true; // not really elegant, just for the disconnection of subsocket
@@ -113,33 +104,33 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   //     return _serverAddress != null;
   // }
 
-  public string GetServerAddress() {
-      return _serverAddress;
-  }
+  // public string GetServerAddress() {
+  //     return _serverAddress;
+  // }
 
-  public string GetServiceAddress(string service) {
-      if (_informations == null) return null;
-      if (_informations.Service.TryGetValue(service, out string result)) {
-          return result;
-      }
-      return null;
-  }
+  // public string GetServiceAddress(string service) {
+  //     if (_informations == null) return null;
+  //     if (_informations.Service.TryGetValue(service, out string result)) {
+  //         return result;
+  //     }
+  //     return null;
+  // }
 
-  public SubscriberSocket GetSubscriberSocket() {
-    return _subSocket;
-  }
+  // public SubscriberSocket GetSubscriberSocket() {
+  //   return _subSocket;
+  // }
 
-  public RequestSocket GetRequestSocket() {
-    return _reqSocket;
-  }
+  // public RequestSocket GetRequestSocket() {
+  //   return _reqSocket;
+  // }
 
   public PublisherSocket GetPublisherSocket() {
     return _pubSocket;
   }
 
-  public ResponseSocket GetResponseSocket() {
-    return _resSocket;
-  }
+  // public ResponseSocket GetResponseSocket() {
+  //   return _resSocket;
+  // }
 
   public void ConnectService () {
     _reqSocket.Connect($"tcp://{_serverAddress}:7721");
@@ -193,6 +184,57 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public void ReleasePublishTopic(string topic) {
     clientInfo.Topic[topic] = "Release";
+  }
+
+  public void RegisterServiceCallback(string service, Action<string> callback) {
+    _serviceCallbacks[service] = callback;
+  }
+
+  public static string GetLocalIPsInSameSubnet(string inputIPAddress)
+  {
+    IPAddress inputIP;
+    if (!IPAddress.TryParse(inputIPAddress, out inputIP))
+    {
+      throw new ArgumentException("Invalid IP address format.", nameof(inputIPAddress));
+    }
+    IPAddress subnetMask = IPAddress.Parse("255.255.255.0");
+    // Get all network interfaces
+    NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+    foreach (NetworkInterface ni in networkInterfaces)
+    {
+      // Get IP properties of the network interface
+      IPInterfaceProperties ipProperties = ni.GetIPProperties();
+      UnicastIPAddressInformationCollection unicastIPAddresses = ipProperties.UnicastAddresses;
+      foreach (UnicastIPAddressInformation ipInfo in unicastIPAddresses)
+      {
+        if (ipInfo.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+        {
+          IPAddress localIP = ipInfo.Address;
+          // Check if the IP is in the same subnet
+          if (IsInSameSubnet(inputIP, localIP, subnetMask))
+          {
+            return localIP.ToString();;
+          }
+        }
+      }
+    }
+    return "127.0.0.1";
+  }
+
+  private static bool IsInSameSubnet(IPAddress ip1, IPAddress ip2, IPAddress subnetMask)
+  {
+    byte[] ip1Bytes = ip1.GetAddressBytes();
+    byte[] ip2Bytes = ip2.GetAddressBytes();
+    byte[] maskBytes = subnetMask.GetAddressBytes();
+
+    for (int i = 0; i < ip1Bytes.Length; i++)
+    {
+      if ((ip1Bytes[i] & maskBytes[i]) != (ip2Bytes[i] & maskBytes[i]))
+      {
+        return false;
+      }
+    }
+    return true;
   }
 
 }
