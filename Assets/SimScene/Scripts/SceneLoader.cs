@@ -32,8 +32,8 @@ public class SceneLoader : MonoBehaviour {
 
   void Start() {
     _netManager = IRXRNetManager.Instance;
-    _netManager.OnNewServerDiscovered += ClearScene;
-    _netManager.OnServiceConnection += DownloadScene;
+    _netManager.OnServerDiscovered += ClearScene;
+    _netManager.OnConnectionCompleted += DownloadScene;
     updateAction = () => { };
     OnSceneLoaded += () => Debug.Log("Scene Loaded");
     OnSceneCleared += () => Debug.Log("Scene Cleared");

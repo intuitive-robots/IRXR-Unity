@@ -8,28 +8,37 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 
+public enum ServerPort {
+  Discovery = 7720,
+  Service = 7721,
+  Topic = 7722,
+}
 
-class DiscoveryMessage {
-  public Dictionary<string, string> Topic = new();
-  public Dictionary<string, string> Service = new();
+public enum ClientPort {
+  Discovery = 7720,
+  Service = 7723,
+  Topic = 7724,
+}
+
+class HostInfo {
+  public string name;
+  public string ip;
+  public List<string> topics = new();
+  public List<string> services = new();
 }
 
 public class IRXRNetManager : Singleton<IRXRNetManager> {
 
-  [SerializeField] private string host;
+  [SerializeField] private string host = "UnityEditor";
   public Action OnDisconnected;
   public Action OnConnectionCompleted;
-  public Action OnNewServerDiscovered;
-  public Action OnServiceConnection;
+  public Action OnServerDiscovered;
   public Action ConnectionSpin;
-  private string _serverAddress;
-  private string _localAddress;
-
   private UdpClient _discoveryClient;
-
-  private DiscoveryMessage _informations = null;
-  private DiscoveryMessage clientInfo = new DiscoveryMessage();
+  private HostInfo _serverInfo = null;
+  private HostInfo _localInfo = new HostInfo();
 
   private List<NetMQSocket> _sockets;
 
@@ -47,7 +56,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   void Awake() {
     AsyncIO.ForceDotNet.Force();
-    _discoveryClient = new UdpClient(7720);
+    _discoveryClient = new UdpClient((int)ServerPort.Discovery);
     _sockets = new List<NetMQSocket>();
     _reqSocket = new RequestSocket();
     _resSocket = new ResponseSocket();
@@ -55,21 +64,32 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _subSocket = new SubscriberSocket();
     _topicsCallbacks = new Dictionary<string, Action<string>>();
     _pubSocket = new PublisherSocket();
-    _pubSocket.Bind("tcp://*:7723");
+    
     _sockets = new List<NetMQSocket> { _reqSocket, _resSocket, _subSocket, _pubSocket };
+    _localInfo.name = host;
   }
 
   void Start() {
-    OnNewServerDiscovered += () => Debug.Log("New Server Discovered");
-    OnNewServerDiscovered += ConnectService;
-    OnNewServerDiscovered += ConnectTopics;
-    OnConnectionCompleted += () => Debug.Log("Connection Completed");
-    OnServiceConnection += () => {};
+    OnServerDiscovered += ConnectService;
+    OnServerDiscovered += SubscribeTopics;
+    OnServerDiscovered += () => isConnected = true;
+    OnConnectionCompleted += () => _pubSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
+    OnConnectionCompleted += RegisterInfo2Server;
     ConnectionSpin += () => {};
-    lastTimeStamp = -2.0f;
+    OnDisconnected += () => Debug.Log("Disconnected");
+    OnDisconnected += () => isConnected = false;
+    OnDisconnected += UnsubscribeTopics;
+    OnDisconnected += () => _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
+    lastTimeStamp = -1.0f;
   }
 
   void Update() {
+    // TODO: Disconnect Behavior
+    if (isConnected && lastTimeStamp + 1.0f < Time.realtimeSinceStartup)
+    {
+      OnDisconnected.Invoke();
+      return;
+    }
     ConnectionSpin.Invoke();
     if (_discoveryClient.Available == 0) return; // there's no message to read
     IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
@@ -79,12 +99,12 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     if (!message.StartsWith("SimPub")) return; // not the right tag
     var split = message.Split(":", 2);
     string info = split[1];
-    _informations = JsonConvert.DeserializeObject<DiscoveryMessage>(info);
-    _serverAddress = endPoint.Address.ToString();
-    if (lastTimeStamp + 2.0f < Time.realtimeSinceStartup) {
-      _localAddress = GetLocalIPsInSameSubnet(_serverAddress);
-      Debug.Log($"Discovered server at {_serverAddress} with local IP {_localAddress}");
-      OnNewServerDiscovered.Invoke();
+    _serverInfo = JsonConvert.DeserializeObject<HostInfo>(info);
+    _serverInfo.ip = endPoint.Address.ToString();
+    if (lastTimeStamp + 1.0f < Time.realtimeSinceStartup) {
+      _localInfo.ip = GetLocalIPsInSameSubnet(_serverInfo.ip);
+      Debug.Log($"Discovered server at {_serverInfo.ip} with local IP {_localInfo.ip}");
+      OnServerDiscovered.Invoke();
       OnConnectionCompleted.Invoke();
       isConnected = true; // not really elegant, just for the disconnection of subsocket
     }
@@ -100,44 +120,18 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     NetMQConfig.Cleanup();
   }
 
-  // public bool HasDiscovered() {
-  //     return _serverAddress != null;
-  // }
-
-  // public string GetServerAddress() {
-  //     return _serverAddress;
-  // }
-
-  // public string GetServiceAddress(string service) {
-  //     if (_informations == null) return null;
-  //     if (_informations.Service.TryGetValue(service, out string result)) {
-  //         return result;
-  //     }
-  //     return null;
-  // }
-
-  // public SubscriberSocket GetSubscriberSocket() {
-  //   return _subSocket;
-  // }
-
-  // public RequestSocket GetRequestSocket() {
-  //   return _reqSocket;
-  // }
-
   public PublisherSocket GetPublisherSocket() {
     return _pubSocket;
   }
 
-  // public ResponseSocket GetResponseSocket() {
-  //   return _resSocket;
-  // }
-
   public void ConnectService () {
-    _reqSocket.Connect($"tcp://{_serverAddress}:7721");
-    Debug.Log($"Starting service connection to {_serverAddress} at prot 7721");
-    OnServiceConnection.Invoke();
+    _reqSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Service}");
+    Debug.Log($"Starting service connection to {_serverInfo.ip}:{ServerPort.Service}");
   }
 
+  // Please use these two request functions to send request to the server.
+  // It may stuck if the server is not responding,
+  // which will cause the Unity Editor to freeze.
   public string RequestString(string service, string request = "") {
     _reqSocket.SendFrame($"{service}:{request}");
     string result = _reqSocket.ReceiveFrameString(out bool more);
@@ -152,24 +146,24 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     return result;
   }
 
-  public void DisconnectTopics() {
+  public void UnsubscribeTopics() {
     if (isConnected) {
-      _subSocket.Disconnect($"tcp://{_serverAddress}:7722");
+      _subSocket.Disconnect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
       while (_subSocket.HasIn) _subSocket.SkipFrame();
     }
-    ConnectionSpin -= TopicUpdate;
+    ConnectionSpin -= TopicUpdateSpin;
     _topicsCallbacks.Clear();
   }
 
-  public void ConnectTopics() {
-    DisconnectTopics();
-    _subSocket.Connect($"tcp://{_serverAddress}:7722");
+  public void SubscribeTopics() {
+    UnsubscribeTopics();
+    _subSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
     _subSocket.Subscribe("");
-    ConnectionSpin += TopicUpdate;
-    Debug.Log($"Connected topic to {_serverAddress} at port 7722");
+    ConnectionSpin += TopicUpdateSpin;
+    Debug.Log($"Connected topic to {_serverInfo.ip}:{ServerPort.Topic}");
   }
 
-  public void TopicUpdate() {
+  public void TopicUpdateSpin() {
     if (!_subSocket.HasIn) return;
     string messageReceived = _subSocket.ReceiveFrameString();
     string[] messageSplit = messageReceived.Split(":", 2);
@@ -182,12 +176,25 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _topicsCallbacks[topic] = callback;
   }
 
-  public void ReleasePublishTopic(string topic) {
-    clientInfo.Topic[topic] = "Release";
+  public void CreatePublishTopic(string topic) {
+    if (_localInfo.topics.Contains(topic)) Debug.LogWarning($"Topic {topic} already exists");
+    _localInfo.topics.Add(topic);
+    RegisterInfo2Server();
+  }
+
+  public void RegisterInfo2Server() {
+    if (isConnected) {
+      string data = JsonConvert.SerializeObject(_localInfo);
+      RequestString("Register", JsonConvert.SerializeObject(_localInfo));
+    }
   }
 
   public void RegisterServiceCallback(string service, Action<string> callback) {
     _serviceCallbacks[service] = callback;
+  }
+
+  public string GetHostName() {
+    return host;
   }
 
   public static string GetLocalIPsInSameSubnet(string inputIPAddress)
@@ -210,6 +217,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
         if (ipInfo.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
         {
           IPAddress localIP = ipInfo.Address;
+          Debug.Log($"Local IP: {localIP}");
           // Check if the IP is in the same subnet
           if (IsInSameSubnet(inputIP, localIP, subnetMask))
           {

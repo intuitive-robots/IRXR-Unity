@@ -3,25 +3,39 @@ using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
 
-
-public class Streamer : MonoBehaviour {
-
+public class Publisher {
   protected PublisherSocket _pubSocket;
-  [SerializeField] private string topic;
+  protected string _topic;
 
-  void Start() {
-    // IRXRNetManager.Instance.
-    // _pubSocket = IRXRNetManager.Instance.GetPublisherSocket();
-    // Initialize();
+  public Publisher(string topic) {
+    IRXRNetManager _netManager = IRXRNetManager.Instance;
+    string hostName = _netManager.GetHostName();
+    _topic = $"{hostName}/{topic}";
+    _pubSocket = _netManager.GetPublisherSocket();
+    _netManager.CreatePublishTopic(_topic);
   }
-
-  void Initialize() {}
 
   public void Publish(object data) {
     string msg = JsonConvert.SerializeObject(data);
-    msg = topic + ":" + msg;
-    _pubSocket.SendFrame(msg);
-    
+    msg = _topic + ":" + msg;
+    _pubSocket.SendFrame(msg); 
   }
+}
+
+
+public class Streamer : MonoBehaviour {
+
+  protected string _topic;
+  protected Publisher _publisher;
+
+  void Start() {
+    SetupTopic();
+    _publisher = new Publisher(_topic);
+    Initialize();
+  }
+
+  protected virtual void SetupTopic() {}
+
+  protected virtual void Initialize() {}
 
 }
