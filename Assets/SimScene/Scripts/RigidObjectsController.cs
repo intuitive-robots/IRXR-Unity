@@ -14,7 +14,6 @@ class StreamMessage {
 [RequireComponent(typeof(SceneLoader))]
 public class RigidObjectsController : MonoBehaviour
 {
-    private GameObject _client;
     private float lastSimulationTimeStamp = 0.0f;
     public Dictionary<string, Transform> _objectsTrans;
     private Transform _trans;
