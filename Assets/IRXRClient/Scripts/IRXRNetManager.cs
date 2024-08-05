@@ -8,63 +8,107 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 
+public enum ServerPort {
+  Discovery = 7720,
+  Service = 7721,
+  Topic = 7722,
+}
+
+public enum ClientPort {
+  Discovery = 7720,
+  Service = 7723,
+  Topic = 7724,
+}
+
+class HostInfo {
+  public string name;
+  public string ip;
+  public List<string> topics = new();
+  public List<string> services = new();
+}
 
 public class IRXRNetManager : Singleton<IRXRNetManager> {
 
-  // public delegate void DiscoveryEventHandler();
-  public Action OnDiscoveryCompleted;
-  public Action OnNewServerDiscovered;
-  private string _id = null;
-  private string _serverIP;
-
+  [SerializeField] private string host = "UnityEditor";
+  public Action OnDisconnected;
+  public Action OnConnectionCompleted;
+  public Action OnServerDiscovered;
+  public Action ConnectionSpin;
   private UdpClient _discoveryClient;
-
-  private Dictionary<string, string> _informations;
+  private HostInfo _serverInfo = null;
+  private HostInfo _localInfo = new HostInfo();
 
   private List<NetMQSocket> _sockets;
 
+  // subscriber socket
   private SubscriberSocket _subSocket;
+  private Dictionary<string, Action<string>> _topicsCallbacks;
+  // publisher socket
   private PublisherSocket _pubSocket;
   private RequestSocket _reqSocket;
   private ResponseSocket _resSocket;
+  private Dictionary<string, Action<string>> _serviceCallbacks;
+
+  private float lastTimeStamp;
+  private bool isConnected = false;
 
   void Awake() {
     AsyncIO.ForceDotNet.Force();
-    _discoveryClient = new UdpClient(7720);
+    _discoveryClient = new UdpClient((int)ServerPort.Discovery);
     _sockets = new List<NetMQSocket>();
     _reqSocket = new RequestSocket();
     _resSocket = new ResponseSocket();
+    // subscriber socket
     _subSocket = new SubscriberSocket();
+    _topicsCallbacks = new Dictionary<string, Action<string>>();
     _pubSocket = new PublisherSocket();
-    _pubSocket.Bind("tcp://*:7723");
+    
     _sockets = new List<NetMQSocket> { _reqSocket, _resSocket, _subSocket, _pubSocket };
+    _localInfo.name = host;
   }
 
   void Start() {
-    OnNewServerDiscovered += () => Debug.Log("New Server Discovered");
-    OnDiscoveryCompleted += () => { };
+    OnServerDiscovered += ConnectService;
+    OnServerDiscovered += SubscribeTopics;
+    OnServerDiscovered += () => isConnected = true;
+    OnConnectionCompleted += () => _pubSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
+    OnConnectionCompleted += RegisterInfo2Server;
+    ConnectionSpin += () => {};
+    OnDisconnected += () => Debug.Log("Disconnected");
+    OnDisconnected += () => isConnected = false;
+    OnDisconnected += UnsubscribeTopics;
+    OnDisconnected += () => _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
+    lastTimeStamp = -1.0f;
   }
 
-  void Update()
-  {
+  void Update() {
+    // TODO: Disconnect Behavior
+    if (isConnected && lastTimeStamp + 1.0f < Time.realtimeSinceStartup)
+    {
+      OnDisconnected.Invoke();
+      return;
+    }
+    ConnectionSpin.Invoke();
     if (_discoveryClient.Available == 0) return; // there's no message to read
     IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
     byte[] result = _discoveryClient.Receive(ref endPoint);
     string message =  Encoding.UTF8.GetString(result);
 
     if (!message.StartsWith("SimPub")) return; // not the right tag
-
-    var split = message.Split(":", 3);
-
-    if (split[1] != _id){
-      OnNewServerDiscovered.Invoke();
-      _id = split[1];
-      string info = split[2];
-      _informations = JsonConvert.DeserializeObject<Dictionary<string, string>>(info);
-      _serverIP = endPoint.Address.ToString();
-      OnDiscoveryCompleted.Invoke();
+    var split = message.Split(":", 2);
+    string info = split[1];
+    _serverInfo = JsonConvert.DeserializeObject<HostInfo>(info);
+    _serverInfo.ip = endPoint.Address.ToString();
+    if (lastTimeStamp + 1.0f < Time.realtimeSinceStartup) {
+      _localInfo.ip = GetLocalIPsInSameSubnet(_serverInfo.ip);
+      Debug.Log($"Discovered server at {_serverInfo.ip} with local IP {_localInfo.ip}");
+      OnServerDiscovered.Invoke();
+      OnConnectionCompleted.Invoke();
+      isConnected = true; // not really elegant, just for the disconnection of subsocket
     }
+    lastTimeStamp = Time.realtimeSinceStartup;
   }
 
   void OnApplicationQuit() {
@@ -76,33 +120,129 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     NetMQConfig.Cleanup();
   }
 
-  public bool HasDiscovered() {
-      return _serverIP != null;
-  }
-
-  public string GetServerIp() {
-      return _serverIP;
-  }
-
-  public int GetServerPort(string service) {
-      int.TryParse(_informations[service], out int result);
-      return result;
-  }
-
-  public SubscriberSocket GetSubscriberSocket() {
-    return _subSocket;
-  }
-
-  public RequestSocket GetRequestSocket() {
-    return _reqSocket;
-  }
-
   public PublisherSocket GetPublisherSocket() {
     return _pubSocket;
   }
 
-  public ResponseSocket GetResponseSocket() {
-    return _resSocket;
+  public void ConnectService () {
+    _reqSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Service}");
+    Debug.Log($"Starting service connection to {_serverInfo.ip}:{ServerPort.Service}");
+  }
+
+  // Please use these two request functions to send request to the server.
+  // It may stuck if the server is not responding,
+  // which will cause the Unity Editor to freeze.
+  public string RequestString(string service, string request = "") {
+    _reqSocket.SendFrame($"{service}:{request}");
+    string result = _reqSocket.ReceiveFrameString(out bool more);
+    while(more) result += _reqSocket.ReceiveFrameString(out more);
+    return result;
+  }
+
+  public List<byte> RequestBytes(string service, string request = "") {
+    _reqSocket.SendFrame($"{service}:{request}");
+    List<byte> result = new List<byte>(_reqSocket.ReceiveFrameBytes(out bool more));
+    while (more) result.AddRange(_reqSocket.ReceiveFrameBytes(out more));
+    return result;
+  }
+
+  public void UnsubscribeTopics() {
+    if (isConnected) {
+      _subSocket.Disconnect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
+      while (_subSocket.HasIn) _subSocket.SkipFrame();
+    }
+    ConnectionSpin -= TopicUpdateSpin;
+    _topicsCallbacks.Clear();
+  }
+
+  public void SubscribeTopics() {
+    UnsubscribeTopics();
+    _subSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
+    _subSocket.Subscribe("");
+    ConnectionSpin += TopicUpdateSpin;
+    Debug.Log($"Connected topic to {_serverInfo.ip}:{ServerPort.Topic}");
+  }
+
+  public void TopicUpdateSpin() {
+    if (!_subSocket.HasIn) return;
+    string messageReceived = _subSocket.ReceiveFrameString();
+    string[] messageSplit = messageReceived.Split(":", 2);
+    if (_topicsCallbacks.ContainsKey(messageSplit[0])) {
+      _topicsCallbacks[messageSplit[0]](messageSplit[1]);
+    }
+  }
+
+  public void RegisterTopicCallback(string topic, Action<string> callback) {
+    _topicsCallbacks[topic] = callback;
+  }
+
+  public void CreatePublishTopic(string topic) {
+    if (_localInfo.topics.Contains(topic)) Debug.LogWarning($"Topic {topic} already exists");
+    _localInfo.topics.Add(topic);
+    RegisterInfo2Server();
+  }
+
+  public void RegisterInfo2Server() {
+    if (isConnected) {
+      string data = JsonConvert.SerializeObject(_localInfo);
+      RequestString("Register", JsonConvert.SerializeObject(_localInfo));
+    }
+  }
+
+  public void RegisterServiceCallback(string service, Action<string> callback) {
+    _serviceCallbacks[service] = callback;
+  }
+
+  public string GetHostName() {
+    return host;
+  }
+
+  public static string GetLocalIPsInSameSubnet(string inputIPAddress)
+  {
+    IPAddress inputIP;
+    if (!IPAddress.TryParse(inputIPAddress, out inputIP))
+    {
+      throw new ArgumentException("Invalid IP address format.", nameof(inputIPAddress));
+    }
+    IPAddress subnetMask = IPAddress.Parse("255.255.255.0");
+    // Get all network interfaces
+    NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+    foreach (NetworkInterface ni in networkInterfaces)
+    {
+      // Get IP properties of the network interface
+      IPInterfaceProperties ipProperties = ni.GetIPProperties();
+      UnicastIPAddressInformationCollection unicastIPAddresses = ipProperties.UnicastAddresses;
+      foreach (UnicastIPAddressInformation ipInfo in unicastIPAddresses)
+      {
+        if (ipInfo.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+        {
+          IPAddress localIP = ipInfo.Address;
+          Debug.Log($"Local IP: {localIP}");
+          // Check if the IP is in the same subnet
+          if (IsInSameSubnet(inputIP, localIP, subnetMask))
+          {
+            return localIP.ToString();;
+          }
+        }
+      }
+    }
+    return "127.0.0.1";
+  }
+
+  private static bool IsInSameSubnet(IPAddress ip1, IPAddress ip2, IPAddress subnetMask)
+  {
+    byte[] ip1Bytes = ip1.GetAddressBytes();
+    byte[] ip2Bytes = ip2.GetAddressBytes();
+    byte[] maskBytes = subnetMask.GetAddressBytes();
+
+    for (int i = 0; i < ip1Bytes.Length; i++)
+    {
+      if ((ip1Bytes[i] & maskBytes[i]) != (ip2Bytes[i] & maskBytes[i]))
+      {
+        return false;
+      }
+    }
+    return true;
   }
 
 }

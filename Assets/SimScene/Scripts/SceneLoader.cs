@@ -1,5 +1,5 @@
+using System;
 using UnityEngine;
-using System; // Don't include System.Diagnostics, Debug becomes disambiguous
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using Newtonsoft.Json;
@@ -7,11 +7,10 @@ using Newtonsoft.Json;
 
 public class SceneLoader : MonoBehaviour {
 
-  private Action _updateAction;
+  private Action updateAction;
   public Action OnSceneLoaded;
   public Action OnSceneCleared;
-  private RequestSender reqSender;
-
+  private IRXRNetManager _netManager;
   private GameObject _simSceneObj;
   private SimScene _simScene;
   private Dictionary<string, Transform> _simObjTrans = new Dictionary<string, Transform>();
@@ -19,7 +18,6 @@ public class SceneLoader : MonoBehaviour {
   private Dictionary<string, SimMesh> _simMeshes;
   private Dictionary<string, SimMaterial> _simMaterials;
   private Dictionary<string, SimTexture> _simTextures;
-  // TODO: The cache meshes and textures probably is not necessary
   private Dictionary<string, Mesh> _cachedMeshes;
   private Dictionary<string, Texture> _cachedTextures;
 
@@ -33,12 +31,10 @@ public class SceneLoader : MonoBehaviour {
   }
 
   void Start() {
-    GameObject client = IRXRNetManager.Instance.gameObject;
-    reqSender = client.GetComponent<RequestSender>();
-    client.GetComponent<IRXRNetManager>().OnNewServerDiscovered += ClearScene;
-    if (reqSender.isServiceConnected) DownloadScene();
-    reqSender.OnServiceConnection += DownloadScene;
-    _updateAction = () => { };
+    _netManager = IRXRNetManager.Instance;
+    _netManager.OnServerDiscovered += ClearScene;
+    _netManager.OnConnectionCompleted += DownloadScene;
+    updateAction = () => { };
     OnSceneLoaded += () => Debug.Log("Scene Loaded");
     OnSceneCleared += () => Debug.Log("Scene Cleared");
   }
@@ -51,23 +47,23 @@ public class SceneLoader : MonoBehaviour {
     _simSceneObj = CreateObject(gameObject.transform, _simScene.root);
     local_watch.Stop();
     Debug.Log($"Building Scene in {local_watch.ElapsedMilliseconds} ms");
-    _updateAction -= BuildScene;
+    updateAction -= BuildScene;
     OnSceneLoaded.Invoke();
   }
 
   void DownloadScene() {
     // Don't include System.Diagnostics, Debug becomes disambiguous
-    var local_watch = new System.Diagnostics.Stopwatch();
-    local_watch.Start();
-    Debug.Log("Downloading Scene");
-    string asset_info = reqSender.RequestString("SCENE");
+    float downloadStartTime = Time.realtimeSinceStartup;
+    string asset_info = _netManager.RequestString("Scene");
+    if (asset_info == "Invild Service") {
+      Debug.LogWarning("Invalid Service");
+      return;
+    }
     _simScene = JsonConvert.DeserializeObject<SimScene>(asset_info);
     DownloadAssets(_simScene);
-    local_watch.Stop();
-    Debug.Log($"Downloaded Scene in {local_watch.ElapsedMilliseconds} ms");
-    _updateAction += BuildScene;
+    Debug.Log($"Downloaded Scene in {Time.realtimeSinceStartup - downloadStartTime} ms");
+    updateAction += BuildScene;
   }
-
 
   public void DownloadAssets(SimScene scene) {
     _simMeshes.Clear();
@@ -84,8 +80,7 @@ public class SceneLoader : MonoBehaviour {
       _simMeshes.Add(mesh.id, mesh);
       return;
     }
-
-    Span<byte> data = reqSender.RequestBytes("ASSET:" + mesh.dataHash).ToArray();
+    Span<byte> data = _netManager.RequestBytes("Asset", mesh.dataHash).ToArray();
     mesh.rawData = new SimMeshData
     {
       indices = MemoryMarshal.Cast<byte, int>(data.Slice(mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
@@ -100,7 +95,7 @@ public class SceneLoader : MonoBehaviour {
     if (_cachedTextures.TryGetValue(texture.dataHash, out Texture cached)){
       texture.compiledTexture = cached;
     } else {
-      texture.textureData = reqSender.RequestBytes("ASSET:" + texture.dataHash).ToArray();
+      texture.textureData = _netManager.RequestBytes("Asset", texture.dataHash).ToArray();
     }
 
     _simTextures.Add(texture.id, texture);
@@ -108,7 +103,7 @@ public class SceneLoader : MonoBehaviour {
 
 
   void Update() {
-    _updateAction();
+    updateAction.Invoke();
   }
 
 
@@ -179,11 +174,6 @@ public class SceneLoader : MonoBehaviour {
   }
 
   void ClearScene() {
-    // SceneController sceneController = GetComponent<SceneController>();
-    // if (sceneController != null)
-    // {
-    //     Destroy(sceneController);
-    // }
     OnSceneCleared.Invoke();
     if (_simSceneObj != null) Destroy(_simSceneObj);
     _simObjTrans.Clear();
