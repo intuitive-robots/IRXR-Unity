@@ -152,7 +152,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 860370806}
-  m_Father: {fileID: 1665718415}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &502128104
 GameObject:
@@ -183,7 +183,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1681067962}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
@@ -365,14 +365,13 @@ GameObject:
   - component: {fileID: 1019736214}
   - component: {fileID: 1019736213}
   - component: {fileID: 1019736215}
-  - component: {fileID: 1019736216}
   m_Layer: 0
   m_Name: SimScene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1019736213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,13 +469,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62ec33cbc3e21ee3ca006b31a9a3da1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1665718413}
   - {fileID: 705507995}
   - {fileID: 1103928889}
   - {fileID: 1019736214}
   - {fileID: 820727528}
+  - {fileID: 383851810}
+  - {fileID: 502128105}
