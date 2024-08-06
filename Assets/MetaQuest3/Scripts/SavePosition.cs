@@ -6,10 +6,12 @@ using UnityEngine;
 public class SavePosition : MonoBehaviour
 {
     private float timer = 0.0f;
-    public float savingInterval = 1.0f;
+    [SerializeField] float savingInterval = 1.0f;
+    [SerializeField] GameObject axisIndicator;
     void Start()
     {
         LoadTransform();
+        axisIndicator.SetActive(false);
     }
 
     void Update()
@@ -30,10 +32,10 @@ public class SavePosition : MonoBehaviour
 
     public void ToggleSceneLock()
     {
-        RayInteractable ri = GetComponentInChildren<RayInteractable>();
+        RayInteractable ri = GetComponent<RayInteractable>();
         if (ri != null)
         {
-            if (ri.MaxInteractors == 0)
+            if (ri.MaxInteractors == 0) 
             {
                 ri.MaxInteractors = -1;
                 ri.MaxSelectingInteractors = -1;

@@ -80,7 +80,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     OnDisconnected += () => isConnected = false;
     OnDisconnected += StopSubscription;
     OnDisconnected += () => _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
-    lastTimeStamp = -1.0f;
+    lastTimeStamp = -5.0f;
   }
 
   void Update() {
@@ -101,7 +101,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     string info = split[1];
     _serverInfo = JsonConvert.DeserializeObject<HostInfo>(info);
     _serverInfo.ip = endPoint.Address.ToString();
-    if (lastTimeStamp + 1.0f < Time.realtimeSinceStartup) {
+    if (lastTimeStamp + 5.0f < Time.realtimeSinceStartup) {
       _localInfo.ip = GetLocalIPsInSameSubnet(_serverInfo.ip);
       Debug.Log($"Discovered server at {_serverInfo.ip} with local IP {_localInfo.ip}");
       OnServerDiscovered.Invoke();
