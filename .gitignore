@@ -154,3 +154,6 @@ crashlytics-build.properties
 
 # vsconfig
 .vsconfig
+
+# Unity Editor Crash Reporter
+mono_crash.*
