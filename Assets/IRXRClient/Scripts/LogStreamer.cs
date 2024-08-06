@@ -21,7 +21,6 @@ public class LogStreamer : Streamer {
   }
 
   void Update() {
-    if (counter++ % 100 == 0) _publisher.Publish("Heartbeat");
     // CaculateTimestampDiff();
   }
 

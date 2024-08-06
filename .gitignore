@@ -151,3 +151,6 @@ crashlytics-build.properties
 
 # macOS
 .DS_Store
+
+# vsconfig
+.vsconfig
