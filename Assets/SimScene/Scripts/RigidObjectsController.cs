@@ -1,10 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
-using Unity.Collections;
 using UnityEngine;
-
 
 class StreamMessage {
     public Dictionary<string, List<float>> updateData;
@@ -27,11 +23,11 @@ public class RigidObjectsController : MonoBehaviour
         Debug.Log("Start Update Scene");
         _trans = gameObject.transform;
         _objectsTrans = gameObject.GetComponent<SceneLoader>().GetObjectsTrans();
-        IRXRNetManager.Instance.RegisterTopicCallback("SceneUpdate", Subscribe);
+        IRXRNetManager.Instance.SubscribeTopic("SceneUpdate", Subscribe);
     }
 
     public void StopUpdate() {
-        IRXRNetManager.Instance.RegisterTopicCallback("SceneUpdate", null);
+        IRXRNetManager.Instance.UnsubscribeTopic("SceneUpdate");
     }
 
     public void Subscribe(string message) {
@@ -43,4 +39,5 @@ public class RigidObjectsController : MonoBehaviour
             _objectsTrans[name].rotation = _trans.rotation * new Quaternion(value[3], value[4], value[5], value[6]);
         }
     }
+
 }
