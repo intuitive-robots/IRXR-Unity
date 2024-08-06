@@ -71,14 +71,14 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   void Start() {
     OnServerDiscovered += ConnectService;
-    OnServerDiscovered += SubscribeTopics;
+    OnServerDiscovered += StartSubscription;
     OnServerDiscovered += () => isConnected = true;
     OnConnectionCompleted += () => _pubSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
     OnConnectionCompleted += RegisterInfo2Server;
     ConnectionSpin += () => {};
     OnDisconnected += () => Debug.Log("Disconnected");
     OnDisconnected += () => isConnected = false;
-    OnDisconnected += UnsubscribeTopics;
+    OnDisconnected += StopSubscription;
     OnDisconnected += () => _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
     lastTimeStamp = -1.0f;
   }
@@ -126,7 +126,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public void ConnectService () {
     _reqSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Service}");
-    Debug.Log($"Starting service connection to {_serverInfo.ip}:{ServerPort.Service}");
+    Debug.Log($"Starting service connection to {_serverInfo.ip}:{(int)ServerPort.Service}");
   }
 
   // Please use these two request functions to send request to the server.
@@ -146,21 +146,22 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     return result;
   }
 
-  public void UnsubscribeTopics() {
+  public void StopSubscription() {
     if (isConnected) {
       _subSocket.Disconnect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
       while (_subSocket.HasIn) _subSocket.SkipFrame();
     }
     ConnectionSpin -= TopicUpdateSpin;
-    _topicsCallbacks.Clear();
+    // It is not necessary to clear the topics callbacks
+    // _topicsCallbacks.Clear();
   }
 
-  public void SubscribeTopics() {
-    UnsubscribeTopics();
+  public void StartSubscription() {
+    StopSubscription();
     _subSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
     _subSocket.Subscribe("");
     ConnectionSpin += TopicUpdateSpin;
-    Debug.Log($"Connected topic to {_serverInfo.ip}:{ServerPort.Topic}");
+    Debug.Log($"Connected topic to {_serverInfo.ip}:{(int)ServerPort.Topic}");
   }
 
   public void TopicUpdateSpin() {
@@ -172,8 +173,13 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     }
   }
 
-  public void RegisterTopicCallback(string topic, Action<string> callback) {
+  public void SubscribeTopic(string topic, Action<string> callback) {
     _topicsCallbacks[topic] = callback;
+    Debug.Log($"Subscribe a new topic {topic}");
+  }
+
+  public void UnsubscribeTopic(string topic) {
+    if (_topicsCallbacks.ContainsKey(topic)) _topicsCallbacks.Remove(topic);
   }
 
   public void CreatePublishTopic(string topic) {

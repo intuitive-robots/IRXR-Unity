@@ -1,16 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
-using Unity.Collections;
 using UnityEngine;
-using Oculus.Interaction;
-using Unity.VisualScripting;
-using Oculus.Interaction.Surfaces;
-using UnityEngine.Animations;
 
 class StreamMessage {
     public Dictionary<string, List<float>> updateData;
@@ -33,11 +23,11 @@ public class RigidObjectsController : MonoBehaviour
         Debug.Log("Start Update Scene");
         _trans = gameObject.transform;
         _objectsTrans = gameObject.GetComponent<SceneLoader>().GetObjectsTrans();
-        IRXRNetManager.Instance.RegisterTopicCallback("SceneUpdate", Subscribe);
+        IRXRNetManager.Instance.SubscribeTopic("SceneUpdate", Subscribe);
     }
 
     public void StopUpdate() {
-        IRXRNetManager.Instance.RegisterTopicCallback("SceneUpdate", null);
+        IRXRNetManager.Instance.UnsubscribeTopic("SceneUpdate");
     }
 
     public void Subscribe(string message) {
