@@ -154,3 +154,9 @@ crashlytics-build.properties
 
 # macOS
 .DS_Store
+
+# vsconfig
+.vsconfig
+
+# Unity Editor Crash Reporter
+mono_crash.*
