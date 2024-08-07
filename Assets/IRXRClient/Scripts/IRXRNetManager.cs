@@ -61,6 +61,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _reqSocket = new RequestSocket();
     // response socket
     _resSocket = new ResponseSocket();
+    _serviceCallbacks = new Dictionary<string, Func<string, string>>();
     // subscriber socket
     _subSocket = new SubscriberSocket();
     _topicsCallbacks = new Dictionary<string, Action<string>>();
@@ -76,6 +77,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     OnServerDiscovered += () => isConnected = true;
     OnConnectionCompleted += () => _pubSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
     OnConnectionCompleted += () => _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
+    OnConnectionCompleted += () => { ConnectionSpin += ServiceRequestSpin; };
     OnConnectionCompleted += RegisterInfo2Server;
     ConnectionSpin += () => {};
     OnDisconnected += () => Debug.Log("Disconnected");
@@ -148,6 +150,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     while (more) result.AddRange(_reqSocket.ReceiveFrameBytes(out more));
     return result;
   }
+
   public void StartSubscription() {
     StopSubscription();
     _subSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
@@ -178,10 +181,13 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public void ServiceRequestSpin() {
     if (!_resSocket.HasIn) return;
+    Debug.Log("Service Request Received");
     string messageReceived = _resSocket.ReceiveFrameString();
     string[] messageSplit = messageReceived.Split(":", 2);
+    Debug.Log($"Service Request: {messageSplit[0]}");
     if (_serviceCallbacks.ContainsKey(messageSplit[0])) {
       string response = _serviceCallbacks[messageSplit[0]](messageSplit[1]);
+      Debug.Log($"Service Response: {response}");
       _resSocket.SendFrame(response);
     }
     else {
@@ -213,7 +219,9 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   }
 
   public void RegisterServiceCallback(string service, Func<string, string> callback) {
+    Debug.Log($"Register service {service}");
     _serviceCallbacks[service] = callback;
+    _localInfo.services.Add(service);
   }
 
   public string GetHostName() {
