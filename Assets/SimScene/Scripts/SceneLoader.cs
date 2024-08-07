@@ -40,6 +40,7 @@ public class SceneLoader : MonoBehaviour {
   }
 
   void BuildScene() {
+    // Don't include System.Diagnostics, Debug becomes disambiguous
     var local_watch = new System.Diagnostics.Stopwatch();
     local_watch.Start();
     Debug.Log("Building Scene");
@@ -52,7 +53,6 @@ public class SceneLoader : MonoBehaviour {
   }
 
   void DownloadScene() {
-    // Don't include System.Diagnostics, Debug becomes disambiguous
     float downloadStartTime = Time.realtimeSinceStartup;
     string asset_info = _netManager.RequestString("Scene");
     if (asset_info == "Invild Service") {
@@ -240,6 +240,10 @@ public class SceneLoader : MonoBehaviour {
 
   public Dictionary<string, Transform> GetObjectsTrans() {
     return _simObjTrans;
+  }
+
+  public GameObject GetSimObject() {
+    return _simSceneObj;
   }
 
 }
