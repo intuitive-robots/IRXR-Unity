@@ -61,7 +61,7 @@ public class SceneLoader : MonoBehaviour {
     }
     _simScene = JsonConvert.DeserializeObject<SimScene>(asset_info);
     DownloadAssets(_simScene);
-    Debug.Log($"Downloaded Scene in {Time.realtimeSinceStartup - downloadStartTime} ms");
+    Debug.Log($"Downloaded Scene in {Time.realtimeSinceStartup - downloadStartTime} s");
     updateAction += BuildScene;
   }
 

@@ -49,7 +49,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   private PublisherSocket _pubSocket;
   private RequestSocket _reqSocket;
   private ResponseSocket _resSocket;
-  private Dictionary<string, Action<string>> _serviceCallbacks;
+  private Dictionary<string, Func<string, string>> _serviceCallbacks;
 
   private float lastTimeStamp;
   private bool isConnected = false;
@@ -59,6 +59,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _discoveryClient = new UdpClient((int)ServerPort.Discovery);
     _sockets = new List<NetMQSocket>();
     _reqSocket = new RequestSocket();
+    // response socket
     _resSocket = new ResponseSocket();
     // subscriber socket
     _subSocket = new SubscriberSocket();
@@ -74,12 +75,14 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     OnServerDiscovered += StartSubscription;
     OnServerDiscovered += () => isConnected = true;
     OnConnectionCompleted += () => _pubSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
+    OnConnectionCompleted += () => StartService;
     OnConnectionCompleted += RegisterInfo2Server;
     ConnectionSpin += () => {};
     OnDisconnected += () => Debug.Log("Disconnected");
     OnDisconnected += () => isConnected = false;
     OnDisconnected += StopSubscription;
     OnDisconnected += () => _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
+    OnDisconnected += () => StopService;
     lastTimeStamp = -1.0f;
   }
 
@@ -145,6 +148,13 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     while (more) result.AddRange(_reqSocket.ReceiveFrameBytes(out more));
     return result;
   }
+  public void StartSubscription() {
+    StopSubscription();
+    _subSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
+    _subSocket.Subscribe("");
+    ConnectionSpin += TopicUpdateSpin;
+    Debug.Log($"Connected topic to {_serverInfo.ip}:{(int)ServerPort.Topic}");
+  }
 
   public void StopSubscription() {
     if (isConnected) {
@@ -156,12 +166,14 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     // _topicsCallbacks.Clear();
   }
 
-  public void StartSubscription() {
-    StopSubscription();
-    _subSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
-    _subSocket.Subscribe("");
-    ConnectionSpin += TopicUpdateSpin;
-    Debug.Log($"Connected topic to {_serverInfo.ip}:{(int)ServerPort.Topic}");
+  public void StartService() {
+    _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}")
+    ConnectionSpin += ServiceRequestSpin;
+  }
+
+  public void StopService() {
+    _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}")
+    ConnectionSpin -= ServiceRequestSpin;
   }
 
   public void TopicUpdateSpin() {
@@ -170,6 +182,20 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     string[] messageSplit = messageReceived.Split(":", 2);
     if (_topicsCallbacks.ContainsKey(messageSplit[0])) {
       _topicsCallbacks[messageSplit[0]](messageSplit[1]);
+    }
+  }
+
+  public void ServiceRequestSpin() {
+    if (!_resSocket.HasIn) return;
+    string messageReceived = _resSocket.ReceiveFrameString();
+    string[] messageSplit = messageReceived.Split(":", 2);
+    if (_serviceCallbacks.ContainsKey(messageSplit[0])) {
+      string response = _serviceCallbacks[messageSplit[0]](messageSplit[1]);
+      _resSocket.SendFrame(response);
+    }
+    else {
+      Debug.LogWarning($"Service {messageSplit[0]} not found");
+      _resSocket.SendFrame("Invalid Service");
     }
   }
 
@@ -195,7 +221,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     }
   }
 
-  public void RegisterServiceCallback(string service, Action<string> callback) {
+  public void RegisterServiceCallback(string service, Func<string, string> callback) {
     _serviceCallbacks[service] = callback;
   }
 
