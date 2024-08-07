@@ -75,14 +75,14 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     OnServerDiscovered += StartSubscription;
     OnServerDiscovered += () => isConnected = true;
     OnConnectionCompleted += () => _pubSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
-    OnConnectionCompleted += () => _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
+    OnConnectionCompleted += () => StartService;
     OnConnectionCompleted += RegisterInfo2Server;
     ConnectionSpin += () => {};
     OnDisconnected += () => Debug.Log("Disconnected");
     OnDisconnected += () => isConnected = false;
     OnDisconnected += StopSubscription;
     OnDisconnected += () => _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
-    OnDisconnected += () => _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
+    OnDisconnected += () => StopService;
     lastTimeStamp = -1.0f;
   }
 
@@ -166,6 +166,15 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     // _topicsCallbacks.Clear();
   }
 
+  public void StartService() {
+    _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}")
+    ConnectionSpin += ServiceRequestSpin;
+  }
+
+  public void StopService() {
+    _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}")
+    ConnectionSpin -= ServiceRequestSpin;
+  }
 
   public void TopicUpdateSpin() {
     if (!_subSocket.HasIn) return;
