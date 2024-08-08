@@ -1,39 +1,72 @@
 using Oculus.Interaction;
-using System.Collections;
-using System.Collections.Generic;
+using Oculus.Interaction.Surfaces;
 using UnityEngine;
 
 public class SavePosition : MonoBehaviour
 {
-    private float timer = 0.0f;
     [SerializeField] float savingInterval = 1.0f;
     [SerializeField] GameObject axisIndicator;
+    private SphereCollider _collider;
+    private ColliderSurface _surface;
+    private RayInteractable _rayInteractable;
+    private bool isMovable = false;
+    private GameObject _sceneObj;
+    private Grabbable _grabbable;
+
     void Start()
     {
-        LoadTransform();
-        axisIndicator.SetActive(false);
+        _collider = GetComponent<SphereCollider>();
+        _surface = GetComponent<ColliderSurface>();
+        _rayInteractable = GetComponent<RayInteractable>();
+        _sceneObj = GetComponent<SceneLoader>().GetSimObject();
+        // _grabbable = GetComponent<Grabbable>();
+        DeactivateInteractable(); 
     }
 
     void Update()
     {
         if (OVRInput.GetDown(OVRInput.Button.One)) // button A locks / unlocks the scene
         {
-            ToggleSceneLock();
+            DeactivateInteractable();
         }
-
-        timer += Time.deltaTime;
-        if (timer > savingInterval)
-        {
-            SaveTransform();
-            timer = 0.0f;
-        }
-        
     }
+
+    public void ToggleMovableLock()
+    {
+        if (isMovable)
+        {
+            DeactivateInteractable();
+        }
+        else
+        {
+            ActivateInteractable();
+        }
+    }
+
+    public void ActivateInteractable()
+    {
+        _collider.enabled = true;
+        _surface.enabled = true;
+        _rayInteractable.enabled = true;
+        axisIndicator.SetActive(true);
+        // _grabbable.enabled = true;
+        isMovable = true;
+    }
+
+    public void DeactivateInteractable()
+    {
+        _collider.enabled = false;
+        _surface.enabled = false;
+        _rayInteractable.enabled = false;
+        axisIndicator.SetActive(false);
+        // _grabbable.enabled = false;
+        isMovable = false;
+    }
+
 
     public void ToggleSceneLock()
     {
-        RayInteractable ri = GetComponent<RayInteractable>();
-        if (ri != null)
+        if (TryGetComponent<RayInteractable>(out var ri))
         {
             if (ri.MaxInteractors == 0) 
             {
@@ -46,47 +79,7 @@ public class SavePosition : MonoBehaviour
                 ri.MaxSelectingInteractors = 0;
             }
         }
-        else
-        {
-            Debug.LogError("No ray interactable found in Scene children!");
-        }
     }
 
-    void SaveTransform()
-    {
-        // Save position
-        PlayerPrefs.SetFloat("PositionX", transform.position.x);
-        PlayerPrefs.SetFloat("PositionY", transform.position.y);
-        PlayerPrefs.SetFloat("PositionZ", transform.position.z);       
-
-        // Save rotation
-        PlayerPrefs.SetFloat("RotationX", transform.rotation.x);
-        PlayerPrefs.SetFloat("RotationY", transform.rotation.y);
-        PlayerPrefs.SetFloat("RotationZ", transform.rotation.z);
-
-        PlayerPrefs.Save();
-    }
-
-    void LoadTransform()
-    {
-        if (PlayerPrefs.HasKey("PositionX"))
-        {
-            // Load position
-            float posX = PlayerPrefs.GetFloat("PositionX");
-            float posY = PlayerPrefs.GetFloat("PositionY");
-            float posZ = PlayerPrefs.GetFloat("PositionZ");
-            transform.position = new Vector3(posX, posY, posZ);
-
-            // Load rotation
-            float rotX = PlayerPrefs.GetFloat("RotationX");
-            float rotY = PlayerPrefs.GetFloat("RotationY");
-            float rotZ = PlayerPrefs.GetFloat("RotationZ");
-            transform.rotation = Quaternion.Euler(rotX, rotY, rotZ);
-
-        }
-        else
-        {
-            Debug.LogWarning("No transform data found in PlayerPrefs.");
-        }
-    }
+   
 }

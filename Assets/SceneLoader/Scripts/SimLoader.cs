@@ -177,6 +177,7 @@ public class SceneLoader : MonoBehaviour {
   void ClearScene() {
     OnSceneCleared.Invoke();
     if (_simSceneObj != null) Destroy(_simSceneObj);
+    _simSceneObj = null;
     _simObjTrans.Clear();
     _simMeshes.Clear();
     _simMaterials.Clear();
