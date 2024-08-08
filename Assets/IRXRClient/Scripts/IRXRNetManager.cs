@@ -37,6 +37,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   public Action OnServerDiscovered;
   public Action ConnectionSpin;
   private UdpClient _discoveryClient;
+  private string _conncetionID = null;
   private HostInfo _serverInfo = null;
   private HostInfo _localInfo = new HostInfo();
 
@@ -49,7 +50,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   private PublisherSocket _pubSocket;
   private RequestSocket _reqSocket;
   private ResponseSocket _resSocket;
-  private Dictionary<string, Action<string>> _serviceCallbacks;
+  private Dictionary<string, Func<string, string>> _serviceCallbacks;
 
   private float lastTimeStamp;
   private bool isConnected = false;
@@ -59,7 +60,9 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _discoveryClient = new UdpClient((int)ServerPort.Discovery);
     _sockets = new List<NetMQSocket>();
     _reqSocket = new RequestSocket();
+    // response socket
     _resSocket = new ResponseSocket();
+    _serviceCallbacks = new Dictionary<string, Func<string, string>>();
     // subscriber socket
     _subSocket = new SubscriberSocket();
     _topicsCallbacks = new Dictionary<string, Action<string>>();
@@ -74,22 +77,25 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     OnServerDiscovered += StartSubscription;
     OnServerDiscovered += () => isConnected = true;
     OnConnectionCompleted += () => _pubSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
+    OnConnectionCompleted += () => _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
+    OnConnectionCompleted += () => { ConnectionSpin += ServiceRequestSpin; };
     OnConnectionCompleted += RegisterInfo2Server;
     ConnectionSpin += () => {};
     OnDisconnected += () => Debug.Log("Disconnected");
     OnDisconnected += () => isConnected = false;
     OnDisconnected += StopSubscription;
+    OnDisconnected += StopService;
     OnDisconnected += () => _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
     lastTimeStamp = -5.0f;
   }
 
   void Update() {
     // TODO: Disconnect Behavior
-    if (isConnected && lastTimeStamp + 1.0f < Time.realtimeSinceStartup)
-    {
-      OnDisconnected.Invoke();
-      return;
-    }
+    // if (isConnected && lastTimeStamp + 1.0f < Time.realtimeSinceStartup)
+    // {
+    //   OnDisconnected.Invoke();
+    //   return;
+    // }
     ConnectionSpin.Invoke();
     if (_discoveryClient.Available == 0) return; // there's no message to read
     IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
@@ -97,11 +103,13 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     string message =  Encoding.UTF8.GetString(result);
 
     if (!message.StartsWith("SimPub")) return; // not the right tag
-    var split = message.Split(":", 2);
-    string info = split[1];
-    _serverInfo = JsonConvert.DeserializeObject<HostInfo>(info);
-    _serverInfo.ip = endPoint.Address.ToString();
-    if (lastTimeStamp + 5.0f < Time.realtimeSinceStartup) {
+    var split = message.Split(":", 3);
+    if (_conncetionID != split[1]) {
+      if (isConnected) OnDisconnected.Invoke();
+      _conncetionID = split[1];
+      string infoStr = split[2];
+      _serverInfo = JsonConvert.DeserializeObject<HostInfo>(infoStr);
+      _serverInfo.ip = endPoint.Address.ToString();
       _localInfo.ip = GetLocalIPsInSameSubnet(_serverInfo.ip);
       Debug.Log($"Discovered server at {_serverInfo.ip} with local IP {_localInfo.ip}");
       OnServerDiscovered.Invoke();
@@ -146,6 +154,14 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     return result;
   }
 
+  public void StartSubscription() {
+    StopSubscription();
+    _subSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
+    _subSocket.Subscribe("");
+    ConnectionSpin += TopicUpdateSpin;
+    Debug.Log($"Connected topic to {_serverInfo.ip}:{(int)ServerPort.Topic}");
+  }
+
   public void StopSubscription() {
     if (isConnected) {
       _subSocket.Disconnect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
@@ -156,12 +172,14 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     // _topicsCallbacks.Clear();
   }
 
-  public void StartSubscription() {
-    StopSubscription();
-    _subSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
-    _subSocket.Subscribe("");
-    ConnectionSpin += TopicUpdateSpin;
-    Debug.Log($"Connected topic to {_serverInfo.ip}:{(int)ServerPort.Topic}");
+  public void StartService() {
+    _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
+    ConnectionSpin += ServiceRequestSpin;
+  }
+
+  public void StopService() {
+    _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
+    ConnectionSpin -= ServiceRequestSpin;
   }
 
   public void TopicUpdateSpin() {
@@ -170,6 +188,23 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     string[] messageSplit = messageReceived.Split(":", 2);
     if (_topicsCallbacks.ContainsKey(messageSplit[0])) {
       _topicsCallbacks[messageSplit[0]](messageSplit[1]);
+    }
+  }
+
+  public void ServiceRequestSpin() {
+    if (!_resSocket.HasIn) return;
+    Debug.Log("Service Request Received");
+    string messageReceived = _resSocket.ReceiveFrameString();
+    string[] messageSplit = messageReceived.Split(":", 2);
+    Debug.Log($"Service Request: {messageSplit[0]}");
+    if (_serviceCallbacks.ContainsKey(messageSplit[0])) {
+      string response = _serviceCallbacks[messageSplit[0]](messageSplit[1]);
+      Debug.Log($"Service Response: {response}");
+      _resSocket.SendFrame(response);
+    }
+    else {
+      Debug.LogWarning($"Service {messageSplit[0]} not found");
+      _resSocket.SendFrame("Invalid Service");
     }
   }
 
@@ -195,8 +230,10 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     }
   }
 
-  public void RegisterServiceCallback(string service, Action<string> callback) {
+  public void RegisterServiceCallback(string service, Func<string, string> callback) {
+    Debug.Log($"Register service {service}");
     _serviceCallbacks[service] = callback;
+    _localInfo.services.Add(service);
   }
 
   public string GetHostName() {
