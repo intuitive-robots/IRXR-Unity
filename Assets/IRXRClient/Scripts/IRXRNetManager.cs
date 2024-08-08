@@ -37,6 +37,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   public Action OnServerDiscovered;
   public Action ConnectionSpin;
   private UdpClient _discoveryClient;
+  private string _conncetionID = null;
   private HostInfo _serverInfo = null;
   private HostInfo _localInfo = new HostInfo();
 
@@ -90,11 +91,11 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   void Update() {
     // TODO: Disconnect Behavior
-    if (isConnected && lastTimeStamp + 1.0f < Time.realtimeSinceStartup)
-    {
-      OnDisconnected.Invoke();
-      return;
-    }
+    // if (isConnected && lastTimeStamp + 1.0f < Time.realtimeSinceStartup)
+    // {
+    //   OnDisconnected.Invoke();
+    //   return;
+    // }
     ConnectionSpin.Invoke();
     if (_discoveryClient.Available == 0) return; // there's no message to read
     IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
@@ -102,13 +103,16 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     string message =  Encoding.UTF8.GetString(result);
 
     if (!message.StartsWith("SimPub")) return; // not the right tag
-    var split = message.Split(":", 2);
-    string info = split[1];
-    _serverInfo = JsonConvert.DeserializeObject<HostInfo>(info);
-    _serverInfo.ip = endPoint.Address.ToString();
-    if (lastTimeStamp + 1.0f < Time.realtimeSinceStartup) {
+    var split = message.Split(":", 3);
+    if (_conncetionID != split[1]) {
+      if (isConnected) OnDisconnected.Invoke();
+      _conncetionID = split[1];
+      string infoStr = split[2];
+      _serverInfo = JsonConvert.DeserializeObject<HostInfo>(infoStr);
+      _serverInfo.ip = endPoint.Address.ToString();
       _localInfo.ip = GetLocalIPsInSameSubnet(_serverInfo.ip);
       Debug.Log($"Discovered server at {_serverInfo.ip} with local IP {_localInfo.ip}");
+      // OnDisconnected.Invoke();
       OnServerDiscovered.Invoke();
       OnConnectionCompleted.Invoke();
       isConnected = true; // not really elegant, just for the disconnection of subsocket
