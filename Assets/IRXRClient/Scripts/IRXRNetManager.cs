@@ -85,7 +85,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     OnDisconnected += () => isConnected = false;
     OnDisconnected += StopSubscription;
     OnDisconnected += () => _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
-    OnDisconnected += () => _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
+    OnDisconnected += () => StopService;
     lastTimeStamp = -1.0f;
   }
 
@@ -173,6 +173,15 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     // _topicsCallbacks.Clear();
   }
 
+  public void StartService() {
+    _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}")
+    ConnectionSpin += ServiceRequestSpin;
+  }
+
+  public void StopService() {
+    _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}")
+    ConnectionSpin -= ServiceRequestSpin;
+  }
 
   public void TopicUpdateSpin() {
     if (!_subSocket.HasIn) return;
