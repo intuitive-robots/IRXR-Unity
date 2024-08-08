@@ -84,8 +84,8 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     OnDisconnected += () => Debug.Log("Disconnected");
     OnDisconnected += () => isConnected = false;
     OnDisconnected += StopSubscription;
+    OnDisconnected += StopService;
     OnDisconnected += () => _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
-    OnDisconnected += () => StopService;
     lastTimeStamp = -1.0f;
   }
 
@@ -112,7 +112,6 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
       _serverInfo.ip = endPoint.Address.ToString();
       _localInfo.ip = GetLocalIPsInSameSubnet(_serverInfo.ip);
       Debug.Log($"Discovered server at {_serverInfo.ip} with local IP {_localInfo.ip}");
-      // OnDisconnected.Invoke();
       OnServerDiscovered.Invoke();
       OnConnectionCompleted.Invoke();
       isConnected = true; // not really elegant, just for the disconnection of subsocket
@@ -174,12 +173,12 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   }
 
   public void StartService() {
-    _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}")
+    _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
     ConnectionSpin += ServiceRequestSpin;
   }
 
   public void StopService() {
-    _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}")
+    _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
     ConnectionSpin -= ServiceRequestSpin;
   }
 
