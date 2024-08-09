@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/IRXRClient/Scenes/IRXRClientSample.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 0
+    path: Assets/MetaQuest3/Scene/PointCloudLabeling.unity
+    guid: 6cd91a426bd822c48a081abbf80c806c
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 5f6b10141f2f8e54a816c17ec9bce5b4, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 31bc18ad5f271024184de3481a572c66, type: 2}
