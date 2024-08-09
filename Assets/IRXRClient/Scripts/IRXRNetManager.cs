@@ -55,6 +55,12 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   private float lastTimeStamp;
   private bool isConnected = false;
   private float timeOffset = 0.0f;
+  public float TimeOffset
+  {
+    get { return timeOffset; }
+    set { timeOffset = value; }
+  }
+
 
   void Awake() {
     AsyncIO.ForceDotNet.Force();
@@ -109,9 +115,9 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     float startTimer = Time.realtimeSinceStartup;
     float serverTime = float.Parse(RequestString("GetServerTimestamp"));
     float endTimer = Time.realtimeSinceStartup;
-    timeOffset = serverTime - (startTimer + endTimer) / 2;
-    float reqDelay = (endTimer - startTimer) / 2 * 1000;
-    Debug.Log($"Request Delay: {reqDelay} ms");
+    timeOffset = (startTimer + endTimer) / 2 - serverTime;
+    float requestDelay = (endTimer - startTimer) / 2 * 1000;
+    Debug.Log($"Request Delay: {requestDelay} ms");
   }
 
   void OnApplicationQuit() {
