@@ -19,7 +19,7 @@ public class MetaQuest3InputData
     public bool Y;
 }
 
-public class MetaQuest3InputStreamer : Streamer
+public class MetaQuest3Controller : Streamer
 {
 
     [SerializeField] private Transform trackingSpace;
@@ -30,7 +30,23 @@ public class MetaQuest3InputStreamer : Streamer
         _topic = "InputData";
     }
 
-    protected override void Initialize() {}
+    protected override void Initialize()
+    {
+        IRXRNetManager _netManager = IRXRNetManager.Instance;
+        string hostName = _netManager.GetHostName();
+        _netManager.SubscribeTopic($"{hostName}/Vibration", Vibration);
+    }
+
+    public void Vibration(string message) {
+        if (message == "left")
+        {
+           OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.LTouch);
+        }
+        else if (message == "right")
+        {
+            OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.RTouch);
+        }
+    }
 
 
     void Update() {
