@@ -32,7 +32,7 @@ public class SceneLoader : MonoBehaviour {
 
   void Start() {
     _netManager = IRXRNetManager.Instance;
-    _netManager.OnServerDiscovered += ClearScene;
+    _netManager.OnDisconnected += ClearScene;
     _netManager.OnConnectionCompleted += DownloadScene;
     updateAction = () => { };
     OnSceneLoaded += () => Debug.Log("Scene Loaded");
@@ -62,7 +62,7 @@ public class SceneLoader : MonoBehaviour {
     _simScene = JsonConvert.DeserializeObject<SimScene>(asset_info);
     DownloadAssets(_simScene);
     float timeSpent = (Time.realtimeSinceStartup - downloadStartTime) * 1000;
-    Debug.Log($"Downloaded Scene in {Time.realtimeSinceStartup - downloadStartTime} s");
+    Debug.Log($"Downloaded Scene in {(int)timeSpent} ms");
     updateAction += BuildScene;
   }
 
@@ -75,7 +75,6 @@ public class SceneLoader : MonoBehaviour {
   }
 
   private void DownloadMesh(SimMesh mesh) {
-
     if (_cachedMeshes.TryGetValue(mesh.dataHash, out Mesh cached)) {
       mesh.compiledMesh = cached;
       _simMeshes.Add(mesh.id, mesh);
@@ -177,6 +176,7 @@ public class SceneLoader : MonoBehaviour {
   void ClearScene() {
     OnSceneCleared.Invoke();
     if (_simSceneObj != null) Destroy(_simSceneObj);
+    _simSceneObj = null;
     _simObjTrans.Clear();
     _simMeshes.Clear();
     _simMaterials.Clear();

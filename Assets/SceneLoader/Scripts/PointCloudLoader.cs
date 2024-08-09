@@ -12,7 +12,7 @@ class PointCloudData {
 [RequireComponent(typeof(ParticleSystem))]
 public class PointCloudLoader : MonoBehaviour
 {
-    private ParticleSystem particleSystem = null;
+    private ParticleSystem _particleSystem = null;
     private ParticleSystem.Particle[] voxels;
     bool voxelsUpdated = false;
     private IRXRNetManager _netManager;
@@ -20,7 +20,7 @@ public class PointCloudLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        particleSystem = GetComponent<ParticleSystem>();
+        _particleSystem = GetComponent<ParticleSystem>();
         _netManager = IRXRNetManager.Instance;
         _netManager.RegisterServiceCallback("LoadPointCloud", LoadPointCloud);
     }
@@ -30,7 +30,7 @@ public class PointCloudLoader : MonoBehaviour
     {
         if (voxelsUpdated)
         {
-            particleSystem.SetParticles(voxels, voxels.Length);
+            _particleSystem.SetParticles(voxels, voxels.Length);
             voxelsUpdated = false;
         }
     }
