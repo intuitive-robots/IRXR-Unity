@@ -360,6 +360,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: IRXRClient
       objectReference: {fileID: 0}
+    - target: {fileID: 9004782405653955561, guid: 94d5024eac9ef16668f3a4c00717c811, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -376,6 +380,14 @@ PrefabInstance:
     - target: {fileID: 1715612398501171564, guid: 68b4bc8f9089e32fa861e21c5913e321, type: 3}
       propertyPath: m_Name
       value: SimScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 1715612398501171564, guid: 68b4bc8f9089e32fa861e21c5913e321, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1817450283232457565, guid: 68b4bc8f9089e32fa861e21c5913e321, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2085763002845073359, guid: 68b4bc8f9089e32fa861e21c5913e321, type: 3}
       propertyPath: m_LocalPosition.x
@@ -416,6 +428,10 @@ PrefabInstance:
     - target: {fileID: 2085763002845073359, guid: 68b4bc8f9089e32fa861e21c5913e321, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5552327243606421420, guid: 68b4bc8f9089e32fa861e21c5913e321, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

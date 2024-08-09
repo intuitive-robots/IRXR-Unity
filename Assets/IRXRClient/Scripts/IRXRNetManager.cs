@@ -54,6 +54,13 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   private float lastTimeStamp;
   private bool isConnected = false;
+  private float timeOffset = 0.0f;
+  public float TimeOffset
+  {
+    get { return timeOffset; }
+    set { timeOffset = value; }
+  }
+
 
   void Awake() {
     AsyncIO.ForceDotNet.Force();
@@ -73,37 +80,22 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   }
 
   void Start() {
-    OnServerDiscovered += ConnectService;
-    OnServerDiscovered += StartSubscription;
-    OnServerDiscovered += () => isConnected = true;
-    OnConnectionCompleted += () => _pubSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
-    OnConnectionCompleted += () => _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
-    OnConnectionCompleted += () => { ConnectionSpin += ServiceRequestSpin; };
+    OnServerDiscovered += StartConnection;
     OnConnectionCompleted += RegisterInfo2Server;
     ConnectionSpin += () => {};
-    OnDisconnected += () => Debug.Log("Disconnected");
-    OnDisconnected += () => isConnected = false;
-    OnDisconnected += StopSubscription;
-    OnDisconnected += StopService;
-    OnDisconnected += () => _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
-    lastTimeStamp = -5.0f;
+    OnDisconnected += StopConnection;
+    lastTimeStamp = -1.0f;
   }
 
   void Update() {
-    // TODO: Disconnect Behavior
-    // if (isConnected && lastTimeStamp + 1.0f < Time.realtimeSinceStartup)
-    // {
-    //   OnDisconnected.Invoke();
-    //   return;
-    // }
     ConnectionSpin.Invoke();
     if (_discoveryClient.Available == 0) return; // there's no message to read
     IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
     byte[] result = _discoveryClient.Receive(ref endPoint);
     string message =  Encoding.UTF8.GetString(result);
-
     if (!message.StartsWith("SimPub")) return; // not the right tag
     var split = message.Split(":", 3);
+    // check if the message is from the same server
     if (_conncetionID != split[1]) {
       if (isConnected) OnDisconnected.Invoke();
       _conncetionID = split[1];
@@ -114,9 +106,18 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
       Debug.Log($"Discovered server at {_serverInfo.ip} with local IP {_localInfo.ip}");
       OnServerDiscovered.Invoke();
       OnConnectionCompleted.Invoke();
-      isConnected = true; // not really elegant, just for the disconnection of subsocket
+      isConnected = true;
     }
     lastTimeStamp = Time.realtimeSinceStartup;
+  }
+
+  private void CaculateTimestampOffset() {
+    float startTimer = Time.realtimeSinceStartup;
+    float serverTime = float.Parse(RequestString("GetServerTimestamp"));
+    float endTimer = Time.realtimeSinceStartup;
+    timeOffset = (startTimer + endTimer) / 2 - serverTime;
+    float requestDelay = (endTimer - startTimer) / 2 * 1000;
+    Debug.Log($"Request Delay: {requestDelay} ms");
   }
 
   void OnApplicationQuit() {
@@ -130,11 +131,6 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public PublisherSocket GetPublisherSocket() {
     return _pubSocket;
-  }
-
-  public void ConnectService () {
-    _reqSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Service}");
-    Debug.Log($"Starting service connection to {_serverInfo.ip}:{(int)ServerPort.Service}");
   }
 
   // Please use these two request functions to send request to the server.
@@ -154,15 +150,22 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     return result;
   }
 
-  public void StartSubscription() {
-    StopSubscription();
+  public void StartConnection() {
+    if (isConnected) StopConnection();
     _subSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
     _subSocket.Subscribe("");
     ConnectionSpin += TopicUpdateSpin;
     Debug.Log($"Connected topic to {_serverInfo.ip}:{(int)ServerPort.Topic}");
+    _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
+    ConnectionSpin += ServiceRespondSpin;
+    _reqSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Service}");
+    Debug.Log($"Starting service connection to {_serverInfo.ip}:{(int)ServerPort.Service}");
+    _pubSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
+    isConnected = true;
+    CaculateTimestampOffset();
   }
 
-  public void StopSubscription() {
+  public void StopConnection() {
     if (isConnected) {
       _subSocket.Disconnect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
       while (_subSocket.HasIn) _subSocket.SkipFrame();
@@ -170,16 +173,11 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     ConnectionSpin -= TopicUpdateSpin;
     // It is not necessary to clear the topics callbacks
     // _topicsCallbacks.Clear();
-  }
-
-  public void StartService() {
-    _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
-    ConnectionSpin += ServiceRequestSpin;
-  }
-
-  public void StopService() {
     _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
-    ConnectionSpin -= ServiceRequestSpin;
+    ConnectionSpin -= ServiceRespondSpin;
+    _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
+    isConnected = false;
+    Debug.Log("Disconnected");
   }
 
   public void TopicUpdateSpin() {
@@ -191,7 +189,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     }
   }
 
-  public void ServiceRequestSpin() {
+  public void ServiceRespondSpin() {
     if (!_resSocket.HasIn) return;
     Debug.Log("Service Request Received");
     string messageReceived = _resSocket.ReceiveFrameString();
