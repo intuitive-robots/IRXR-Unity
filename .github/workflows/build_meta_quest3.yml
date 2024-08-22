@@ -40,7 +40,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: ""
-          androidExportType: "AndroidAppBundle"
+          androidExportType: "androidAppBundle"
           # TODO maybe androidKeystore Setup?
       - uses: actions/upload-artifact@v3
         with:
