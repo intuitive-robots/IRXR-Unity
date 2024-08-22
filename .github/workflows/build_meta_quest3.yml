@@ -5,8 +5,8 @@ on: [push]
 jobs:
   buildForAndroid:
     name: Build for ${{ matrix.targetPlatform }}
-    # run on latest windows
-    runs-on: windows-latest
+    # run on latest ubuntu
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -21,6 +21,9 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+      # install mp4 codecs
+      - name: Install mp4 codecs
+        run: sudo apt-get install ubuntu-restricted-extras
       - uses: actions/cache@v3
         with:
           path: ${{ matrix.projectPath }}/Library
