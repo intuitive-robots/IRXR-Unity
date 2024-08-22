@@ -44,7 +44,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: ""
-          androidExportType: "apk"
+          androidExportType: "androidPackage"
           buildName: "MetaQuest3Build"
       - uses: actions/upload-artifact@v3
         with:
