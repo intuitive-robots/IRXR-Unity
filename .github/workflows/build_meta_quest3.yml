@@ -20,9 +20,6 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-      - name: Install mp4 codecs
-        # This is needed cause some .mp4 files get downloaded as part of MetaQuest package tooltipps
-        run: sudo apt-get install ubuntu-restricted-extras
       - uses: actions/cache@v3
         with:
           path: ${{ matrix.projectPath }}/Library
@@ -33,6 +30,9 @@ jobs:
             Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
             Library-${{ matrix.projectPath }}-
             Library-
+      - name: Install mp4 codecs
+        # This is needed cause some .mp4 files get downloaded as part of MetaQuest package tooltipps
+        run: sudo apt-get install ubuntu-restricted-extras
       - uses: jlumbroso/free-disk-space@v1.2.0
       - uses: game-ci/unity-builder@v4
         env:
