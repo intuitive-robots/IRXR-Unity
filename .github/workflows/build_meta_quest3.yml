@@ -1,6 +1,9 @@
 name: Build Meta Quest3
 
-on: [push] #TODO
+on:
+  pull_request:
+    branches:
+      - meta-quest3-dev
 
 jobs:
   buildForMetaQuest3:
@@ -50,3 +53,5 @@ jobs:
         with:
           name: MetaQuest3Build
           path: build
+
+# TODO add some release logic here
