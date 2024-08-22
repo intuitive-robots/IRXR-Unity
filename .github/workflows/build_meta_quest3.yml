@@ -1,11 +1,10 @@
 name: Build Meta Quest3
 
-on: [push]
+on: [push] #TODO
 
 jobs:
-  buildForAndroid:
+  buildForMetaQuest3:
     name: Build for ${{ matrix.targetPlatform }}
-    # run on latest ubuntu
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -21,8 +20,8 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-      # install mp4 codecs
       - name: Install mp4 codecs
+        # This is needed cause some .mp4 files get downloaded as part of MetaQuest package tooltipps
         run: sudo apt-get install ubuntu-restricted-extras
       - uses: actions/cache@v3
         with:
@@ -46,8 +45,8 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: ""
           androidExportType: "androidAppBundle"
-          # TODO maybe androidKeystore Setup?
+          buildName: "MetaQuest3Build"
       - uses: actions/upload-artifact@v3
         with:
           name: MetaQuest3Build
-          path: build/MetaQuest3
+          path: build
