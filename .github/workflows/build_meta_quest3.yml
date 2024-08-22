@@ -4,7 +4,7 @@ on: [push] #TODO
 
 jobs:
   buildForMetaQuest3:
-    name: Build for ${{ matrix.targetPlatform }}
+    name: Build for MetaQuest3
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
