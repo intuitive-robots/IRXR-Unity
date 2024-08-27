@@ -191,7 +191,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public void ServiceRespondSpin() {
     if (!_resSocket.HasIn) return;
-    Debug.Log("Service Request Received");
+     
     string messageReceived = _resSocket.ReceiveFrameString();
     string[] messageSplit = messageReceived.Split(":", 2);
     Debug.Log($"Service Request: {messageSplit[0]}");
