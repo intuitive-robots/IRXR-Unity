@@ -32,6 +32,23 @@ git checkout hololens2-dev
 and the follow the [HoloLens2 instruction](./Docs/HoloLens2Deploy.md). 
 
 
+### Build Workflow
+Currently supported plattforms:  
+- [x] MetaQuest3
+- [ ] HoloLens2
+
+**Users:** find the latest file under [Releases](https://github.com/intuitive-robots/IRXR-Unity/releases). 
+**Collaborators:** find your .apk file as an Artifact of a workflow under [Actions](https://github.com/intuitive-robots/IRXR-Unity/actions/).
+ 
+#### MetaQuest3 run .apk
+To execute an .apk file after you've downloaded it
+
+1. connect your MetaQuest3 to your computer via USB
+1. install [adb](https://developer.android.com/tools/adb)
+1. run `adb install -r YOURFILE.apk`
+1. execute programm on MetaQuest3
+
+
 ### Run your application
 
 We use [SimPublisher](https://github.com/intuitive-robots/SimPublisher.git) to make the communication eaiser. 
