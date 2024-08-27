@@ -184,10 +184,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43f86b14a27b52f4f9298c33015b5c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transferOnSecondSelection: 1
+  _transferOnSecondSelection: 0
   _addNewPointsToFront: 0
   _forwardElement: {fileID: 0}
-  _oneGrabTransformer: {fileID: 4641397673901773112}
+  _oneGrabTransformer: {fileID: 4905919364394044375}
   _twoGrabTransformer: {fileID: 4905919364394044375}
   _targetTransform: {fileID: 7932504893417094405}
   _maxGrabPoints: -1
@@ -242,38 +242,38 @@ MonoBehaviour:
   _positionConstraints:
     ConstraintsAreRelative: 0
     XAxis:
-      ConstrainAxis: 1
+      ConstrainAxis: 0
       AxisRange:
         Min: 0
         Max: 0
     YAxis:
-      ConstrainAxis: 1
+      ConstrainAxis: 0
       AxisRange:
         Min: 0
         Max: 0
     ZAxis:
-      ConstrainAxis: 1
+      ConstrainAxis: 0
       AxisRange:
         Min: 0
         Max: 0
   _rotationConstraints:
     XAxis:
-      ConstrainAxis: 1
+      ConstrainAxis: 0
       AxisRange:
         Min: 0
         Max: 0
     YAxis:
-      ConstrainAxis: 1
+      ConstrainAxis: 0
       AxisRange:
         Min: 0
         Max: 0
     ZAxis:
-      ConstrainAxis: 1
+      ConstrainAxis: 0
       AxisRange:
         Min: 0
         Max: 0
   _scaleConstraints:
-    ConstraintsAreRelative: 1
+    ConstraintsAreRelative: 0
     XAxis:
       ConstrainAxis: 0
       AxisRange:

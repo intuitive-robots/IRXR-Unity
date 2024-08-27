@@ -5,13 +5,13 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/MetaQuest3/Scene/QuestScene.unity
     guid: 2ad3c97db74ec8e49abaa4327292027b
   - enabled: 0
     path: Assets/IRXRClient/Scenes/IRXRClientSample.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 0
+  - enabled: 1
     path: Assets/MetaQuest3/Scene/PointCloudLabeling.unity
     guid: 6cd91a426bd822c48a081abbf80c806c
   m_configObjects:
