@@ -5,6 +5,7 @@ using Oculus.Interaction;
 using UnityEngine.UIElements;
 using Unity.VisualScripting;
 using UnityEngine.Animations;
+using NetMQ;
 
 class BBoxData {
     public List<float[]> data;
@@ -13,17 +14,25 @@ class BBoxData {
 public class MetaQuestBBoxGenerator : MonoBehaviour {
 
     [SerializeField] public GameObject boundingBoxPrefab;
-    private List<GameObject> bboxList = new List<GameObject>();
+    private List<GameObject> bboxList = new List<GameObject>();    
+    private IRXRNetManager _netManager;
+    const string TOPIC = "bbox_submission";
     
     private void Start() {
-        IRXRNetManager _netManager = IRXRNetManager.Instance;
+        _netManager = IRXRNetManager.Instance;
         _netManager.RegisterServiceCallback("GenerateBBox", CreateBBoxFromJson);
+
+        _netManager.CreatePublishTopic(TOPIC);
     }
 
     private void Update() {
         if (OVRInput.GetDown(OVRInput.Button.Two)) // button A locks / unlocks the scene
         {
             GenerateDefaultBBox();
+        }
+        if (OVRInput.GetDown(OVRInput.Button.Four))
+        {
+            SubmitBBox(BBoxToJson());
         }
     }
 
@@ -37,6 +46,22 @@ public class MetaQuestBBoxGenerator : MonoBehaviour {
             GenerateBBox(position, rotation, localScale);
         }
         return "Generated Bounding Box";
+    }
+
+    public string BBoxToJson()
+    {
+        var bbox = bboxList[0];
+        Vector3 position = bbox.transform.localPosition;
+        Quaternion rotation = bbox.transform.localRotation;
+        Vector3 localScale = bbox.transform.localScale;
+
+        BBoxData bboxData = new BBoxData()
+        {
+            data = new List<float[]> {
+                new float[] {position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, localScale.x, localScale.y, localScale.z}
+            }
+        };
+        return JsonConvert.SerializeObject(bboxData);
     }
 
     public void GenerateBBox(Vector3 pos, Quaternion rot, Vector3 scale) {
@@ -58,4 +83,10 @@ public class MetaQuestBBoxGenerator : MonoBehaviour {
         GenerateBBox(new Vector3(0, 0, 0), new Quaternion(0, 0, 0, 0), Vector3.zero);
     }
 
+    private void SubmitBBox(string bboxData)
+    {
+        var publisher = _netManager.GetPublisherSocket();
+        bboxData = $"{TOPIC}:{bboxData}";
+        publisher.SendFrame(bboxData);
+    }
 }
