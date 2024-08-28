@@ -3,23 +3,17 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Oculus.Interaction;
 using UnityEngine.UIElements;
+using Unity.VisualScripting;
+using UnityEngine.Animations;
 
 class BBoxData {
     public List<float[]> data;
-}
-
-enum ScaleMode {
-    ALL,
-    X,
-    Y,
-    Z
 }
 
 public class MetaQuestBBoxGenerator : MonoBehaviour {
 
     [SerializeField] public GameObject boundingBoxPrefab;
     private List<GameObject> bboxList = new List<GameObject>();
-    private ScaleMode scaleMode = ScaleMode.ALL;
     
     private void Start() {
         IRXRNetManager _netManager = IRXRNetManager.Instance;
@@ -30,58 +24,6 @@ public class MetaQuestBBoxGenerator : MonoBehaviour {
         if (OVRInput.GetDown(OVRInput.Button.Two)) // button A locks / unlocks the scene
         {
             GenerateDefaultBBox();
-        }
-        if (OVRInput.GetDown(OVRInput.Button.Three))
-        {
-            switch (scaleMode)
-            {
-                case ScaleMode.ALL:
-                    scaleMode = ScaleMode.X;
-                    break;
-                case ScaleMode.X:
-                    scaleMode = ScaleMode.Y;
-                    break;
-                case ScaleMode.Y:
-                    scaleMode = ScaleMode.Z;
-                    break;
-                case ScaleMode.Z:
-                    scaleMode = ScaleMode.ALL;
-                    break;
-            }
-            Debug.Log("Scale Mode: " + scaleMode);
-            
-            TransformerUtils.FloatRange range = new TransformerUtils.FloatRange(){
-                Min = 1.0f,
-                Max = 1.0f
-            };
-            TransformerUtils.ScaleConstraints scaleConstraints = new TransformerUtils.ScaleConstraints()
-            {
-                XAxis = new TransformerUtils.ConstrainedAxis()
-                {
-                    ConstrainAxis = scaleMode == ScaleMode.Y || scaleMode == ScaleMode.Z,
-                    AxisRange = range
-                },
-                YAxis = new TransformerUtils.ConstrainedAxis()
-                {
-                    ConstrainAxis = scaleMode == ScaleMode.X || scaleMode == ScaleMode.Z,
-                    AxisRange = range
-                },
-                ZAxis = new TransformerUtils.ConstrainedAxis()
-                {
-                    ConstrainAxis = scaleMode == ScaleMode.X || scaleMode == ScaleMode.Y,
-                    AxisRange = range
-                },
-                ConstraintsAreRelative = true
-                
-            };
-        
-            foreach (var bbox in bboxList)
-            {
-                foreach (var grabFreeTransformer in bbox.GetComponentsInChildren<GrabFreeTransformer>())
-                {
-                    grabFreeTransformer.InjectOptionalScaleConstraints(scaleConstraints);
-                }
-            }
         }
     }
 
@@ -109,6 +51,7 @@ public class MetaQuestBBoxGenerator : MonoBehaviour {
         if (scale != Vector3.zero) {
             boundingBox.transform.localScale = scale;
         }
+        bboxList.Add(boundingBox);
     }
 
     public void GenerateDefaultBBox() {
