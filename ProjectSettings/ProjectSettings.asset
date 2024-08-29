@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: Intuitive Robot Lab
-  productName: IRXR
+  productName: PointCloudLabeling
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -142,6 +142,8 @@ PlayerSettings:
   bundleVersion: 0.1
   preloadedAssets:
   - {fileID: 11400000, guid: a454b5f547b8e7041a02ed507bd3d630, type: 2}
+  - {fileID: -2412258842065300301, guid: 31bc18ad5f271024184de3481a572c66, type: 2}
+  - {fileID: 11400000, guid: 5f6b10141f2f8e54a816c17ec9bce5b4, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
