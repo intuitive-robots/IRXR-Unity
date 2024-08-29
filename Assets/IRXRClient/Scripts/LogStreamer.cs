@@ -33,9 +33,4 @@ public class LogStreamer : Streamer {
     }
   }
 
-  // TODO: caculate the timestamp difference between the server and the client
-  void CaculateTimestampDiff() {
-    // _publisher.Publish("CaculateTimestampDiff");
-  }
-
 }
