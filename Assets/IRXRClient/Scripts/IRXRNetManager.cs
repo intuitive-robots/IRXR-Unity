@@ -195,7 +195,6 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public void TopicUpdateSpin() {
     // Only process the latest message of each topic
-    while (_subSocket.HasIn) _subSocket.SkipFrame();
     Dictionary<string, string> messageProcessed = new();
     while (_subSocket.HasIn)
     {
