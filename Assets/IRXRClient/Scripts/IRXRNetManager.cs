@@ -82,6 +82,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   void Start() {
     OnServerDiscovered += StartConnection;
     OnServerDiscovered += RegisterInfo2Server;
+    // OnConnectionCompleted += RegisterInfo2Server;
     OnConnectionCompleted += () => {};
     ConnectionSpin += () => {};
     OnDisconnected += StopConnection;
@@ -187,16 +188,24 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
     ConnectionSpin -= ServiceRespondSpin;
     _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
+    _reqSocket.Disconnect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Service}");
     isConnected = false;
     Debug.Log("Disconnected");
   }
 
   public void TopicUpdateSpin() {
-    if (!_subSocket.HasIn) return;
-    string messageReceived = _subSocket.ReceiveFrameString();
-    string[] messageSplit = messageReceived.Split(":", 2);
-    if (_topicsCallbacks.ContainsKey(messageSplit[0])) {
-      _topicsCallbacks[messageSplit[0]](messageSplit[1]);
+    // Only process the latest message of each topic
+    Dictionary<string, string> messageProcessed = new();
+    while (_subSocket.HasIn)
+    {
+      string messageReceived = _subSocket.ReceiveFrameString();
+      string[] messageSplit = messageReceived.Split(":", 2);
+      if (_topicsCallbacks.ContainsKey(messageSplit[0])) {
+        messageProcessed[messageSplit[0]] = messageSplit[1];
+      }
+      foreach (var (topic, msg) in messageProcessed) {
+        _topicsCallbacks[topic](msg);
+      }
     }
   }
 
