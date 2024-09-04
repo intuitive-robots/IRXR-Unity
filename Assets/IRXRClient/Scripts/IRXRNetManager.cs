@@ -194,14 +194,20 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   }
 
   public void TopicUpdateSpin() {
-    if (!_subSocket.HasIn) return;
-    string messageReceived = _subSocket.ReceiveFrameString();
-    string[] messageSplit = messageReceived.Split(":", 2);
-    if (_topicsCallbacks.ContainsKey(messageSplit[0])) {
-      _topicsCallbacks[messageSplit[0]](messageSplit[1]);
-    }
-    // drop the rest messages
+    // Only process the latest message of each topic
     while (_subSocket.HasIn) _subSocket.SkipFrame();
+    Dictionary<string, string> messageProcessed = new();
+    while (_subSocket.HasIn)
+    {
+      string messageReceived = _subSocket.ReceiveFrameString();
+      string[] messageSplit = messageReceived.Split(":", 2);
+      if (_topicsCallbacks.ContainsKey(messageSplit[0])) {
+        messageProcessed[messageSplit[0]] = messageSplit[1];
+      }
+      foreach (var (topic, msg) in messageProcessed) {
+        _topicsCallbacks[topic](msg);
+      }
+    }
   }
 
   public void ServiceRespondSpin() {
