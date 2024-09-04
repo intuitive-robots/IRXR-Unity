@@ -82,6 +82,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   void Start() {
     OnServerDiscovered += StartConnection;
     OnServerDiscovered += RegisterInfo2Server;
+    // OnConnectionCompleted += RegisterInfo2Server;
     OnConnectionCompleted += () => {};
     ConnectionSpin += () => {};
     OnDisconnected += StopConnection;
@@ -187,6 +188,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
     ConnectionSpin -= ServiceRespondSpin;
     _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
+    _reqSocket.Disconnect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Service}");
     isConnected = false;
     Debug.Log("Disconnected");
   }
@@ -198,6 +200,8 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     if (_topicsCallbacks.ContainsKey(messageSplit[0])) {
       _topicsCallbacks[messageSplit[0]](messageSplit[1]);
     }
+    // drop the rest messages
+    while (_subSocket.HasIn) _subSocket.SkipFrame();
   }
 
   public void ServiceRespondSpin() {
