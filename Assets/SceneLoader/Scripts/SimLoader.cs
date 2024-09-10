@@ -33,7 +33,7 @@ public class SceneLoader : MonoBehaviour {
   void Start() {
     _netManager = IRXRNetManager.Instance;
     _netManager.OnDisconnected += ClearScene;
-    _netManager.OnConnectionCompleted += DownloadScene;
+    _netManager.OnConnectionStart += DownloadScene;
     updateAction = () => { };
     OnSceneLoaded += () => Debug.Log("Scene Loaded");
     OnSceneCleared += () => Debug.Log("Scene Cleared");
@@ -53,6 +53,10 @@ public class SceneLoader : MonoBehaviour {
   }
 
   void DownloadScene() {
+    if (!_netManager.CheckServerService("Scene")) {
+      Debug.LogWarning("Scene Service is not found");
+      return;
+    }
     float downloadStartTime = Time.realtimeSinceStartup;
     string asset_info = _netManager.RequestString("Scene");
     if (asset_info == "Invild Service") {
