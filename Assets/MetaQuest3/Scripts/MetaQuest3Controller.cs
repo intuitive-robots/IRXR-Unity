@@ -34,19 +34,33 @@ public class MetaQuest3Controller : Streamer
     {
         IRXRNetManager _netManager = IRXRNetManager.Instance;
         string hostName = _netManager.GetHostName();
-        _netManager.SubscribeTopic($"{hostName}/Vibration", Vibration);
+        _netManager.SubscribeTopic($"{hostName}/StartVibration", StartVibration);
+        _netManager.SubscribeTopic($"{hostName}/StopVibration", StopVibration);
     }
 
-    public void Vibration(string message) {
+    public void StartVibration(string message) {
         if (message == "left")
         {
-           OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.LTouch);
+           OVRInput.SetControllerVibration(1.0f, 1.0f, OVRInput.Controller.LTouch);
         }
         else if (message == "right")
         {
-            OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.RTouch);
+            OVRInput.SetControllerVibration(1.0f, 1.0f, OVRInput.Controller.RTouch);
         }
     }
+
+
+    public void StopVibration(string message) {
+        if (message == "left")
+        {
+            OVRInput.SetControllerVibration(0.0f, 0.0f, OVRInput.Controller.LTouch);
+        }
+        else if (message == "right")
+        {
+            OVRInput.SetControllerVibration(0.0f, 0.0f, OVRInput.Controller.RTouch);
+        }
+    }
+
 
 
     void Update() {
