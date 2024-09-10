@@ -32,8 +32,8 @@ class HostInfo {
 public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public Action OnDisconnected;
-  public Action OnConnectionCompleted;
-  public Action OnServerDiscovered;
+  public Action OnConnectionStart;
+  // public Action OnServerDiscovered;
   public Action ConnectionSpin;
   private UdpClient _discoveryClient;
   private string _conncetionID = null;
@@ -76,17 +76,30 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     // the collection of all sockets
     _sockets = new List<NetMQSocket> { _reqSocket, _resSocket, _subSocket, _pubSocket };
     // Default host name
-    _localInfo.name = "UnityClient";
+    if (PlayerPrefs.HasKey("HostName"))
+    {
+        // The key exists, proceed to get the value
+        string savedHostName = PlayerPrefs.GetString("HostName");
+        _localInfo.name = savedHostName;
+        Debug.Log($"Find Host Name: {_localInfo.name}");
+    }
+    else
+    {
+        // The key does not exist, handle it accordingly
+        _localInfo.name = "UnityClient";
+        Debug.Log($"Host Name not found, using default name {_localInfo.name}");
+    }
   }
 
   void Start() {
-    OnServerDiscovered += StartConnection;
-    OnServerDiscovered += RegisterInfo2Server;
-    // OnConnectionCompleted += RegisterInfo2Server;
-    OnConnectionCompleted += () => {};
+    // OnServerDiscovered += StartConnection;
+    // OnServerDiscovered += RegisterInfo2Server;
+    // OnConnectionStart += RegisterInfo2Server;
+    OnConnectionStart += () => { isConnected = true; };
     ConnectionSpin += () => {};
     OnDisconnected += StopConnection;
     lastTimeStamp = -1.0f;
+    RegisterServiceCallback("ChangeHostName", ChangeHoseName);
   }
 
   void Update() {
@@ -106,9 +119,9 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
       _serverInfo.ip = endPoint.Address.ToString();
       _localInfo.ip = GetLocalIPsInSameSubnet(_serverInfo.ip);
       Debug.Log($"Discovered server at {_serverInfo.ip} with local IP {_localInfo.ip}");
-      OnServerDiscovered.Invoke();
-      OnConnectionCompleted.Invoke();
-      isConnected = true;
+      StartConnection();
+      RegisterInfo2Server();
+      OnConnectionStart.Invoke();
     }
     lastTimeStamp = Time.realtimeSinceStartup;
   }
@@ -211,13 +224,10 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public void ServiceRespondSpin() {
     if (!_resSocket.HasIn) return;
-    Debug.Log("Service Request Received");
     string messageReceived = _resSocket.ReceiveFrameString();
     string[] messageSplit = messageReceived.Split(":", 2);
-    Debug.Log($"Service Request: {messageSplit[0]}");
     if (_serviceCallbacks.ContainsKey(messageSplit[0])) {
       string response = _serviceCallbacks[messageSplit[0]](messageSplit[1]);
-      Debug.Log($"Service Response: {response}");
       _resSocket.SendFrame(response);
     }
     else {
@@ -306,8 +316,19 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     return true;
   }
 
-  public void ChangeHoseName(string name) {
+  public string ChangeHoseName(string name) {
     _localInfo.name = name;
+    PlayerPrefs.SetString("HostName", name);
+    Debug.Log($"Change Host Name to {_localInfo.name}");
+    PlayerPrefs.Save();
+    return "Host Name Changed";
+  }
+
+  public bool CheckServerService(string serviceName) {
+    if (isConnected) return false;
+    if (_serverInfo == null) return false;
+    if (_serverInfo.services.Contains(serviceName)) return true;
+    return false;
   }
 
 }
