@@ -31,7 +31,7 @@ class HostInfo {
 
 public class IRXRNetManager : Singleton<IRXRNetManager> {
 
-  [SerializeField] private string host = "UnityEditor";
+  private string host = "UnityClient";
   public Action OnDisconnected;
   public Action OnConnectionCompleted;
   public Action OnServerDiscovered;
