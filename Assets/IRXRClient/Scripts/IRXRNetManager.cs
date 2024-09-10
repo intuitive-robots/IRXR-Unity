@@ -325,7 +325,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   }
 
   public bool CheckServerService(string serviceName) {
-    if (isConnected) return false;
+    if (!isConnected) return false;
     if (_serverInfo == null) return false;
     if (_serverInfo.services.Contains(serviceName)) return true;
     return false;
