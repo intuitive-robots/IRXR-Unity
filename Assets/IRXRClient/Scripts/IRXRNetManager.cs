@@ -31,7 +31,6 @@ class HostInfo {
 
 public class IRXRNetManager : Singleton<IRXRNetManager> {
 
-  private string host = "UnityClient";
   public Action OnDisconnected;
   public Action OnConnectionCompleted;
   public Action OnServerDiscovered;
@@ -74,9 +73,10 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _subSocket = new SubscriberSocket();
     _topicsCallbacks = new Dictionary<string, Action<string>>();
     _pubSocket = new PublisherSocket();
-    
+    // the collection of all sockets
     _sockets = new List<NetMQSocket> { _reqSocket, _resSocket, _subSocket, _pubSocket };
-    _localInfo.name = host;
+    // Default host name
+    _localInfo.name = "UnityClient";
   }
 
   void Start() {
@@ -255,7 +255,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   }
 
   public string GetHostName() {
-    return host;
+    return _localInfo.name;
   }
 
   public static string GetLocalIPsInSameSubnet(string inputIPAddress)
@@ -304,6 +304,10 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
       }
     }
     return true;
+  }
+
+  public void ChangeHoseName(string name) {
+    _localInfo.name = name;
   }
 
 }
