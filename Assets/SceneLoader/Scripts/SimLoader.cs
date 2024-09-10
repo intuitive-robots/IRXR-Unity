@@ -158,6 +158,17 @@ public class SceneLoader : MonoBehaviour {
       }
       else {
         renderer.material = new Material(Shader.Find("Standard"));
+        if (visual.color[3] < 1)
+        {
+          renderer.material.SetFloat("_Mode", 2);
+          renderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+          renderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+          renderer.material.SetInt("_ZWrite", 0);
+          renderer.material.DisableKeyword("_ALPHATEST_ON");
+          renderer.material.EnableKeyword("_ALPHABLEND_ON");
+          renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+          renderer.material.renderQueue = 3000;
+        }
         renderer.material.SetColor("_Color", new Color(visual.color[0], visual.color[1], visual.color[2], visual.color[3]));
       }
 
