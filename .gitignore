@@ -157,3 +157,7 @@ crashlytics-build.properties
 
 # Unity Editor Crash Reporter
 mono_crash.*
+
+# GameCI / Github Workflows 
+/[Aa]rtifacts/
+/[Cc]odeCoverage/
