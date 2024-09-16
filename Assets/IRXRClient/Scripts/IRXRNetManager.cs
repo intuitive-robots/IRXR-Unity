@@ -81,7 +81,8 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   void Start() {
     OnServerDiscovered += StartConnection;
-    OnConnectionCompleted += RegisterInfo2Server;
+    OnServerDiscovered += RegisterInfo2Server;
+    OnConnectionCompleted += () => {};
     ConnectionSpin += () => {};
     OnDisconnected += StopConnection;
     lastTimeStamp = -1.0f;
@@ -113,7 +114,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   private void CaculateTimestampOffset() {
     float startTimer = Time.realtimeSinceStartup;
-    float serverTime = float.Parse(Req uestString("GetServerTimestamp"));
+    float serverTime = float.Parse(RequestString("GetServerTimestamp"));
     float endTimer = Time.realtimeSinceStartup;
     timeOffset = (startTimer + endTimer) / 2 - serverTime;
     float requestDelay = (endTimer - startTimer) / 2 * 1000;
@@ -138,16 +139,25 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   // which will cause the Unity Editor to freeze.
   public string RequestString(string service, string request = "") {
     _reqSocket.SendFrame($"{service}:{request}");
-    string result = _reqSocket.ReceiveFrameString(out bool more);
-    Debug.Log($"Service Response: {result}");
+    // string result = _reqSocket.TryReceiveFrame(out bool more);
+    if (!_reqSocket.TryReceiveFrameString(TimeSpan.FromMilliseconds(5000), out string result, out bool more)) {
+      Debug.LogWarning("Request Timeout");
+      return "Request Timeout";
+    }
     while(more) result += _reqSocket.ReceiveFrameString(out more);
     return result;
   }
 
   public List<byte> RequestBytes(string service, string request = "") {
     _reqSocket.SendFrame($"{service}:{request}");
-    List<byte> result = new List<byte>(_reqSocket.ReceiveFrameBytes(out bool more));
-    while (more) result.AddRange(_reqSocket.ReceiveFrameBytes(out more));
+    List<byte> result = new List<byte>();
+    if (!_reqSocket.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(5000), out byte[] bytes, out bool more)) {
+      Debug.LogWarning("Request Timeout");
+    }
+    else {      
+      result.AddRange(bytes);
+      while (more) result.AddRange(_reqSocket.ReceiveFrameBytes(out more));
+    }
     return result;
   }
 
@@ -192,7 +202,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public void ServiceRespondSpin() {
     if (!_resSocket.HasIn) return;
-    Debug.Log("Service Request Received");
+     
     string messageReceived = _resSocket.ReceiveFrameString();
     string[] messageSplit = messageReceived.Split(":", 2);
     Debug.Log($"Service Request: {messageSplit[0]}");
