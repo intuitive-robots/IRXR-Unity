@@ -113,7 +113,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   private void CaculateTimestampOffset() {
     float startTimer = Time.realtimeSinceStartup;
-    float serverTime = float.Parse(RequestString("GetServerTimestamp"));
+    float serverTime = float.Parse(Req uestString("GetServerTimestamp"));
     float endTimer = Time.realtimeSinceStartup;
     timeOffset = (startTimer + endTimer) / 2 - serverTime;
     float requestDelay = (endTimer - startTimer) / 2 * 1000;
@@ -139,6 +139,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   public string RequestString(string service, string request = "") {
     _reqSocket.SendFrame($"{service}:{request}");
     string result = _reqSocket.ReceiveFrameString(out bool more);
+    Debug.Log($"Service Response: {result}");
     while(more) result += _reqSocket.ReceiveFrameString(out more);
     return result;
   }
