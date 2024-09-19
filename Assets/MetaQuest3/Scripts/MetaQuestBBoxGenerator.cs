@@ -20,8 +20,7 @@ public class MetaQuestBBoxGenerator : MonoBehaviour {
     
     private void Start() {
         _netManager = IRXRNetManager.Instance;
-        _netManager.RegisterServiceCallback("GenerateBBox", CreateBBoxFromJson);
-
+        _netManager.RegisterServiceCallback("GenerateBBox", CreateBBoxFromJson);  
         _netManager.CreatePublishTopic(TOPIC);
     }
 
@@ -36,8 +35,15 @@ public class MetaQuestBBoxGenerator : MonoBehaviour {
         }
     }
 
+
     public string CreateBBoxFromJson(string bBoxJson) {
         BBoxData bboxData = JsonConvert.DeserializeObject<BBoxData>(bBoxJson);
+        // Destroy all existing bounding boxes and empty the list
+        foreach (var bbox in bboxList)
+        {
+            Destroy(bbox);
+        }
+        bboxList.Clear();
         foreach (var item in bboxData.data)
         {
             Vector3 position = new Vector3(item[0], item[1], item[2]);
@@ -53,7 +59,7 @@ public class MetaQuestBBoxGenerator : MonoBehaviour {
         var bbox = bboxList[0];
         Vector3 position = bbox.transform.localPosition;
         Quaternion rotation = bbox.transform.localRotation;
-        Vector3 localScale = bbox.transform.localScale;
+        Vector3 localScale = bbox.transform.Find("Cube").transform.localScale;
 
         BBoxData bboxData = new BBoxData()
         {
@@ -65,6 +71,7 @@ public class MetaQuestBBoxGenerator : MonoBehaviour {
     }
 
     public void GenerateBBox(Vector3 pos, Quaternion rot, Vector3 scale) {
+        Debug.Log("Generating Bounding Box from JSON");
         GameObject boundingBox = Instantiate(boundingBoxPrefab);
         // if (tf == null) {
         //     tf = transform;
