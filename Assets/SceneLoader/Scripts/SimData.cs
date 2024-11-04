@@ -47,7 +47,7 @@ public class SimScene {
 }
 
 public class SimAsset {
-  public string id;
+  public string name;
 }
 
 public class SimMeshData {

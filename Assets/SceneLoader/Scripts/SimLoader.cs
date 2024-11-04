@@ -81,7 +81,7 @@ public class SceneLoader : MonoBehaviour {
   private void DownloadMesh(SimMesh mesh) {
     if (_cachedMeshes.TryGetValue(mesh.dataHash, out Mesh cached)) {
       mesh.compiledMesh = cached;
-      _simMeshes.Add(mesh.id, mesh);
+      _simMeshes.Add(mesh.name, mesh);
       return;
     }
     Span<byte> data = _netManager.RequestBytes("Asset", mesh.dataHash).ToArray();
@@ -90,8 +90,7 @@ public class SceneLoader : MonoBehaviour {
       indices = MemoryMarshal.Cast<byte, int>(data.Slice(mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
       vertices = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.verticesLayout[0], mesh.verticesLayout[1] * sizeof(float))).ToArray(),
       normals = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.normalsLayout[0], mesh.normalsLayout[1] * sizeof(float))).ToArray(),
-      // uv is not implemented yet
-      // uvs = MemoryMarshal.Cast<byte, Vector2>(data.Slice(mesh.uvLayout[0], mesh.uvLayout[1] * sizeof(float))).ToArray(),
+      uvs = MemoryMarshal.Cast<byte, Vector2>(data.Slice(mesh.uvLayout[0], mesh.uvLayout[1] * sizeof(float))).ToArray(),
     };
   }
 
@@ -102,7 +101,7 @@ public class SceneLoader : MonoBehaviour {
       texture.textureData = _netManager.RequestBytes("Asset", texture.dataHash).ToArray();
     }
 
-    _simTextures.Add(texture.id, texture);
+    _simTextures.Add(texture.name, texture);
   }
 
 
@@ -131,8 +130,14 @@ public class SceneLoader : MonoBehaviour {
       GameObject visualObj;
       switch (visual.type) {
         case "MESH": {
+          if (!_simMeshes.ContainsKey(visual.mesh)) {
+            Debug.LogWarning("Mesh not found, " + visual.mesh);
+            visualObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            visualObj.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+            break;
+          }
           SimMesh asset = _simMeshes[visual.mesh];
-          visualObj = new GameObject(asset.id, typeof(MeshFilter), typeof(MeshRenderer));
+          visualObj = new GameObject(asset.name, typeof(MeshFilter), typeof(MeshRenderer));
           visualObj.GetComponent<MeshFilter>().mesh = asset.compiledMesh; 
           break;
         }
@@ -214,14 +219,14 @@ public class SceneLoader : MonoBehaviour {
     SimMesh mesh = (SimMesh)asset;
 
     mesh.compiledMesh = new Mesh{
-      name = mesh.id,
+      name = mesh.name,
       vertices = mesh.rawData.vertices,
       normals = mesh.rawData.normals,
       triangles = mesh.rawData.indices,
       uv = mesh.rawData.uvs,
     };
     _cachedMeshes[mesh.dataHash] = mesh.compiledMesh;
-    _simMeshes[mesh.id] = mesh;
+    _simMeshes[mesh.name] = mesh;
   }
 
   public void ProcessMaterial(SimAsset asset) {
@@ -243,13 +248,13 @@ public class SceneLoader : MonoBehaviour {
     }
 
     material.compiledMaterial = mat;
-    _simMaterials[material.id] = material;
+    _simMaterials[material.name] = material;
   }
 
   public void ProcessTexture(SimAsset asset) {
     SimTexture simTexture = (SimTexture)asset;
 
-    var tex = new Texture2D(simTexture.width, simTexture.height, TextureFormat.RGBA32, false);
+    var tex = new Texture2D(simTexture.width, simTexture.height, TextureFormat.RGB24, false);
     tex.LoadRawTextureData(simTexture.textureData);
     tex.Apply();
 
