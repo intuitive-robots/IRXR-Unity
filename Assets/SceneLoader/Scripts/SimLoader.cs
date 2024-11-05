@@ -209,7 +209,6 @@ public class SceneLoader : MonoBehaviour {
   public void ProcessAsset() {
     _simScene.meshes.ForEach(ProcessMesh);
     _simScene.materials.ForEach(ProcessMaterial);
-    _simScene.textures.ForEach(ProcessTexture);  
   }
 
   public void ProcessMesh(SimAsset asset) {
@@ -222,6 +221,9 @@ public class SceneLoader : MonoBehaviour {
       triangles = mesh.rawData.indices,
       uv = mesh.rawData.uvs,
     };
+
+    mesh.rawData = null;
+
     _cachedMeshes[mesh.dataHash] = mesh.compiledMesh;
     _simMeshes[mesh.name] = mesh;
   }
@@ -239,7 +241,8 @@ public class SceneLoader : MonoBehaviour {
 
     if (material.texture != null) {
       SimTexture texture = _simTextures[material.texture];
-      if (texture.compiledTexture == null) ProcessTexture(texture);
+      if (texture.compiledTexture == null) 
+        ProcessTexture(texture);
       mat.mainTexture = texture.compiledTexture;
       mat.mainTextureScale = new Vector2(material.textureSize[0], material.textureSize[1]);
     }
@@ -248,15 +251,18 @@ public class SceneLoader : MonoBehaviour {
     _simMaterials[material.name] = material;
   }
 
-  public void ProcessTexture(SimAsset asset) {
+  public SimAsset ProcessTexture(SimAsset asset) {
     SimTexture simTexture = (SimTexture)asset;
 
     var tex = new Texture2D(simTexture.width, simTexture.height, TextureFormat.RGB24, false);
     tex.LoadRawTextureData(simTexture.textureData);
     tex.Apply();
 
+    simTexture.textureData = null;
+
     simTexture.compiledTexture = tex;
     _cachedTextures[simTexture.dataHash] = simTexture.compiledTexture;
+    return asset;
   }
 
   public Dictionary<string, Transform> GetObjectsTrans() {
