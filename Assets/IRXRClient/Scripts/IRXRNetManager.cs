@@ -14,15 +14,16 @@ public enum ServerPort {
   Discovery = 7720,
   Service = 7721,
   Topic = 7722,
+  HTTP = 7723,
 }
 
 public enum ClientPort {
   Discovery = 7720,
-  Service = 7723,
-  Topic = 7724,
+  Service = 7730,
+  Topic = 7731,
 }
 
-class HostInfo {
+public class HostInfo {
   public string name;
   public string ip;
   public List<string> topics = new();
@@ -37,7 +38,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   public Action ConnectionSpin;
   private UdpClient _discoveryClient;
   private string _conncetionID = null;
-  private HostInfo _serverInfo = null;
+  public HostInfo _serverInfo = null;
   private HostInfo _localInfo = new HostInfo();
 
   private List<NetMQSocket> _sockets;
@@ -329,6 +330,10 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     if (_serverInfo == null) return false;
     if (_serverInfo.services.Contains(serviceName)) return true;
     return false;
+  }
+
+  public HostInfo GetServerInfo() {
+    return _serverInfo;
   }
 
 }

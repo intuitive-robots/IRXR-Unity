@@ -1,9 +1,10 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
 using Newtonsoft.Json;
-
+using UnityEngine.Networking;
 
 public class SceneLoader : MonoBehaviour {
 
@@ -20,6 +21,8 @@ public class SceneLoader : MonoBehaviour {
   private Dictionary<string, SimTexture> _simTextures;
   private Dictionary<string, Mesh> _cachedMeshes;
   private Dictionary<string, Texture> _cachedTextures;
+
+  private int _coroutinesCompleted = 0;
 
   void Awake() {
     _simMeshes = new();
@@ -57,7 +60,7 @@ public class SceneLoader : MonoBehaviour {
       Debug.LogWarning("Scene Service is not found");
       return;
     }
-    float downloadStartTime = Time.realtimeSinceStartup;
+    // float downloadStartTime = Time.realtimeSinceStartup;
     string asset_info = _netManager.RequestString("Scene");
     if (asset_info == "Invild Service") {
       Debug.LogWarning("Invalid Service");
@@ -65,18 +68,121 @@ public class SceneLoader : MonoBehaviour {
     }
     _simScene = JsonConvert.DeserializeObject<SimScene>(asset_info);
     DownloadAssets(_simScene);
-    float timeSpent = (Time.realtimeSinceStartup - downloadStartTime) * 1000;
-    Debug.Log($"Downloaded Scene in {(int)timeSpent} ms");
-    updateAction += BuildScene;
+    // float timeSpent = (Time.realtimeSinceStartup - downloadStartTime) * 1000;
+    // Debug.Log($"Downloaded Scene in {(int)timeSpent} ms");
+    // updateAction += BuildScene;
   }
 
   public void DownloadAssets(SimScene scene) {
     _simMeshes.Clear();
     _simMaterials.Clear();
     _simTextures.Clear();
-    scene.meshes.ForEach(DownloadMesh);
-    scene.textures.ForEach(DownloadTexture);
+    _coroutinesCompleted = 0;
+    // scene.meshes.ForEach(DownloadMesh);
+    // scene.textures.ForEach(DownloadTexture);
+    StartCoroutine(DownloadAllAssets(scene));
   }
+
+
+private IEnumerator DownloadAllAssets(SimScene scene)
+{
+    float downloadStartTime = Time.realtimeSinceStartup;
+    List<IEnumerator> coroutines = new List<IEnumerator>();
+    for (int i = 0; i < scene.meshes.Count; i++)
+    {
+        coroutines.Add(DownloadMeshHTTP(scene.meshes[i]));
+    }
+
+    for (int i = 0; i < scene.textures.Count; i++)
+    {
+        coroutines.Add(DownloadTextureHTTP(scene.textures[i]));
+    }
+
+    List<Coroutine> runningCoroutines = new List<Coroutine>();
+    foreach (var coroutine in coroutines)
+    {
+        runningCoroutines.Add(StartCoroutine(coroutine));
+    }
+
+    foreach (var runningCoroutine in runningCoroutines)
+    {
+        yield return runningCoroutine;
+    }
+
+    Debug.Log("All assets have been downloaded.");
+    updateAction += BuildScene;
+    float timeSpent = (Time.realtimeSinceStartup - downloadStartTime) * 1000;
+    Debug.Log($"Downloaded Scene in {(int)timeSpent} ms");
+}
+
+  IEnumerator DownloadMeshHTTP(SimMesh mesh)
+  {
+    if (_cachedMeshes.TryGetValue(mesh.dataHash, out Mesh cached)) {
+      mesh.compiledMesh = cached;
+      _simMeshes.Add(mesh.name, mesh);
+    }
+    else
+    {
+      HostInfo serverInfo = _netManager.GetServerInfo();
+      string fileUrl = $"http://{serverInfo.ip}:{(int)ServerPort.HTTP}/?asset_tag={mesh.dataHash}";
+      using (UnityWebRequest request = UnityWebRequest.Get(fileUrl))
+      {
+        float downloadStartTime = Time.realtimeSinceStartup;
+        Debug.Log($"Downloading mesh data: {mesh.name} at {downloadStartTime}");
+        yield return request.SendWebRequest();
+        float timeSpent = (Time.realtimeSinceStartup - downloadStartTime) * 1000;
+        Debug.Log($"Downloaded {mesh.name} in {(int)timeSpent} ms");
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+          Debug.LogError($"Error downloading mesh data: {request.error}");
+        }
+        else
+        {
+          // Debug.Log($"Downloaded mesh data: {mesh.name}");
+          downloadStartTime = Time.realtimeSinceStartup;
+          byte[] byteArray = request.downloadHandler.data;
+          Span<byte> data = new Span<byte>(byteArray);
+          mesh.rawData = new SimMeshData
+          {
+            indices = MemoryMarshal.Cast<byte, int>(data.Slice(mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
+            vertices = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.verticesLayout[0], mesh.verticesLayout[1] * sizeof(float))).ToArray(),
+            normals = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.normalsLayout[0], mesh.normalsLayout[1] * sizeof(float))).ToArray(),
+            uvs = MemoryMarshal.Cast<byte, Vector2>(data.Slice(mesh.uvLayout[0], mesh.uvLayout[1] * sizeof(float))).ToArray(),
+          };
+          timeSpent = (Time.realtimeSinceStartup - downloadStartTime) * 1000;
+          Debug.Log($"Processed {mesh.name} in {timeSpent} ms");
+        }
+      }
+    }
+  }
+
+  IEnumerator DownloadTextureHTTP(SimTexture texture)
+  {
+    if (_cachedTextures.TryGetValue(texture.dataHash, out Texture cached)){
+      texture.compiledTexture = cached;
+    }
+    else
+    {
+      HostInfo serverInfo = _netManager.GetServerInfo();
+      string fileUrl = $"http://{serverInfo.ip}:{(int)ServerPort.HTTP}/?asset_tag={texture.dataHash}";
+      using (UnityWebRequest request = UnityWebRequest.Get(fileUrl))
+      {
+        // Debug.Log($"Downloading texture data: {texture.name}");
+        yield return request.SendWebRequest();
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+          Debug.LogError($"Error downloading mesh data: {request.error}");
+        }
+        else
+        {
+          // Debug.Log($"Downloaded texture data: {texture.name}");
+          texture.textureData = request.downloadHandler.data;
+          _simTextures.Add(texture.name, texture);
+        }
+      }
+    }
+  }
+
 
   private void DownloadMesh(SimMesh mesh) {
     if (_cachedMeshes.TryGetValue(mesh.dataHash, out Mesh cached)) {
