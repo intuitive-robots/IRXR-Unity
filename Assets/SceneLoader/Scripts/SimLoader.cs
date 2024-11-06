@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.IO.Pipes;
 using System.Collections.Concurrent;
-
+using Unity.Collections;
+using System.Reflection;
 
 public class SceneLoader : MonoBehaviour {
 
@@ -77,25 +78,40 @@ public class SceneLoader : MonoBehaviour {
     _simMaterials.Clear();
     _simTextures.Clear();
 
-    scene.meshes.ForEach(mesh => DownloadMesh(mesh));
-    scene.textures.ForEach(texture => DownloadTexture(texture));  
+    int textureSizeAcc = 0;
+    int meshSizeAcc = 0;
+
+    scene.meshes.ForEach(mesh => {
+      meshSizeAcc += DownloadMesh(mesh);
+    });
+    scene.textures.ForEach(texture => {
+      textureSizeAcc += DownloadTexture(texture);
+    });  
     scene.materials.ForEach(material => _simMaterials.Add(material.name, material));
+
+    print($"Downloaded {Math.Round(meshSizeAcc / Math.Pow(2, 20), 2)}MB meshes, {Math.Round(textureSizeAcc / Math.Pow(2, 20), 2)}MB textures, {scene.materials.Count} materials");
   }
 
-  private void DownloadMesh(SimMesh mesh) {
+  private int DownloadMesh(SimMesh mesh) {
+    int meshSize = 0;
     if (!_cachedMeshes.TryGetValue(mesh.dataHash, out mesh.compiledMesh)) {
       byte[] data = _netManager.RequestBytes("Asset", mesh.dataHash).ToArray();
+      meshSize += data.Length;
       RunOnMainThread(() => ProcessMesh(mesh, data));
     }
     _simMeshes.TryAdd(mesh.name, mesh);
+    return meshSize;
   }
 
-  private void DownloadTexture(SimTexture texture) {
+  private int DownloadTexture(SimTexture texture) {
+    int textureSize = 0;
     if (!_cachedTextures.TryGetValue(texture.dataHash, out texture.compiledTexture)){
-      byte[] data = _netManager.RequestBytes("Asset", texture.dataHash).ToArray();
+      List<byte> data = _netManager.RequestBytes("Asset", texture.dataHash);
+      textureSize = data.Count;
       RunOnMainThread(() => ProcessTexture(texture, data));
     }
     _simTextures.TryAdd(texture.name, texture);
+    return textureSize;
   }
 
 
@@ -220,13 +236,12 @@ public class SceneLoader : MonoBehaviour {
   public void ProcessMesh(SimAsset asset, byte[] data) {
     SimMesh mesh = (SimMesh)asset;
 
-    var indices = 
 
     mesh.compiledMesh = new Mesh{
       name = asset.name, 
-      triangles = MemoryMarshal.Cast<byte, int>(new ReadOnlySpan<byte>(data, mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
       vertices = MemoryMarshal.Cast<byte, Vector3>(new ReadOnlySpan<byte>(data, mesh.verticesLayout[0], mesh.verticesLayout[1] * sizeof(float))).ToArray(),
       normals = MemoryMarshal.Cast<byte, Vector3>(new ReadOnlySpan<byte>(data, mesh.normalsLayout[0], mesh.normalsLayout[1] * sizeof(float))).ToArray(),
+      triangles = MemoryMarshal.Cast<byte, int>(new ReadOnlySpan<byte>(data, mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
       uv = MemoryMarshal.Cast<byte, Vector2>(new ReadOnlySpan<byte>(data, mesh.uvLayout[0], mesh.uvLayout[1] * sizeof(float))).ToArray()
     };
 
@@ -258,11 +273,15 @@ public class SceneLoader : MonoBehaviour {
     _simMaterials[material.name] = material;
   }
 
-  public SimAsset ProcessTexture(SimAsset asset, byte[] data) {
+  public SimAsset ProcessTexture(SimAsset asset, List<byte> data) {
     SimTexture simTexture = (SimTexture)asset;
 
+    byte[] byteData = data.ToArray();
+    data.Clear();
+    data = null;
+
     var tex = new Texture2D(simTexture.width, simTexture.height, TextureFormat.RGB24, false);
-    tex.LoadRawTextureData(data);
+    tex.LoadRawTextureData(byteData);
     tex.Apply();
     
     simTexture.compiledTexture = tex;
