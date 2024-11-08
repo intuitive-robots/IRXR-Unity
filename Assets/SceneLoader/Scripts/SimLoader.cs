@@ -14,23 +14,25 @@ public class SceneLoader : MonoBehaviour {
   private IRXRNetManager _netManager;
   private GameObject _simSceneObj;
   private SimScene _simScene;
-  private Dictionary<string, Transform> _simObjTrans = new Dictionary<string, Transform>();
+  private Dictionary<string, Transform> _simObjTrans = new ();
 
-  private Dictionary<string, SimMesh> _simMeshes;
-  private Dictionary<string, SimMaterial> _simMaterials;
-  private Dictionary<string, SimTexture> _simTextures;
-  private Dictionary<string, Mesh> _cachedMeshes;
-  private Dictionary<string, Texture> _cachedTextures;
+  // private Dictionary<string, SimMesh> _simMeshes;
+  // private Dictionary<string, SimMaterial> _simMaterials;
+  // private Dictionary<string, SimTexture> _simTextures;
+  // private Dictionary<string, Mesh> _cachedMeshes;
+  // private Dictionary<string, Texture> _cachedTextures;
 
-  private int _coroutinesCompleted = 0;
+  private Dictionary<string, List<MeshFilter>> _pendingMesh = new ();
+  private Dictionary<string, List<Material>> _pendingMaterial = new ();
+
 
   void Awake() {
-    _simMeshes = new();
-    _simMaterials = new();
-    _simTextures = new();
+    // _simMeshes = new();
+    // _simMaterials = new();
+    // _simTextures = new();
 
-    _cachedTextures = new();
-    _cachedMeshes = new();
+    // _cachedTextures = new();
+    // _cachedMeshes = new();
   }
 
   void Start() {
@@ -77,9 +79,6 @@ public class SceneLoader : MonoBehaviour {
     _simMeshes.Clear();
     _simMaterials.Clear();
     _simTextures.Clear();
-    _coroutinesCompleted = 0;
-    // scene.meshes.ForEach(DownloadMesh);
-    // scene.textures.ForEach(DownloadTexture);
     StartCoroutine(DownloadAllAssets(scene));
   }
 
@@ -115,48 +114,42 @@ private IEnumerator DownloadAllAssets(SimScene scene)
     Debug.Log($"Downloaded Scene in {(int)timeSpent} ms");
 }
 
-  IEnumerator DownloadMeshHTTP(SimMesh mesh)
+  IEnumerator DownloadMesh(SimMesh mesh)
   {
-    if (_cachedMeshes.TryGetValue(mesh.dataHash, out Mesh cached)) {
-      mesh.compiledMesh = cached;
-      _simMeshes.Add(mesh.name, mesh);
-    }
-    else
+    // if (_cachedMeshes.TryGetValue(mesh.dataHash, out Mesh cached)) {
+    //   mesh.compiledMesh = cached;
+    //   _simMeshes.Add(mesh.name, mesh);
+    // }
+    // else
+    // {
+    HostInfo serverInfo = _netManager.GetServerInfo();
+    string fileUrl = $"http://{serverInfo.ip}:{(int)ServerPort.HTTP}/?asset_tag={mesh.dataHash}";
+    using (UnityWebRequest request = UnityWebRequest.Get(fileUrl))
     {
-      HostInfo serverInfo = _netManager.GetServerInfo();
-      string fileUrl = $"http://{serverInfo.ip}:{(int)ServerPort.HTTP}/?asset_tag={mesh.dataHash}";
-      using (UnityWebRequest request = UnityWebRequest.Get(fileUrl))
+      yield return request.SendWebRequest();
+      if (request.result != UnityWebRequest.Result.Success)
       {
-        float downloadStartTime = Time.realtimeSinceStartup;
-        Debug.Log($"Downloading mesh data: {mesh.name} at {downloadStartTime}");
-        yield return request.SendWebRequest();
-        float timeSpent = (Time.realtimeSinceStartup - downloadStartTime) * 1000;
-        Debug.Log($"Downloaded {mesh.name} in {(int)timeSpent} ms");
-        if (request.result != UnityWebRequest.Result.Success)
-        {
-          Debug.LogError($"Error downloading mesh data: {request.error}");
-        }
-        else
-        {
-          // Debug.Log($"Downloaded mesh data: {mesh.name}");
-          downloadStartTime = Time.realtimeSinceStartup;
-          byte[] byteArray = request.downloadHandler.data;
-          Span<byte> data = new Span<byte>(byteArray);
-          mesh.rawData = new SimMeshData
-          {
-            indices = MemoryMarshal.Cast<byte, int>(data.Slice(mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
-            vertices = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.verticesLayout[0], mesh.verticesLayout[1] * sizeof(float))).ToArray(),
-            normals = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.normalsLayout[0], mesh.normalsLayout[1] * sizeof(float))).ToArray(),
-            uvs = MemoryMarshal.Cast<byte, Vector2>(data.Slice(mesh.uvLayout[0], mesh.uvLayout[1] * sizeof(float))).ToArray(),
-          };
-          timeSpent = (Time.realtimeSinceStartup - downloadStartTime) * 1000;
-          Debug.Log($"Processed {mesh.name} in {timeSpent} ms");
-        }
+        Debug.LogError($"Error downloading mesh data: {request.error}");
+        yield break;
+      }
+      byte[] byteArray = request.downloadHandler.data;
+      Span<byte> data = new Span<byte>(byteArray);
+      mesh.rawData = new SimMeshData
+      {
+        indices = MemoryMarshal.Cast<byte, int>(data.Slice(mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
+        vertices = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.verticesLayout[0], mesh.verticesLayout[1] * sizeof(float))).ToArray(),
+        normals = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.normalsLayout[0], mesh.normalsLayout[1] * sizeof(float))).ToArray(),
+        uvs = MemoryMarshal.Cast<byte, Vector2>(data.Slice(mesh.uvLayout[0], mesh.uvLayout[1] * sizeof(float))).ToArray(),
+      };
+      yield return null;
+      foreach (var meshFilter in _pendingMesh[mesh.name])
+      {
+        meshFilter.mesh = mesh.compiledMesh;
       }
     }
   }
 
-  IEnumerator DownloadTextureHTTP(SimTexture texture)
+  IEnumerator DownloadTexture(SimTexture texture)
   {
     if (_cachedTextures.TryGetValue(texture.dataHash, out Texture cached)){
       texture.compiledTexture = cached;
@@ -172,43 +165,44 @@ private IEnumerator DownloadAllAssets(SimScene scene)
         if (request.result != UnityWebRequest.Result.Success)
         {
           Debug.LogError($"Error downloading mesh data: {request.error}");
+          yield break;
         }
-        else
+        texture.textureData = request.downloadHandler.data;
+        _simTextures.Add(texture.name, texture);
+        foreach (var visualObj in _pendingTexture[texture.name])
         {
-          // Debug.Log($"Downloaded texture data: {texture.name}");
-          texture.textureData = request.downloadHandler.data;
-          _simTextures.Add(texture.name, texture);
+          visualObj.GetComponent<Renderer>().material.mainTexture = texture.compiledTexture;
         }
       }
     }
   }
 
 
-  private void DownloadMesh(SimMesh mesh) {
-    if (_cachedMeshes.TryGetValue(mesh.dataHash, out Mesh cached)) {
-      mesh.compiledMesh = cached;
-      _simMeshes.Add(mesh.name, mesh);
-      return;
-    }
-    Span<byte> data = _netManager.RequestBytes("Asset", mesh.dataHash).ToArray();
-    mesh.rawData = new SimMeshData
-    {
-      indices = MemoryMarshal.Cast<byte, int>(data.Slice(mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
-      vertices = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.verticesLayout[0], mesh.verticesLayout[1] * sizeof(float))).ToArray(),
-      normals = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.normalsLayout[0], mesh.normalsLayout[1] * sizeof(float))).ToArray(),
-      uvs = MemoryMarshal.Cast<byte, Vector2>(data.Slice(mesh.uvLayout[0], mesh.uvLayout[1] * sizeof(float))).ToArray(),
-    };
-  }
+  // private void DownloadMesh(SimMesh mesh) {
+  //   if (_cachedMeshes.TryGetValue(mesh.dataHash, out Mesh cached)) {
+  //     mesh.compiledMesh = cached;
+  //     _simMeshes.Add(mesh.name, mesh);
+  //     return;
+  //   }
+  //   Span<byte> data = _netManager.RequestBytes("Asset", mesh.dataHash).ToArray();
+  //   mesh.rawData = new SimMeshData
+  //   {
+  //     indices = MemoryMarshal.Cast<byte, int>(data.Slice(mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
+  //     vertices = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.verticesLayout[0], mesh.verticesLayout[1] * sizeof(float))).ToArray(),
+  //     normals = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.normalsLayout[0], mesh.normalsLayout[1] * sizeof(float))).ToArray(),
+  //     uvs = MemoryMarshal.Cast<byte, Vector2>(data.Slice(mesh.uvLayout[0], mesh.uvLayout[1] * sizeof(float))).ToArray(),
+  //   };
+  // }
 
-  private void DownloadTexture(SimTexture texture) {
-    if (_cachedTextures.TryGetValue(texture.dataHash, out Texture cached)){
-      texture.compiledTexture = cached;
-    } else {
-      texture.textureData = _netManager.RequestBytes("Asset", texture.dataHash).ToArray();
-    }
+  // private void DownloadTexture(SimTexture texture) {
+  //   if (_cachedTextures.TryGetValue(texture.dataHash, out Texture cached)){
+  //     texture.compiledTexture = cached;
+  //   } else {
+  //     texture.textureData = _netManager.RequestBytes("Asset", texture.dataHash).ToArray();
+  //   }
 
-    _simTextures.Add(texture.name, texture);
-  }
+  //   _simTextures.Add(texture.name, texture);
+  // }
 
 
   void Update() {
@@ -243,7 +237,7 @@ private IEnumerator DownloadAllAssets(SimScene scene)
           }
           SimMesh asset = _simMeshes[visual.mesh];
           visualObj = new GameObject(asset.name, typeof(MeshFilter), typeof(MeshRenderer));
-          visualObj.GetComponent<MeshFilter>().mesh = asset.compiledMesh; 
+          _pendingMesh[asset.name] = _pendingMesh.ContainsKey(asset.name) ? _pendingMesh[asset.name] : new List<GameObject>();
           break;
         }
         case "CUBE":
@@ -268,11 +262,12 @@ private IEnumerator DownloadAllAssets(SimScene scene)
       }
 
       Renderer renderer = visualObj.GetComponent<Renderer>();
+      renderer.material = new Material(Shader.Find("Standard"));
       if (visual.material != null) {
-        renderer.material = GetMaterial(visual.material).compiledMaterial;
+        _pendingTexture[visual.material] = _pendingTexture.ContainsKey(visual.material) ? _pendingTexture[visual.material] : new List<Material>();
+
       }
       else {
-        renderer.material = new Material(Shader.Find("Standard"));
         if (visual.color[3] < 1)
         {
           renderer.material.SetFloat("_Mode", 2);
