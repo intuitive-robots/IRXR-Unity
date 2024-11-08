@@ -3,10 +3,17 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-
+using System.Threading.Tasks;
+using System.Linq;
+using System.IO.Pipes;
+using System.Collections.Concurrent;
+using Unity.Collections;
+using System.Reflection;
 
 public class SceneLoader : MonoBehaviour {
 
+
+  private object updateActionLock = new();
   private Action updateAction;
   public Action OnSceneLoaded;
   public Action OnSceneCleared;
@@ -15,20 +22,12 @@ public class SceneLoader : MonoBehaviour {
   private SimScene _simScene;
   private Dictionary<string, Transform> _simObjTrans = new Dictionary<string, Transform>();
 
-  private Dictionary<string, SimMesh> _simMeshes;
-  private Dictionary<string, SimMaterial> _simMaterials;
-  private Dictionary<string, SimTexture> _simTextures;
-  private Dictionary<string, Mesh> _cachedMeshes;
-  private Dictionary<string, Texture> _cachedTextures;
+  private Dictionary<string, SimMesh> _simMeshes = new();
+  private Dictionary<string, SimMaterial> _simMaterials = new();
+  private Dictionary<string, SimTexture> _simTextures = new();
+  private Dictionary<string, Mesh> _cachedMeshes  = new();
+  private Dictionary<string, Texture> _cachedTextures = new();
 
-  void Awake() {
-    _simMeshes = new();
-    _simMaterials = new();
-    _simTextures = new();
-
-    _cachedTextures = new();
-    _cachedMeshes = new();
-  }
 
   void Start() {
     _netManager = IRXRNetManager.Instance;
@@ -44,29 +43,33 @@ public class SceneLoader : MonoBehaviour {
     var local_watch = new System.Diagnostics.Stopwatch();
     local_watch.Start();
     Debug.Log("Building Scene");
-    ProcessAsset(); // Compile Meshes, textures and Materials can only be done on the main thread
     _simSceneObj = CreateObject(gameObject.transform, _simScene.root);
     local_watch.Stop();
     Debug.Log($"Building Scene in {local_watch.ElapsedMilliseconds} ms");
-    updateAction -= BuildScene;
     OnSceneLoaded.Invoke();
   }
 
-  void DownloadScene() {
+  private void DownloadScene() {
+
+    var local_watch = new System.Diagnostics.Stopwatch();
+    local_watch.Start();
+
     if (!_netManager.CheckServerService("Scene")) {
       Debug.LogWarning("Scene Service is not found");
       return;
     }
-    float downloadStartTime = Time.realtimeSinceStartup;
+    
     string asset_info = _netManager.RequestString("Scene");
-    if (asset_info == "Invild Service") {
+    
+    if (asset_info == "Invalid Service") {
       Debug.LogWarning("Invalid Service");
       return;
     }
+
     _simScene = JsonConvert.DeserializeObject<SimScene>(asset_info);
     DownloadAssets(_simScene);
-    float timeSpent = (Time.realtimeSinceStartup - downloadStartTime) * 1000;
-    Debug.Log($"Downloaded Scene in {(int)timeSpent} ms");
+    local_watch.Stop();
+    Debug.Log($"Downloaded Scene in {local_watch.ElapsedMilliseconds} ms");
     updateAction += BuildScene;
   }
 
@@ -74,39 +77,55 @@ public class SceneLoader : MonoBehaviour {
     _simMeshes.Clear();
     _simMaterials.Clear();
     _simTextures.Clear();
-    scene.meshes.ForEach(DownloadMesh);
-    scene.textures.ForEach(DownloadTexture);
+
+    int textureSizeAcc = 0;
+    int meshSizeAcc = 0;
+
+    scene.meshes.ForEach(mesh => {
+      meshSizeAcc += DownloadMesh(mesh);
+    });
+    scene.textures.ForEach(texture => {
+      textureSizeAcc += DownloadTexture(texture);
+    });  
+    scene.materials.ForEach(material => _simMaterials.Add(material.name, material));
+
+    print($"Downloaded {Math.Round(meshSizeAcc / Math.Pow(2, 20), 2)}MB meshes, {Math.Round(textureSizeAcc / Math.Pow(2, 20), 2)}MB textures, {scene.materials.Count} materials");
   }
 
-  private void DownloadMesh(SimMesh mesh) {
-    if (_cachedMeshes.TryGetValue(mesh.dataHash, out Mesh cached)) {
-      mesh.compiledMesh = cached;
-      _simMeshes.Add(mesh.name, mesh);
-      return;
+  private int DownloadMesh(SimMesh mesh) {
+    int meshSize = 0;
+    if (!_cachedMeshes.TryGetValue(mesh.dataHash, out mesh.compiledMesh)) {
+      byte[] data = _netManager.RequestBytes("Asset", mesh.dataHash).ToArray();
+      meshSize += data.Length;
+      RunOnMainThread(() => ProcessMesh(mesh, data));
     }
-    Span<byte> data = _netManager.RequestBytes("Asset", mesh.dataHash).ToArray();
-    mesh.rawData = new SimMeshData
-    {
-      indices = MemoryMarshal.Cast<byte, int>(data.Slice(mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
-      vertices = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.verticesLayout[0], mesh.verticesLayout[1] * sizeof(float))).ToArray(),
-      normals = MemoryMarshal.Cast<byte, Vector3>(data.Slice(mesh.normalsLayout[0], mesh.normalsLayout[1] * sizeof(float))).ToArray(),
-      uvs = MemoryMarshal.Cast<byte, Vector2>(data.Slice(mesh.uvLayout[0], mesh.uvLayout[1] * sizeof(float))).ToArray(),
-    };
+    _simMeshes.TryAdd(mesh.name, mesh);
+    return meshSize;
   }
 
-  private void DownloadTexture(SimTexture texture) {
-    if (_cachedTextures.TryGetValue(texture.dataHash, out Texture cached)){
-      texture.compiledTexture = cached;
-    } else {
-      texture.textureData = _netManager.RequestBytes("Asset", texture.dataHash).ToArray();
+  private int DownloadTexture(SimTexture texture) {
+    int textureSize = 0;
+    if (!_cachedTextures.TryGetValue(texture.dataHash, out texture.compiledTexture)){
+      List<byte> data = _netManager.RequestBytes("Asset", texture.dataHash);
+      textureSize = data.Count;
+      RunOnMainThread(() => ProcessTexture(texture, data));
     }
-
-    _simTextures.Add(texture.name, texture);
+    _simTextures.TryAdd(texture.name, texture);
+    return textureSize;
   }
 
+
+  void RunOnMainThread(Action action) {
+    lock(updateActionLock) {
+      updateAction += action;
+    }
+  }
 
   void Update() {
-    updateAction.Invoke();
+    lock(updateActionLock) {
+      updateAction.Invoke();
+      updateAction = () => { };
+    }
   }
 
 
@@ -117,9 +136,10 @@ public class SceneLoader : MonoBehaviour {
   }
 
 
-  GameObject CreateObject(Transform root, SimBody body, string name = null) {
-    GameObject bodyRoot = new GameObject(name != null ? name : body.name);
-    if (root != null)  bodyRoot.transform.SetParent(root, false);
+  GameObject CreateObject(Transform root, SimBody body) {
+    
+    GameObject bodyRoot = new GameObject(body.name);
+    bodyRoot.transform.SetParent(root, false);
     ApplyTransform(bodyRoot.transform, body.trans);
 
     GameObject VisualContainer = new GameObject("Visuals");
@@ -163,22 +183,14 @@ public class SceneLoader : MonoBehaviour {
 
       Renderer renderer = visualObj.GetComponent<Renderer>();
       if (visual.material != null) {
-        renderer.material = GetMaterial(visual.material).compiledMaterial;
+        var material = GetMaterial(visual.material);
+        if (material.compiledMaterial == null) {
+          ProcessMaterial(material);
+        }
+        renderer.material = material.compiledMaterial;
       }
       else {
-        renderer.material = new Material(Shader.Find("Standard"));
-        if (visual.color[3] < 1)
-        {
-          renderer.material.SetFloat("_Mode", 2);
-          renderer.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-          renderer.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-          renderer.material.SetInt("_ZWrite", 0);
-          renderer.material.DisableKeyword("_ALPHATEST_ON");
-          renderer.material.EnableKeyword("_ALPHABLEND_ON");
-          renderer.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-          renderer.material.renderQueue = 3000;
-        }
-        renderer.material.SetColor("_Color", new Color(visual.color[0], visual.color[1], visual.color[2], visual.color[3]));
+        renderer.material = CreateColorMaterial(visual.color);
       }
 
       visualObj.transform.SetParent(VisualContainer.transform, false);
@@ -198,30 +210,41 @@ public class SceneLoader : MonoBehaviour {
     _simMeshes.Clear();
     _simMaterials.Clear();
     _simTextures.Clear();
-
-    _cachedTextures.Clear();
-    _cachedMeshes.Clear();
   }
 
   public SimMesh GetMesh(string id) => _simMeshes[id];
   public SimTexture GetTexture(string id) => _simTextures[id];
   public SimMaterial GetMaterial(string id) => _simMaterials[id];
-  public void ProcessAsset() {
-    _simScene.meshes.ForEach(ProcessMesh);
-    _simScene.materials.ForEach(ProcessMaterial);
-    _simScene.textures.ForEach(ProcessTexture);  
+  
+  public Material CreateColorMaterial(List<float> color) {
+    var material = new Material(Shader.Find("Standard"));
+    if (color[3] < 1)
+    {
+      material.SetFloat("_Mode", 2);
+      material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+      material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+      material.SetInt("_ZWrite", 0);
+      material.DisableKeyword("_ALPHATEST_ON");
+      material.EnableKeyword("_ALPHABLEND_ON");
+      material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+      material.renderQueue = 3000;
+    }
+    material.SetColor("_Color", new Color(color[0], color[1], color[2], color[3]));
+    return material;
   }
 
-  public void ProcessMesh(SimAsset asset) {
+  public void ProcessMesh(SimAsset asset, byte[] data) {
     SimMesh mesh = (SimMesh)asset;
 
+
     mesh.compiledMesh = new Mesh{
-      name = mesh.name,
-      vertices = mesh.rawData.vertices,
-      normals = mesh.rawData.normals,
-      triangles = mesh.rawData.indices,
-      uv = mesh.rawData.uvs,
+      name = asset.name, 
+      vertices = MemoryMarshal.Cast<byte, Vector3>(new ReadOnlySpan<byte>(data, mesh.verticesLayout[0], mesh.verticesLayout[1] * sizeof(float))).ToArray(),
+      normals = MemoryMarshal.Cast<byte, Vector3>(new ReadOnlySpan<byte>(data, mesh.normalsLayout[0], mesh.normalsLayout[1] * sizeof(float))).ToArray(),
+      triangles = MemoryMarshal.Cast<byte, int>(new ReadOnlySpan<byte>(data, mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
+      uv = MemoryMarshal.Cast<byte, Vector2>(new ReadOnlySpan<byte>(data, mesh.uvLayout[0], mesh.uvLayout[1] * sizeof(float))).ToArray()
     };
+
     _cachedMeshes[mesh.dataHash] = mesh.compiledMesh;
     _simMeshes[mesh.name] = mesh;
   }
@@ -239,7 +262,9 @@ public class SceneLoader : MonoBehaviour {
 
     if (material.texture != null) {
       SimTexture texture = _simTextures[material.texture];
-      if (texture.compiledTexture == null) ProcessTexture(texture);
+
+      _simTextures[material.texture] = texture; // Just to be shure the texture is updated (investigate)
+
       mat.mainTexture = texture.compiledTexture;
       mat.mainTextureScale = new Vector2(material.textureSize[0], material.textureSize[1]);
     }
@@ -248,15 +273,20 @@ public class SceneLoader : MonoBehaviour {
     _simMaterials[material.name] = material;
   }
 
-  public void ProcessTexture(SimAsset asset) {
+  public SimAsset ProcessTexture(SimAsset asset, List<byte> data) {
     SimTexture simTexture = (SimTexture)asset;
 
-    var tex = new Texture2D(simTexture.width, simTexture.height, TextureFormat.RGB24, false);
-    tex.LoadRawTextureData(simTexture.textureData);
-    tex.Apply();
+    byte[] byteData = data.ToArray();
+    data.Clear();
+    data = null;
 
+    var tex = new Texture2D(simTexture.width, simTexture.height, TextureFormat.RGB24, false);
+    tex.LoadRawTextureData(byteData);
+    tex.Apply();
+    
     simTexture.compiledTexture = tex;
     _cachedTextures[simTexture.dataHash] = simTexture.compiledTexture;
+    return asset;
   }
 
   public Dictionary<string, Transform> GetObjectsTrans() {

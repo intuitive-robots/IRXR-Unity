@@ -50,13 +50,6 @@ public class SimAsset {
   public string name;
 }
 
-public class SimMeshData {
-  public int[] indices;
-  public Vector3[] vertices;
-  public Vector3[] normals;
-  public Vector2[] uvs;
-}
-
 public class SimMesh : SimAsset {
   public string dataHash;
   public List<int> indicesLayout;
@@ -69,10 +62,6 @@ public class SimMesh : SimAsset {
 
   [JsonIgnore]
   public Mesh compiledMesh;
-
-  
-  [JsonIgnore]
-  public SimMeshData rawData;
 }
 
 public class SimMaterial : SimAsset {
@@ -96,9 +85,6 @@ public class SimTexture  : SimAsset {
   public int height;
 
   public string texureType;
-  
-  [JsonIgnore]
-  public byte[] textureData;
 
   [JsonIgnore]
   public Texture compiledTexture;
