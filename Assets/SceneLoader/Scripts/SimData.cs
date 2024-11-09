@@ -58,7 +58,7 @@ public class SimMeshData {
 }
 
 public class SimMesh : SimAsset {
-  public string dataHash;
+  public string hash;
   public List<int> indicesLayout;
 
   public List<int> verticesLayout;
@@ -67,16 +67,16 @@ public class SimMesh : SimAsset {
 
   public List<int> uvLayout;
 
-  [JsonIgnore]
-  public Mesh compiledMesh;
+  // [JsonIgnore]
+  // public Mesh compiledMesh;
 
   
-  [JsonIgnore]
-  public SimMeshData rawData;
+  // [JsonIgnore]
+  // public SimMeshData rawData;
 }
 
 public class SimMaterial : SimAsset {
-  public string dataHash;
+  public string hash;
   public List<float> color;
   public List<float> emissionColor;
   public float specular;
@@ -85,21 +85,21 @@ public class SimMaterial : SimAsset {
   public string texture;
   public List<float> textureSize;
 
-  [JsonIgnore]
-  public Material compiledMaterial;
+  // [JsonIgnore]
+  // public Material compiledMaterial;
 }
 
 public class SimTexture  : SimAsset { 
-  public string dataHash;
+  public string hash;
   public int width;
 
   public int height;
 
   public string texureType;
   
-  [JsonIgnore]
-  public byte[] textureData;
+  // [JsonIgnore]
+  // public byte[] textureData;
 
-  [JsonIgnore]
-  public Texture compiledTexture;
+  // [JsonIgnore]
+  // public Texture compiledTexture;
 }

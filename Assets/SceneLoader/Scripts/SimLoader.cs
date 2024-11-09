@@ -116,14 +116,14 @@ private IEnumerator DownloadAllAssets(SimScene scene)
 
   IEnumerator DownloadMesh(SimMesh mesh)
   {
-    // if (_cachedMeshes.TryGetValue(mesh.dataHash, out Mesh cached)) {
+    // if (_cachedMeshes.TryGetValue(mesh.hash, out Mesh cached)) {
     //   mesh.compiledMesh = cached;
     //   _simMeshes.Add(mesh.name, mesh);
     // }
     // else
     // {
     HostInfo serverInfo = _netManager.GetServerInfo();
-    string fileUrl = $"http://{serverInfo.ip}:{(int)ServerPort.HTTP}/?asset_tag={mesh.dataHash}";
+    string fileUrl = $"http://{serverInfo.ip}:{(int)ServerPort.HTTP}/?asset_tag={mesh.hash}";
     using (UnityWebRequest request = UnityWebRequest.Get(fileUrl))
     {
       yield return request.SendWebRequest();
@@ -151,13 +151,13 @@ private IEnumerator DownloadAllAssets(SimScene scene)
 
   IEnumerator DownloadTexture(SimTexture texture)
   {
-    if (_cachedTextures.TryGetValue(texture.dataHash, out Texture cached)){
+    if (_cachedTextures.TryGetValue(texture.hash, out Texture cached)){
       texture.compiledTexture = cached;
     }
     else
     {
       HostInfo serverInfo = _netManager.GetServerInfo();
-      string fileUrl = $"http://{serverInfo.ip}:{(int)ServerPort.HTTP}/?asset_tag={texture.dataHash}";
+      string fileUrl = $"http://{serverInfo.ip}:{(int)ServerPort.HTTP}/?asset_tag={texture.hash}";
       using (UnityWebRequest request = UnityWebRequest.Get(fileUrl))
       {
         // Debug.Log($"Downloading texture data: {texture.name}");
@@ -179,12 +179,12 @@ private IEnumerator DownloadAllAssets(SimScene scene)
 
 
   // private void DownloadMesh(SimMesh mesh) {
-  //   if (_cachedMeshes.TryGetValue(mesh.dataHash, out Mesh cached)) {
+  //   if (_cachedMeshes.TryGetValue(mesh.hash, out Mesh cached)) {
   //     mesh.compiledMesh = cached;
   //     _simMeshes.Add(mesh.name, mesh);
   //     return;
   //   }
-  //   Span<byte> data = _netManager.RequestBytes("Asset", mesh.dataHash).ToArray();
+  //   Span<byte> data = _netManager.RequestBytes("Asset", mesh.hash).ToArray();
   //   mesh.rawData = new SimMeshData
   //   {
   //     indices = MemoryMarshal.Cast<byte, int>(data.Slice(mesh.indicesLayout[0], mesh.indicesLayout[1] * sizeof(int))).ToArray(),
@@ -195,10 +195,10 @@ private IEnumerator DownloadAllAssets(SimScene scene)
   // }
 
   // private void DownloadTexture(SimTexture texture) {
-  //   if (_cachedTextures.TryGetValue(texture.dataHash, out Texture cached)){
+  //   if (_cachedTextures.TryGetValue(texture.hash, out Texture cached)){
   //     texture.compiledTexture = cached;
   //   } else {
-  //     texture.textureData = _netManager.RequestBytes("Asset", texture.dataHash).ToArray();
+  //     texture.textureData = _netManager.RequestBytes("Asset", texture.hash).ToArray();
   //   }
 
   //   _simTextures.Add(texture.name, texture);
@@ -325,7 +325,7 @@ private IEnumerator DownloadAllAssets(SimScene scene)
 
     mesh.rawData = null;
 
-    _cachedMeshes[mesh.dataHash] = mesh.compiledMesh;
+    _cachedMeshes[mesh.hash] = mesh.compiledMesh;
     _simMeshes[mesh.name] = mesh;
   }
 
@@ -362,7 +362,7 @@ private IEnumerator DownloadAllAssets(SimScene scene)
     simTexture.textureData = null;
 
     simTexture.compiledTexture = tex;
-    _cachedTextures[simTexture.dataHash] = simTexture.compiledTexture;
+    _cachedTextures[simTexture.hash] = simTexture.compiledTexture;
     return asset;
   }
 
