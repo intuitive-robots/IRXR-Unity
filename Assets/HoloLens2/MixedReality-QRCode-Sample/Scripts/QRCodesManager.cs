@@ -79,6 +79,7 @@ namespace Microsoft.MixedReality.SampleQRCodes
         async protected virtual void Start()
         {
             IsSupported = QRCodeWatcher.IsSupported();
+            Debug.Log("QRCodesManager IsSupported: " + IsSupported);
             capabilityTask = QRCodeWatcher.RequestAccessAsync();
             accessStatus = await capabilityTask;
             capabilityInitialized = true;
