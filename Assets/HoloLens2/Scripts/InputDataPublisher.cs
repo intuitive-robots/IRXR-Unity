@@ -1,5 +1,6 @@
 using UnityEngine;
 using Microsoft.MixedReality.Toolkit;
+using UnityEngine.InputSystem;
 
 public class InputDataPublisher : Streamer
 {

@@ -795,6 +795,7 @@ PlayerSettings:
   syncCapabilities: 0
   platformCapabilities:
     WindowsStoreApps:
+      GazeInput: True
       PrivateNetworkClientServer: True
       InternetClientServer: True
       SpatialPerception: True
