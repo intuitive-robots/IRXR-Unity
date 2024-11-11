@@ -22,12 +22,10 @@ public class SimTransform {
 }
 
 public class SimVisual {
-  // public string name;
   public string type;
-  public string mesh;
-  public string material;
+  public SimMesh mesh;
+  public SimMaterial material;
   public SimTransform trans;
-  public List<float> color;
 }
 
 
@@ -50,56 +48,29 @@ public class SimAsset {
   public string name;
 }
 
-public class SimMeshData {
-  public int[] indices;
-  public Vector3[] vertices;
-  public Vector3[] normals;
-  public Vector2[] uvs;
-}
-
 public class SimMesh : SimAsset {
-  public string dataHash;
+  public string hash;
   public List<int> indicesLayout;
-
   public List<int> verticesLayout;
-
   public List<int> normalsLayout;
-
   public List<int> uvLayout;
 
-  [JsonIgnore]
-  public Mesh compiledMesh;
-
-  
-  [JsonIgnore]
-  public SimMeshData rawData;
 }
 
 public class SimMaterial : SimAsset {
-  public string dataHash;
+  public string hash;
   public List<float> color;
   public List<float> emissionColor;
   public float specular;
   public float shininess;
   public float reflectance;
-  public string texture;
-  public List<float> textureSize;
-
-  [JsonIgnore]
-  public Material compiledMaterial;
+  public SimTexture texture;
 }
 
 public class SimTexture  : SimAsset { 
-  public string dataHash;
+  public string hash;
   public int width;
-
   public int height;
-
   public string texureType;
-  
-  [JsonIgnore]
-  public byte[] textureData;
-
-  [JsonIgnore]
-  public Texture compiledTexture;
+  public List<float> textureSize;
 }
