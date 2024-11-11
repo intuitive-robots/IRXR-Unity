@@ -15,7 +15,6 @@ public enum ServerPort {
   Discovery = 7720,
   Service = 7721,
   Topic = 7722,
-  HTTP = 7723,
 }
 
 public enum ClientPort {
@@ -233,6 +232,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     if (!_resSocket.HasIn) return;
     string messageReceived = _resSocket.ReceiveFrameString();
     string[] messageSplit = messageReceived.Split(":", 2);
+    Debug.Log($"Received service request {messageSplit[0]}");
     if (_serviceCallbacks.ContainsKey(messageSplit[0])) {
       string response = _serviceCallbacks[messageSplit[0]](messageSplit[1]);
       _resSocket.SendFrame(response);
