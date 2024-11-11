@@ -42,6 +42,12 @@ public class SceneLoader : MonoBehaviour {
     updateAction = () => { };
     OnSceneLoaded += () => Debug.Log("Scene Loaded");
     OnSceneCleared += () => Debug.Log("Scene Cleared");
+    _netManager.RegisterServiceCallback("ClearScene", LoadPointCloud);
+  }
+
+  private void LoadSimScene(string pointCloudStrData) {
+    ClearScene();
+    
   }
 
   void BuildScene() {

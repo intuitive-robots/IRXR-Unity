@@ -79,16 +79,16 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     // Default host name
     if (PlayerPrefs.HasKey("HostName"))
     {
-        // The key exists, proceed to get the value
-        string savedHostName = PlayerPrefs.GetString("HostName");
-        _localInfo.name = savedHostName;
-        Debug.Log($"Find Host Name: {_localInfo.name}");
+      // The key exists, proceed to get the value
+      string savedHostName = PlayerPrefs.GetString("HostName");
+      _localInfo.name = savedHostName;
+      Debug.Log($"Find Host Name: {_localInfo.name}");
     }
     else
     {
-        // The key does not exist, handle it accordingly
-        _localInfo.name = "UnityClient";
-        Debug.Log($"Host Name not found, using default name {_localInfo.name}");
+      // The key does not exist, handle it accordingly
+      _localInfo.name = "UnityClient";
+      Debug.Log($"Host Name not found, using default name {_localInfo.name}");
     }
   }
 
@@ -100,7 +100,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     ConnectionSpin += () => {};
     OnDisconnected += StopConnection;
     lastTimeStamp = -1.0f;
-    RegisterServiceCallback("ChangeHostName", ChangeHoseName);
+    RegisterServiceCallback("ChangeHostName", ChangeHostName);
   }
 
   void Update() {
@@ -317,7 +317,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     return true;
   }
 
-  public string ChangeHoseName(string name) {
+  public string ChangeHostName(string name) {
     _localInfo.name = name;
     PlayerPrefs.SetString("HostName", name);
     Debug.Log($"Change Host Name to {_localInfo.name}");
