@@ -19,11 +19,11 @@ public enum ServerPort {
 
 public enum ClientPort {
   Discovery = 7720,
-  Service = 7723,
-  Topic = 7724,
+  Service = 7730,
+  Topic = 7731,
 }
 
-class HostInfo {
+public class HostInfo {
   public string name;
   public string ip;
   public List<string> topics = new();
@@ -38,7 +38,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   public Action ConnectionSpin;
   private UdpClient _discoveryClient;
   private string _conncetionID = null;
-  private HostInfo _serverInfo = null;
+  public HostInfo _serverInfo = null;
   private HostInfo _localInfo = new HostInfo();
 
   private List<NetMQSocket> _sockets;
@@ -81,16 +81,16 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     // Default host name
     if (PlayerPrefs.HasKey("HostName"))
     {
-        // The key exists, proceed to get the value
-        string savedHostName = PlayerPrefs.GetString("HostName");
-        _localInfo.name = savedHostName;
-        Debug.Log($"Find Host Name: {_localInfo.name}");
+      // The key exists, proceed to get the value
+      string savedHostName = PlayerPrefs.GetString("HostName");
+      _localInfo.name = savedHostName;
+      Debug.Log($"Find Host Name: {_localInfo.name}");
     }
     else
     {
-        // The key does not exist, handle it accordingly
-        _localInfo.name = "UnityClient";
-        Debug.Log($"Host Name not found, using default name {_localInfo.name}");
+      // The key does not exist, handle it accordingly
+      _localInfo.name = "UnityClient";
+      Debug.Log($"Host Name not found, using default name {_localInfo.name}");
     }
   }
 
@@ -101,7 +101,8 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     OnConnectionStart += () => { isConnected = true; };
     ConnectionSpin += () => {};
     OnDisconnected += StopConnection;
-    RegisterServiceCallback("ChangeHostName", ChangeHoseName);
+    lastTimeStamp = -1.0f;
+    RegisterServiceCallback("ChangeHostName", ChangeHostName);
   }
 
   async void Update() {
@@ -231,6 +232,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     if (!_resSocket.HasIn) return;
     string messageReceived = _resSocket.ReceiveFrameString();
     string[] messageSplit = messageReceived.Split(":", 2);
+    Debug.Log($"Received service request {messageSplit[0]}");
     if (_serviceCallbacks.ContainsKey(messageSplit[0])) {
       string response = _serviceCallbacks[messageSplit[0]](messageSplit[1]);
       _resSocket.SendFrame(response);
@@ -320,7 +322,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     return true;
   }
 
-  public string ChangeHoseName(string name) {
+  public string ChangeHostName(string name) {
     _localInfo.name = name;
     PlayerPrefs.SetString("HostName", name);
     Debug.Log($"Change Host Name to {_localInfo.name}");
@@ -333,6 +335,10 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     if (_serverInfo == null) return false;
     if (_serverInfo.services.Contains(serviceName)) return true;
     return false;
+  }
+
+  public HostInfo GetServerInfo() {
+    return _serverInfo;
   }
 
 }
