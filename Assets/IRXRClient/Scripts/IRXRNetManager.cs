@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 
 public enum ServerPort {
   Discovery = 7720,
@@ -49,10 +50,11 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   // publisher socket
   private PublisherSocket _pubSocket;
   private RequestSocket _reqSocket;
+
   private ResponseSocket _resSocket;
   private Dictionary<string, Func<string, string>> _serviceCallbacks;
 
-  private float lastTimeStamp;
+  private float lastTimeStamp = -1.0f;
   private bool isConnected = false;
   private float timeOffset = 0.0f;
   public float TimeOffset
@@ -76,6 +78,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _pubSocket = new PublisherSocket();
     // the collection of all sockets
     _sockets = new List<NetMQSocket> { _reqSocket, _resSocket, _subSocket, _pubSocket };
+
     // Default host name
     if (PlayerPrefs.HasKey("HostName"))
     {
@@ -103,7 +106,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     RegisterServiceCallback("ChangeHostName", ChangeHostName);
   }
 
-  void Update() {
+  async void Update() {
     ConnectionSpin.Invoke();
     if (_discoveryClient.Available == 0) return; // there's no message to read
     IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
@@ -122,7 +125,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
       Debug.Log($"Discovered server at {_serverInfo.ip} with local IP {_localInfo.ip}");
       StartConnection();
       RegisterInfo2Server();
-      OnConnectionStart.Invoke();
+      await Task.Run(() => OnConnectionStart.Invoke());
     }
     lastTimeStamp = Time.realtimeSinceStartup;
   }
@@ -153,6 +156,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   // It may stuck if the server is not responding,
   // which will cause the Unity Editor to freeze.
   public string RequestString(string service, string request = "") {
+    
     _reqSocket.SendFrame($"{service}:{request}");
     // string result = _reqSocket.TryReceiveFrame(out bool more);
     if (!_reqSocket.TryReceiveFrameString(TimeSpan.FromMilliseconds(5000), out string result, out bool more)) {
@@ -161,18 +165,20 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     }
     while(more) result += _reqSocket.ReceiveFrameString(out more);
     return result;
+    
   }
 
   public List<byte> RequestBytes(string service, string request = "") {
+
     _reqSocket.SendFrame($"{service}:{request}");
-    List<byte> result = new List<byte>();
-    if (!_reqSocket.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(5000), out byte[] bytes, out bool more)) {
-      Debug.LogWarning("Request Timeout");
+    if (!_reqSocket.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(10000), out byte[] bytes, out bool more)) {
+      Debug.LogWarning($"Request Timeout");
+      return new List<byte>();
     }
-    else {      
-      result.AddRange(bytes);
-      while (more) result.AddRange(_reqSocket.ReceiveFrameBytes(out more));
-    }
+
+    List<byte> result = new List<byte>(bytes);
+    result.AddRange(bytes);
+    while (more) result.AddRange(_reqSocket.ReceiveFrameBytes(out more));
     return result;
   }
 
@@ -286,10 +292,9 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
       UnicastIPAddressInformationCollection unicastIPAddresses = ipProperties.UnicastAddresses;
       foreach (UnicastIPAddressInformation ipInfo in unicastIPAddresses)
       {
-        if (ipInfo.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+        if (ipInfo.Address.AddressFamily == AddressFamily.InterNetwork)
         {
           IPAddress localIP = ipInfo.Address;
-          Debug.Log($"Local IP: {localIP}");
           // Check if the IP is in the same subnet
           if (IsInSameSubnet(inputIP, localIP, subnetMask))
           {

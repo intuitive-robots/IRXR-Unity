@@ -50,13 +50,6 @@ public class SimAsset {
   public string name;
 }
 
-public class SimMeshData {
-  public int[] indices;
-  public Vector3[] vertices;
-  public Vector3[] normals;
-  public Vector2[] uvs;
-}
-
 public class SimMesh : SimAsset {
   public string hash;
   public List<int> indicesLayout;
