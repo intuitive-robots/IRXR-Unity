@@ -39,9 +39,6 @@ public class SimBody {
 public class SimScene {
   public string id;
   public SimBody root;
-  public List<SimMesh> meshes;
-  public List<SimMaterial> materials;
-  public List<SimTexture> textures;
 }
 
 public class SimAsset {
