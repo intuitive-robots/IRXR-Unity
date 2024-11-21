@@ -30,6 +30,44 @@ public class HostInfo {
   public List<string> services = new();
 }
 
+
+public class Subscriber <MsgType> {
+  protected string _topic;
+  private Action<MsgType> _receiveAction;
+
+  public Subscriber(string topic, Action<MsgType> receiveAction) {
+    _topic = topic;
+    _receiveAction = receiveAction;
+  }
+
+  public void StartSubscription() {
+    if (typeof(MsgType) == typeof(byte[]))
+    {
+      IRXRNetManager.Instance.SubscribeTopic(_topic, OnByteReceive);
+    }
+    else
+    {
+      IRXRNetManager.Instance.SubscribeTopic(_topic, OnReceive);
+    }
+  }
+
+  public void OnByteReceive(byte[] byteMessage) {
+    _receiveAction((MsgType)(object)byteMessage);
+  }
+
+  public void OnReceive(byte[] byteMessage) {
+    string jsonString = Encoding.UTF8.GetString(byteMessage);
+    MsgType msg = JsonConvert.DeserializeObject<MsgType>(jsonString);
+    _receiveAction(msg);
+  }
+
+  public void Unsubscribe() {
+    IRXRNetManager.Instance.UnsubscribeTopic(_topic);
+  }
+
+}
+
+
 public class IRXRNetManager : Singleton<IRXRNetManager> {
   public Action OnDisconnected;
   public Action OnConnectionStart;
@@ -44,7 +82,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   // subscriber socket
   private SubscriberSocket _subSocket;
-  private Dictionary<string, Action<string>> _topicsCallbacks;
+  private Dictionary<string, Action<byte[]>> _topicsCallbacks;
   // publisher socket
   private PublisherSocket _pubSocket;
   private RequestSocket _reqSocket;
@@ -72,7 +110,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _serviceCallbacks = new Dictionary<string, Func<string, string>>();
     // subscriber socket
     _subSocket = new SubscriberSocket();
-    _topicsCallbacks = new Dictionary<string, Action<string>>();
+    _topicsCallbacks = new Dictionary<string, Action<byte[]>>();
     _pubSocket = new PublisherSocket();
     // the collection of all sockets
     _sockets = new List<NetMQSocket> { _reqSocket, _resSocket, _subSocket, _pubSocket };
@@ -213,17 +251,26 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public void TopicUpdateSpin() {
     // Only process the latest message of each topic
-    Dictionary<string, string> messageProcessed = new();
+    Dictionary<string, byte[]> messageProcessed = new();
     while (_subSocket.HasIn)
     {
-      string messageReceived = _subSocket.ReceiveFrameString();
-      string[] messageSplit = messageReceived.Split(":", 2);
-      if (_topicsCallbacks.ContainsKey(messageSplit[0])) {
-        messageProcessed[messageSplit[0]] = messageSplit[1];
+      byte[] byteMsgReceived = _subSocket.ReceiveFrameBytes();
+      int colonIndex = -1;
+      for (int i = 0; i < byteMsgReceived.Length; i++)
+      {
+          if (byteMsgReceived[i] == 58)
+          {
+              colonIndex = i;
+              break;
+          }
       }
-      foreach (var (topic, msg) in messageProcessed) {
-        _topicsCallbacks[topic](msg);
+      string topic = Encoding.UTF8.GetString(byteMsgReceived, 0, colonIndex);
+      if (_topicsCallbacks.ContainsKey(topic)) {
+        messageProcessed[topic] = byteMsgReceived.AsSpan(colonIndex + 1).ToArray();
       }
+    }
+    foreach (var (topic, msg) in messageProcessed) {
+      _topicsCallbacks[topic](msg);
     }
   }
 
@@ -242,7 +289,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     }
   }
 
-  public void SubscribeTopic(string topic, Action<string> callback) {
+  public void SubscribeTopic(string topic, Action<byte[]> callback) {
     _topicsCallbacks[topic] = callback;
     Debug.Log($"Subscribe a new topic {topic}");
   }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 
-class StreamMessage {
+public class StreamMessage {
     public Dictionary<string, List<float>> updateData;
     public float time;
 }
@@ -16,10 +16,12 @@ public class RigidObjectsController : MonoBehaviour
     private float timeOffset = 0.0f;
     private float frameCounter = 0;
     private float timeDelay = 0;
+    private Subscriber<StreamMessage> _subscriber;
 
     void Start() {
         gameObject.GetComponent<SceneLoader>().OnSceneLoaded += StartSubscription;
         gameObject.GetComponent<SceneLoader>().OnSceneCleared += StopSubscription;
+        _subscriber = new Subscriber<StreamMessage>("SceneUpdate", SubscribeCallback);
     }
 
     public void StartSubscription() {
@@ -27,15 +29,14 @@ public class RigidObjectsController : MonoBehaviour
         _objectsTrans = gameObject.GetComponent<SceneLoader>().GetObjectsTrans();
         timeOffset = IRXRNetManager.Instance.TimeOffset;
         Debug.Log("Start Update Scene");
-        IRXRNetManager.Instance.SubscribeTopic("SceneUpdate", SubscribeCallback);
+        _subscriber.StartSubscription();
     }
 
     public void StopSubscription() {
-        IRXRNetManager.Instance.UnsubscribeTopic("SceneUpdate");
+        _subscriber.Unsubscribe();
     }
 
-    public void SubscribeCallback(string message) {
-        StreamMessage streamMsg = JsonConvert.DeserializeObject<StreamMessage>(message);
+    public void SubscribeCallback(StreamMessage streamMsg) {
         if (streamMsg.time < lastSimulationTimeStamp) return;
         lastSimulationTimeStamp = streamMsg.time;
         foreach (var (name, value) in streamMsg.updateData) {
