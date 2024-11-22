@@ -27,7 +27,7 @@ public class LogStreamer : Streamer {
     float totalTime = Time.realtimeSinceStartup - timer;
     if (totalTime > 5.0f) {
       float fps = frameCounter / totalTime;
-      Debug.Log("Average FPS in the last 5s: " + fps);
+      HandleLog("Average FPS in the last 5s: " + fps, null, LogType.Log);
       timer = Time.realtimeSinceStartup;
       frameCounter = 0;
     }
