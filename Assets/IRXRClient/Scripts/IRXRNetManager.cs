@@ -183,7 +183,10 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   }
 
   void OnApplicationQuit() {
-    RequestString("ClientQuit", _localInfo.ip);
+    if (isConnected)
+    {
+      RequestString("ClientQuit", _localInfo.ip);
+    };
     _discoveryClient.Dispose();
     foreach (var socket in _sockets) {
       socket.Dispose();
