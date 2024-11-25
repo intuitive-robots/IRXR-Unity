@@ -1,4 +1,3 @@
-
 using NetMQ;
 using NetMQ.Sockets;
 using UnityEngine;
@@ -11,17 +10,13 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
-// public enum ServerPort {
-//   Discovery = 7720,
-//   Service = 7721,
-//   Topic = 7722,
-// }
 
 public enum ClientPort {
   Discovery = 7720,
   Service = 7730,
   Topic = 7731,
 }
+
 
 public class HostInfo {
   public string name;
@@ -32,43 +27,6 @@ public class HostInfo {
   public string topicPort;
   public List<string> serviceList = new();
   public List<string> topicList = new();
-}
-
-
-public class Subscriber <MsgType> {
-  protected string _topic;
-  private Action<MsgType> _receiveAction;
-
-  public Subscriber(string topic, Action<MsgType> receiveAction) {
-    _topic = topic;
-    _receiveAction = receiveAction;
-  }
-
-  public void StartSubscription() {
-    if (typeof(MsgType) == typeof(byte[]))
-    {
-      IRXRNetManager.Instance.SubscribeTopic(_topic, OnByteReceive);
-    }
-    else
-    {
-      IRXRNetManager.Instance.SubscribeTopic(_topic, OnReceive);
-    }
-  }
-
-  public void OnByteReceive(byte[] byteMessage) {
-    _receiveAction((MsgType)(object)byteMessage);
-  }
-
-  public void OnReceive(byte[] byteMessage) {
-    string jsonString = Encoding.UTF8.GetString(byteMessage);
-    MsgType msg = JsonConvert.DeserializeObject<MsgType>(jsonString);
-    _receiveAction(msg);
-  }
-
-  public void Unsubscribe() {
-    IRXRNetManager.Instance.UnsubscribeTopic(_topic);
-  }
-
 }
 
 

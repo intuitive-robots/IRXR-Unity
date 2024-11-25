@@ -1,7 +1,4 @@
 using UnityEngine;
-using NetMQ;
-using NetMQ.Sockets;
-using Newtonsoft.Json;
 
 
 public class LogStreamer : Streamer {

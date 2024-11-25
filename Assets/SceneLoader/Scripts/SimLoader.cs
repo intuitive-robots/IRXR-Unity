@@ -1,15 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
-using System.Linq;
-using System.IO.Pipes;
-using System.Collections.Concurrent;
-using Unity.Collections;
-using System.Reflection;
+
 
 public class SceneLoader : MonoBehaviour {
 
@@ -47,7 +42,7 @@ public class SceneLoader : MonoBehaviour {
     // It is more accurate to use System.Diagnostics.Stopwatch, theoretically
     var local_watch = new System.Diagnostics.Stopwatch();
     local_watch.Start();
-    Debug.Log("Building Scene");
+    // Debug.Log("Start Building Scene");
     _simSceneObj = CreateObject(gameObject.transform, _simScene.root);
     local_watch.Stop();
     Debug.Log($"Building Scene in {local_watch.ElapsedMilliseconds} ms");
@@ -84,7 +79,7 @@ public class SceneLoader : MonoBehaviour {
     
     // When debug run in the subthread, it will not send the log to the server
     RunOnMainThread(() => Debug.Log($"Downloaded {meshSizeMB}MB meshes, {textureSizeMB}MB textures."));
-    RunOnMainThread(() => Debug.Log($"Downloading Asset in {local_watch.ElapsedMilliseconds} ms"));
+    RunOnMainThread(() => Debug.Log($"Downloaded Asset in {local_watch.ElapsedMilliseconds} ms"));
   }
 
   void RunOnMainThread(Action action) {
@@ -192,7 +187,7 @@ public class SceneLoader : MonoBehaviour {
     mat.SetFloat("_Smoothness", simMat.shininess);
     mat.SetFloat("_GlossyReflections", simMat.reflectance);
     if (simMat.texture != null) {
-      Debug.Log($"Texture found for {objName}");
+      // Debug.Log($"Texture found for {objName}");
       SimTexture simTex = simMat.texture;
       if (!_pendingTexture.ContainsKey(simTex.hash)) {
         _pendingTexture[simTex.hash] = new(simTex, new());

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using UnityEngine;
+
 
 public class StreamMessage {
     public Dictionary<string, List<float>> updateData;
