@@ -1,4 +1,3 @@
-
 using NetMQ;
 using NetMQ.Sockets;
 using UnityEngine;
@@ -11,11 +10,6 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
-public enum ServerPort {
-  Discovery = 7720,
-  Service = 7721,
-  Topic = 7722,
-}
 
 public enum ClientPort {
   Discovery = 7720,
@@ -23,32 +17,37 @@ public enum ClientPort {
   Topic = 7731,
 }
 
+
 public class HostInfo {
   public string name;
+  public string instance;
   public string ip;
-  public List<string> topics = new();
-  public List<string> services = new();
+  public string type;
+  public string servicePort;
+  public string topicPort;
+  public List<string> serviceList = new();
+  public List<string> topicList = new();
 }
+
 
 public class IRXRNetManager : Singleton<IRXRNetManager> {
   public Action OnDisconnected;
   public Action OnConnectionStart;
+  public Action OnDeviceSetup;
   // public Action OnServerDiscovered;
   public Action ConnectionSpin;
   private UdpClient _discoveryClient;
   private string _conncetionID = null;
   public HostInfo _serverInfo = null;
   private HostInfo _localInfo = new HostInfo();
-
   private List<NetMQSocket> _sockets;
-
   // subscriber socket
   private SubscriberSocket _subSocket;
-  private Dictionary<string, Action<string>> _topicsCallbacks;
+  private Dictionary<string, Action<byte[]>> _topicsCallbacks;
   // publisher socket
   private PublisherSocket _pubSocket;
   private RequestSocket _reqSocket;
-
+  // response socket
   private ResponseSocket _resSocket;
   private Dictionary<string, Func<string, string>> _serviceCallbacks;
 
@@ -64,7 +63,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   void Awake() {
     AsyncIO.ForceDotNet.Force();
-    _discoveryClient = new UdpClient((int)ServerPort.Discovery);
+    _discoveryClient = new UdpClient((int)ClientPort.Discovery);
     _sockets = new List<NetMQSocket>();
     _reqSocket = new RequestSocket();
     // response socket
@@ -72,11 +71,10 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _serviceCallbacks = new Dictionary<string, Func<string, string>>();
     // subscriber socket
     _subSocket = new SubscriberSocket();
-    _topicsCallbacks = new Dictionary<string, Action<string>>();
+    _topicsCallbacks = new Dictionary<string, Action<byte[]>>();
     _pubSocket = new PublisherSocket();
     // the collection of all sockets
     _sockets = new List<NetMQSocket> { _reqSocket, _resSocket, _subSocket, _pubSocket };
-
     // Default host name
     if (PlayerPrefs.HasKey("HostName"))
     {
@@ -91,12 +89,17 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
       _localInfo.name = "UnityClient";
       Debug.Log($"Host Name not found, using default name {_localInfo.name}");
     }
+    _localInfo.instance = Guid.NewGuid().ToString();
+    _localInfo.type = "UnityClient";
+    _localInfo.servicePort = ((int)ClientPort.Service).ToString();
+    _localInfo.topicPort = ((int)ClientPort.Topic).ToString();
   }
 
   void Start() {
     // OnServerDiscovered += StartConnection;
     // OnServerDiscovered += RegisterInfo2Server;
     // OnConnectionStart += RegisterInfo2Server;
+    OnDeviceSetup?.Invoke();
     OnConnectionStart += () => { isConnected = true; };
     ConnectionSpin += () => {};
     OnDisconnected += StopConnection;
@@ -105,7 +108,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   }
 
   async void Update() {
-    ConnectionSpin.Invoke();
+    ConnectionSpin?.Invoke();
     if (_discoveryClient.Available == 0) return; // there's no message to read
     IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
     byte[] result = _discoveryClient.Receive(ref endPoint);
@@ -138,6 +141,10 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   }
 
   void OnApplicationQuit() {
+    if (isConnected)
+    {
+      RequestString("ClientQuit", _localInfo.ip);
+    };
     _discoveryClient.Dispose();
     foreach (var socket in _sockets) {
       socket.Dispose();
@@ -182,14 +189,14 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public void StartConnection() {
     if (isConnected) StopConnection();
-    _subSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
+    _subSocket.Connect($"tcp://{_serverInfo.ip}:{_serverInfo.topicPort}");
     _subSocket.Subscribe("");
     ConnectionSpin += TopicUpdateSpin;
-    Debug.Log($"Connected topic to {_serverInfo.ip}:{(int)ServerPort.Topic}");
+    Debug.Log($"Connected topic to {_serverInfo.ip}:{_serverInfo.topicPort}");
     _resSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
     ConnectionSpin += ServiceRespondSpin;
-    _reqSocket.Connect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Service}");
-    Debug.Log($"Starting service connection to {_serverInfo.ip}:{(int)ServerPort.Service}");
+    _reqSocket.Connect($"tcp://{_serverInfo.ip}:{_serverInfo.servicePort}");
+    Debug.Log($"Starting service connection to {_serverInfo.ip}:{_serverInfo.servicePort}");
     _pubSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
     isConnected = true;
     CaculateTimestampOffset();
@@ -197,7 +204,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
 
   public void StopConnection() {
     if (isConnected) {
-      _subSocket.Disconnect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Topic}");
+      _subSocket.Disconnect($"tcp://{_serverInfo.ip}:{_serverInfo.topicPort}");
       while (_subSocket.HasIn) _subSocket.SkipFrame();
     }
     ConnectionSpin -= TopicUpdateSpin;
@@ -206,24 +213,33 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     _resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
     ConnectionSpin -= ServiceRespondSpin;
     _pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
-    _reqSocket.Disconnect($"tcp://{_serverInfo.ip}:{(int)ServerPort.Service}");
+    _reqSocket.Disconnect($"tcp://{_serverInfo.ip}:{_serverInfo.servicePort}");
     isConnected = false;
     Debug.Log("Disconnected");
   }
 
   public void TopicUpdateSpin() {
     // Only process the latest message of each topic
-    Dictionary<string, string> messageProcessed = new();
+    Dictionary<string, byte[]> messageProcessed = new();
     while (_subSocket.HasIn)
     {
-      string messageReceived = _subSocket.ReceiveFrameString();
-      string[] messageSplit = messageReceived.Split(":", 2);
-      if (_topicsCallbacks.ContainsKey(messageSplit[0])) {
-        messageProcessed[messageSplit[0]] = messageSplit[1];
+      byte[] byteMsgReceived = _subSocket.ReceiveFrameBytes();
+      int colonIndex = -1;
+      for (int i = 0; i < byteMsgReceived.Length; i++)
+      {
+          if (byteMsgReceived[i] == 58)
+          {
+              colonIndex = i;
+              break;
+          }
       }
-      foreach (var (topic, msg) in messageProcessed) {
-        _topicsCallbacks[topic](msg);
+      string topic = Encoding.UTF8.GetString(byteMsgReceived, 0, colonIndex);
+      if (_topicsCallbacks.ContainsKey(topic)) {
+        messageProcessed[topic] = byteMsgReceived.AsSpan(colonIndex + 1).ToArray();
       }
+    }
+    foreach (var (topic, msg) in messageProcessed) {
+      _topicsCallbacks[topic](msg);
     }
   }
 
@@ -242,7 +258,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     }
   }
 
-  public void SubscribeTopic(string topic, Action<string> callback) {
+  public void SubscribeTopic(string topic, Action<byte[]> callback) {
     _topicsCallbacks[topic] = callback;
     Debug.Log($"Subscribe a new topic {topic}");
   }
@@ -252,8 +268,8 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   }
 
   public void CreatePublishTopic(string topic) {
-    if (_localInfo.topics.Contains(topic)) Debug.LogWarning($"Topic {topic} already exists");
-    _localInfo.topics.Add(topic);
+    if (_localInfo.topicList.Contains(topic)) Debug.LogWarning($"Topic {topic} already exists");
+    _localInfo.topicList.Add(topic);
     RegisterInfo2Server();
   }
 
@@ -267,7 +283,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   public void RegisterServiceCallback(string service, Func<string, string> callback) {
     Debug.Log($"Register service {service}");
     _serviceCallbacks[service] = callback;
-    _localInfo.services.Add(service);
+    _localInfo.serviceList.Add(service);
   }
 
   public string GetHostName() {
@@ -332,7 +348,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   public bool CheckServerService(string serviceName) {
     if (!isConnected) return false;
     if (_serverInfo == null) return false;
-    if (_serverInfo.services.Contains(serviceName)) return true;
+    if (_serverInfo.serviceList.Contains(serviceName)) return true;
     return false;
   }
 
