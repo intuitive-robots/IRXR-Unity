@@ -153,6 +153,8 @@ public class SceneLoader : MonoBehaviour {
       }
     }
     body.children.ForEach(body => CreateObject(bodyRoot.transform, body));
+    if (_simObjTrans.ContainsKey(body.name)) 
+      _simObjTrans.Remove(body.name);
     _simObjTrans.Add(body.name, bodyRoot.transform);
     return bodyRoot;
   }

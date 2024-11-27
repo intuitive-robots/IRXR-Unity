@@ -4,5 +4,12 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
-  m_configObjects: {}
+  m_Scenes:
+  - enabled: 0
+    path: Assets/MetaQuest3/Scene/PointCloudLabeling.unity
+    guid: dc5592ac60ccaaa4bb413f7385379e58
+  - enabled: 1
+    path: Assets/MetaQuest3/Scene/QuestScene.unity
+    guid: 2ad3c97db74ec8e49abaa4327292027b
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 5f6b10141f2f8e54a816c17ec9bce5b4, type: 2}
