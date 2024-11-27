@@ -34,8 +34,10 @@ public class MetaQuest3Controller : Streamer
     {
         IRXRNetManager _netManager = IRXRNetManager.Instance;
         string hostName = _netManager.GetHostName();
-        _netManager.SubscribeTopic($"{hostName}/StartVibration", StartVibration);
-        _netManager.SubscribeTopic($"{hostName}/StopVibration", StopVibration);
+        // TODO: waiting for tesing the vibration function
+        // TODO: vibration function is not working since it probably blocks the main thread
+        // _netManager.SubscribeTopic($"{hostName}/StartVibration", StartVibration);
+        // _netManager.SubscribeTopic($"{hostName}/StopVibration", StopVibration);
     }
 
     public void StartVibration(string message) {
