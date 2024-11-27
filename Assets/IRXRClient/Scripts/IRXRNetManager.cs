@@ -31,7 +31,6 @@ public class HostInfo {
 }
 
 public class IRXRNetManager : Singleton<IRXRNetManager> {
-
   public Action OnDisconnected;
   public Action OnConnectionStart;
   // public Action OnServerDiscovered;

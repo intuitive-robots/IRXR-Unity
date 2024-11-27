@@ -1,11 +1,15 @@
 # Intuitive Robot & Mixed Reality (IRXR-Unity)
 
+![FancyGym](./Docs/Pictures/fancy_gym_example.gif)
+![Libero](./Docs/Pictures/libero_example.gif)
+![Robocasa](./Docs/Pictures/robocasa_example.gif)
+
 This repository aims to enhance robot simulation by making it more intuitive and interactive through Mixed Reality (MR). 
 Current visualization devices, such as XR/AR/VR glasses, support only basic physics simulations and are not tailored for research-driven simulation due to their limited computational resources.
+To ensure the reproducibility of simulation results, we have decoupled the simulation and rendering processes onto two separate machines. 
 
 ![System Overview](./Docs/Pictures/SystemOverview.png)
 
-To ensure the reproducibility of simulation results, we have decoupled the simulation and rendering processes onto two separate machines. 
 This framework allows for more efficient and accurate simulations. 
 The Unity and simulation are interconnected via [SimPublisher](https://github.com/intuitive-robots/SimPublisher.git), which simplifies the process of remotely rendering simulated objects from the simulation.
 This repo is the implementation of rendering.
