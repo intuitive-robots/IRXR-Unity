@@ -16,8 +16,8 @@ public class SceneLoader : MonoBehaviour {
   private GameObject _simSceneObj;
   private SimScene _simScene;
   private Dictionary<string, Transform> _simObjTrans = new ();
-  private Dictionary<string, Tuple<SimMesh, List<MeshFilter>>> _pendingMesh = new ();
-  private Dictionary<string, Tuple<SimTexture, List<Material>>> _pendingTexture = new ();
+  private Dictionary<string, List<Tuple<SimMesh, MeshFilter>>> _pendingMesh = new ();
+  private Dictionary<string, List<Tuple<SimTexture, Material>>> _pendingTexture = new ();
 
 
   void Start() {
@@ -38,7 +38,7 @@ public class SceneLoader : MonoBehaviour {
   }
 
   void BuildScene() {
-    // Don't include System.Diagnostics, Debug becomes disambiguous
+    // Don't include System.Diagnostics, Debug becomes ambiguous
     // It is more accurate to use System.Diagnostics.Stopwatch, theoretically
     var local_watch = new System.Diagnostics.Stopwatch();
     local_watch.Start();
@@ -58,15 +58,21 @@ public class SceneLoader : MonoBehaviour {
     foreach (string hash in _pendingMesh.Keys)
     {
       byte[] meshData = _netManager.RequestBytes("Asset", hash).ToArray();
-      var(simMesh, meshFilters) = _pendingMesh[hash];
-      RunOnMainThread(() => BuildMesh(meshData, simMesh, meshFilters));
+      foreach (var item in _pendingMesh[hash])
+      {
+        var (simMesh, meshFilter) = item;
+        RunOnMainThread(() => BuildMesh(meshData, simMesh, meshFilter));
+      }
       totalMeshSize += meshData.Length;
     }
     foreach (string hash in _pendingTexture.Keys)
     {
       byte[] texData = _netManager.RequestBytes("Asset", hash).ToArray();
-      var(simTex, materials) = _pendingTexture[hash];
-      RunOnMainThread(() => BuildTexture(texData, simTex, materials));
+      foreach (var item in _pendingTexture[hash])
+      {
+        var (simTex, material) = item;
+        RunOnMainThread(() => BuildTexture(texData, simTex, material));
+      }
       totalTextureSize += texData.Length;
     }
 
@@ -77,7 +83,7 @@ public class SceneLoader : MonoBehaviour {
     _pendingMesh.Clear();
     _pendingTexture.Clear();
     
-    // When debug run in the subthread, it will not send the log to the server
+    // When debug run in the sub thread, it will not send the log to the server
     RunOnMainThread(() => Debug.Log($"Downloaded {meshSizeMB}MB meshes, {textureSizeMB}MB textures."));
     RunOnMainThread(() => Debug.Log($"Downloaded Asset in {local_watch.ElapsedMilliseconds} ms"));
   }
@@ -116,9 +122,9 @@ public class SceneLoader : MonoBehaviour {
             SimMesh simMesh = visual.mesh;
             visualObj = new GameObject(simMesh.hash, typeof(MeshFilter), typeof(MeshRenderer));
             if (!_pendingMesh.ContainsKey(simMesh.hash)) {
-              _pendingMesh[simMesh.hash] = new(simMesh, new());
+              _pendingMesh[simMesh.hash] = new List<Tuple<SimMesh, MeshFilter>>();
             }
-            _pendingMesh[simMesh.hash].Item2.Add(visualObj.GetComponent<MeshFilter>());
+            _pendingMesh[simMesh.hash].Add(new(simMesh, visualObj.GetComponent<MeshFilter>()));
             break;
           }
           case "CUBE":
@@ -190,34 +196,34 @@ public class SceneLoader : MonoBehaviour {
       // Debug.Log($"Texture found for {objName}");
       SimTexture simTex = simMat.texture;
       if (!_pendingTexture.ContainsKey(simTex.hash)) {
-        _pendingTexture[simTex.hash] = new(simTex, new());
+        _pendingTexture[simTex.hash] = new();
       }
-      _pendingTexture[simTex.hash].Item2.Add(mat);
+      _pendingTexture[simTex.hash].Add(new(simTex, mat));
     }
     return mat;
   }
 
-  public void BuildMesh(byte[] meshData, SimMesh simMesh, List<MeshFilter> meshFilters) {
-    var mesh = new Mesh{
-      vertices = MemoryMarshal.Cast<byte, Vector3>(new ReadOnlySpan<byte>(meshData, simMesh.verticesLayout[0], simMesh.verticesLayout[1] * sizeof(float))).ToArray(),
-      normals = MemoryMarshal.Cast<byte, Vector3>(new ReadOnlySpan<byte>(meshData, simMesh.normalsLayout[0], simMesh.normalsLayout[1] * sizeof(float))).ToArray(),
-      triangles = MemoryMarshal.Cast<byte, int>(new ReadOnlySpan<byte>(meshData, simMesh.indicesLayout[0], simMesh.indicesLayout[1] * sizeof(int))).ToArray(),
-      uv = MemoryMarshal.Cast<byte, Vector2>(new ReadOnlySpan<byte>(meshData, simMesh.uvLayout[0], simMesh.uvLayout[1] * sizeof(float))).ToArray()
+public T[] DecodeArray<T>(byte[] data, int start, int length) where T : struct
+{
+    return MemoryMarshal.Cast<byte, T>(new ReadOnlySpan<byte>(data, start, length)).ToArray();
+}
+
+  public void BuildMesh(byte[] meshData, SimMesh simMesh, MeshFilter meshFilter) {
+    meshFilter.mesh = new Mesh
+    {
+      vertices = DecodeArray<Vector3>(meshData, simMesh.verticesLayout[0], simMesh.verticesLayout[1]),
+      normals = DecodeArray<Vector3>(meshData, simMesh.normalsLayout[0], simMesh.normalsLayout[1]),
+      triangles = DecodeArray<int>(meshData, simMesh.indicesLayout[0], simMesh.indicesLayout[1]),
+      uv = DecodeArray<Vector2>(meshData, simMesh.uvLayout[0], simMesh.uvLayout[1])
     };
-    foreach (MeshFilter meshFilter in meshFilters) {
-      meshFilter.mesh = mesh;
-    }
   }
 
-  public void BuildTexture(byte[] texData, SimTexture simTex, List<Material> materials) {
+  public void BuildTexture(byte[] texData, SimTexture simTex, Material material) {
     Texture2D tex = new Texture2D(simTex.width, simTex.height, TextureFormat.RGB24, false);
     tex.LoadRawTextureData(texData);
     tex.Apply();
-
-    foreach (Material material in materials) {
-      material.mainTexture = tex;
-      material.mainTextureScale = new Vector2(simTex.textureSize[0], simTex.textureSize[1]);
-    }
+    material.mainTexture = tex;
+    material.mainTextureScale = new Vector2(simTex.textureScale[0], simTex.textureScale[1]);
   }
 
   public Dictionary<string, Transform> GetObjectsTrans() {

@@ -75,5 +75,5 @@ public class SimTexture  : SimAsset {
   public int width;
   public int height;
   public string texureType;
-  public List<float> textureSize;
+  public List<float> textureScale;
 }
