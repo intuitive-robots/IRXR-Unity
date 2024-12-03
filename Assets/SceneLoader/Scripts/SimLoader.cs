@@ -101,10 +101,10 @@ public class SceneLoader : MonoBehaviour {
     }
   }
 
-  void ApplyTransform(Transform utransform, SimTransform trans) {
-    utransform.localPosition = trans.GetPos();
-    utransform.localRotation = trans.GetRot();
-    utransform.localScale = trans.GetScale();
+  void ApplyTransform(Transform uTransform, SimTransform simTrans) {
+    uTransform.localPosition = simTrans.GetPos();
+    uTransform.localRotation = simTrans.GetRot();
+    uTransform.localScale = simTrans.GetScale();
   }
 
   GameObject CreateObject(Transform root, SimBody body) {

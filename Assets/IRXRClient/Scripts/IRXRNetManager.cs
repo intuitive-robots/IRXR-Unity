@@ -131,7 +131,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     lastTimeStamp = Time.realtimeSinceStartup;
   }
 
-  private void CaculateTimestampOffset() {
+  private void CalculateTimestampOffset() {
     float startTimer = Time.realtimeSinceStartup;
     float serverTime = float.Parse(RequestString("GetServerTimestamp"));
     float endTimer = Time.realtimeSinceStartup;
@@ -199,7 +199,7 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
     Debug.Log($"Starting service connection to {_serverInfo.ip}:{_serverInfo.servicePort}");
     _pubSocket.Bind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
     isConnected = true;
-    CaculateTimestampOffset();
+    CalculateTimestampOffset();
   }
 
   public void StopConnection() {
