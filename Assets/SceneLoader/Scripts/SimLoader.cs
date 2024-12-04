@@ -174,6 +174,13 @@ public class SceneLoader : MonoBehaviour {
 
   public Material BuildMaterial(SimMaterial simMat, string objName) {
     Material mat = new Material(Shader.Find("Standard"));
+    if (simMat.color.Count == 3) {
+      simMat.color.Add(1.0);
+    }
+    else if (simMat.color.Count != 4) {
+      Debug.LogWarning($"Invalid color for {objName}");
+      simMat.emissionColor = new List<float> {1.0, 1.0, 1.0, 1.0};
+    }
     // Transparency
     if (simMat.color[3] < 1)
     {
