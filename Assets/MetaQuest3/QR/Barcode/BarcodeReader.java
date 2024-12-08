@@ -6,11 +6,6 @@ import android.graphics.Bitmap;
 
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
-//import com.google.mlkit.vision.barcode.BarcodeScanner;
-//import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
-//import com.google.mlkit.vision.barcode.BarcodeScanning;
-//import com.google.mlkit.vision.barcode.common.Barcode;
-//import com.google.mlkit.vision.common.InputImage;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.LuminanceSource;
 import com.google.zxing.RGBLuminanceSource;
@@ -66,7 +61,7 @@ public class BarcodeReader implements IDisplayCaptureReceiver {
 
 		public Point(ResultPoint point) {
 			x = point.getX();
-			y = point.getY	();
+			y = point.getY();
 		}
 	}
 
@@ -93,13 +88,6 @@ public class BarcodeReader implements IDisplayCaptureReceiver {
 	}
 
 	public BarcodeReader() {
-
-//		var optBuilder = new BarcodeScannerOptions.Builder();
-//		optBuilder.setBarcodeFormats(Barcode.FORMAT_QR_CODE);
-//		optBuilder.build();
-//
-//		scanner = BarcodeScanning.getClient(optBuilder.build());
-
 		scanner = new QRCodeReader();
 
 		gson = new Gson();
@@ -166,54 +154,14 @@ public class BarcodeReader implements IDisplayCaptureReceiver {
 			results.results[0] = result;
 
 			String resultsAsJson = gson.toJson(results);
-			Log.i(TAG, "JSON: " + resultsAsJson);
+			// Log.i(TAG, "JSON: " + resultsAsJson);
 			unityInterface.OnBarcodeResults(resultsAsJson);
 		}).start();
-
-		/*InputImage input = InputImage.fromBitmap(bitmap, 0);
-
-		readingBarcode = true;
-		scanner.process(input).addOnCompleteListener(task -> {
-
-			readingBarcode = false;
-
-			if (!task.isSuccessful()) {
-				Log.v(TAG, "No barcode found.");
-				return;
-			}
-
-			var taskResult = task.getResult();
-			Results results = new Results(taskResult.size());
-
-			Log.i(TAG, taskResult.size() + " barcodes found.");
-
-			for(int i = 0; i < taskResult.size(); i++) {
-				Barcode barcode = taskResult.get(i);
-				Log.i(TAG, "Barcode: " + barcode.getDisplayValue());
-
-				Result result = new Result();
-				result.text = barcode.getDisplayValue();
-				result.timestamp = timestamp;
-
-				var cornerPoints = Objects.requireNonNull(barcode.getCornerPoints());
-				result.points = new Point[cornerPoints.length];
-				for(int j = 0; j < cornerPoints.length; j++)
-					result.points[j] = new Point(cornerPoints[j]);
-				results.results[i] = result;
-			}
-
-			String resultsAsJson = gson.toJson(results);
-			Log.i(TAG, "JSON: " + resultsAsJson);
-			unityInterface.OnBarcodeResults(resultsAsJson);
-		}); */
 	}
 
-	// called by Unity
+	// called by Unity to create a new unity interface with 
+	// the name of the GameObject that will receive the barcode results
 	public void setup(String gameObjectName) {
 		unityInterface = new UnityInterface(gameObjectName);
 	}
-
-//	public BarcodeResult[] getResults() {
-//		return barcodeResults;
-//	}
 }
