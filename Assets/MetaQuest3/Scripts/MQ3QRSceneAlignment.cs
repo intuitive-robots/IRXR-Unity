@@ -31,6 +31,13 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 			barCodeReader.OnReadBarCodes += OnReadBarCodes;
 	}
 
+	override public void StopQRTracing()
+	{
+		base.StopQRTracing();
+		if(barCodeReader != null)
+			barCodeReader.OnReadBarCodes -= OnReadBarCodes;
+	}
+
 	private void OnReadBarCodes(IEnumerable<BarCodeReader.Result> barcodeResults)
 	{
 		foreach (BarCodeReader.Result barcodeResult in barcodeResults)
