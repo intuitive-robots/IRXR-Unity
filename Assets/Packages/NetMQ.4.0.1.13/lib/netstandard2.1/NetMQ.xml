@@ -1256,7 +1256,7 @@
             The default value is false.
             </summary>
         </member>
-        <member name="P:NetMQ.Core.Options.PgmMaxTransportServicedataUnitLength">
+        <member name="P:NetMQ.Core.Options.PgmMaxTransportServiceDataUnitLength">
             <summary>
             Controls the maximum datagram size for PGM.
             </summary>
@@ -4029,7 +4029,7 @@
         </member>
         <member name="T:NetMQ.Core.Transports.IEncoder">
             <summary>
-            Interface IEncoder mandates SetMsgSource and Getdata methods.
+            Interface IEncoder mandates SetMsgSource and GetData methods.
             </summary>
         </member>
         <member name="M:NetMQ.Core.Transports.IEncoder.Encode(NetMQ.Core.Transports.ByteArraySegment@,System.Int32)">
@@ -5426,7 +5426,7 @@
             Specifies the byte-order: big-endian, vs little-endian.
             </summary>
         </member>
-        <member name="F:NetMQ.Core.ZmqSocketOption.PgmMaxTransportServicedataUnitLength">
+        <member name="F:NetMQ.Core.ZmqSocketOption.PgmMaxTransportServiceDataUnitLength">
             <summary>
             Specifies the max datagram size for PGM.
             </summary>
@@ -6693,7 +6693,7 @@
         </member>
         <member name="P:NetMQ.Msg.Size">
             <summary>
-            Get the number of bytes within the data property.
+            Get the number of bytes within the Data property.
             </summary>
         </member>
         <member name="P:NetMQ.Msg.IsEmpty">
@@ -6713,7 +6713,7 @@
         </member>
         <member name="P:NetMQ.Msg.Offset">
             <summary>
-            Gets the position of the first element in the data property delimited by the message,
+            Gets the position of the first element in the Data property delimited by the message,
             relative to the start of the original array.
             Deprecated: use <see cref="M:NetMQ.Msg.Slice"/> or implicit casting to Span
             </summary>
@@ -6747,7 +6747,7 @@
         </member>
         <member name="P:NetMQ.Msg.IsShared">
             <summary>
-            Get whether the <see cref="P:NetMQ.Msg.data"/> buffer of this <see cref="T:NetMQ.Msg"/> is shared with another instance.
+            Get whether the <see cref="P:NetMQ.Msg.Data"/> buffer of this <see cref="T:NetMQ.Msg"/> is shared with another instance.
             Only applies to pooled message types.
             </summary>
         </member>
@@ -6784,7 +6784,7 @@
             </summary>
             <exception cref="T:NetMQ.InvalidException">Value is larger than 255.</exception>
         </member>
-        <member name="P:NetMQ.Msg.data">
+        <member name="P:NetMQ.Msg.Data">
             <summary>
             Get the byte-array that represents the data payload of this <see cref="T:NetMQ.Msg"/>.
             Deprecated: use <see cref="M:NetMQ.Msg.Slice" /> or implicit casting to Span
@@ -6851,7 +6851,7 @@
         </member>
         <member name="M:NetMQ.Msg.InitEmpty">
             <summary>
-            Clear this Msg to empty - ie, set MsgFlags to None, MsgType to Empty, and clear the data.
+            Clear this Msg to empty - ie, set MsgFlags to None, MsgType to Empty, and clear the Data.
             </summary>
         </member>
         <member name="M:NetMQ.Msg.InitPool(System.Int32)">
@@ -6864,14 +6864,14 @@
             <summary>
             Initialise this Msg to be of MsgType.GC with the given data-buffer value.
             </summary>
-            <param name="data">the byte-array of data to assign to the Msg's data property</param>
+            <param name="data">the byte-array of data to assign to the Msg's Data property</param>
             <param name="size">the number of bytes that are in the data byte-array</param>
         </member>
         <member name="M:NetMQ.Msg.InitGC(System.Byte[],System.Int32,System.Int32)">
             <summary>
             Initialise this Msg to be of MsgType.GC with the given data-buffer value.
             </summary>
-            <param name="data">the byte-array of data to assign to the Msg's data property</param>
+            <param name="data">the byte-array of data to assign to the Msg's Data property</param>
             <param name="offset">first byte in the data array</param>
             <param name="size">the number of bytes that are in the data byte-array</param>
         </member>
@@ -6882,7 +6882,7 @@
         </member>
         <member name="M:NetMQ.Msg.Close">
             <summary>
-            Clear the <see cref="P:NetMQ.Msg.data"/> and set the MsgType to Invalid.
+            Clear the <see cref="P:NetMQ.Msg.Data"/> and set the MsgType to Invalid.
             If this is not a shared-data Msg (MsgFlags.Shared is not set), or it is shared but the reference-counter has dropped to zero,
             then return the data back to the BufferPool.
             </summary>
@@ -6928,33 +6928,33 @@
         </member>
         <member name="M:NetMQ.Msg.Put(System.Byte[],System.Int32,System.Int32)">
             <summary>
-            Copy the given byte-array data to this Msg's data buffer.
+            Copy the given byte-array data to this Msg's Data buffer.
             </summary>
             <param name="src">the source byte-array to copy from</param>
-            <param name="dstOffset">index within the internal data array to copy that byte to</param>
+            <param name="dstOffset">index within the internal Data array to copy that byte to</param>
             <param name="len">the number of bytes to copy</param>
         </member>
         <member name="M:NetMQ.Msg.Put(System.Byte[],System.Int32,System.Int32,System.Int32)">
             <summary>
-            Copy the given byte-array data to this Msg's data buffer.
+            Copy the given byte-array data to this Msg's Data buffer.
             </summary>
             <param name="src">the source byte-array to copy from</param>
             <param name="srcOffset">first byte in the source byte-array</param>
-            <param name="dstOffset">index within the internal data array to copy that byte to</param>
+            <param name="dstOffset">index within the internal Data array to copy that byte to</param>
             <param name="len">the number of bytes to copy</param>
         </member>
         <member name="M:NetMQ.Msg.Put(System.Byte)">
             <summary>
-            Copy the given single byte to this Msg's data buffer.
+            Copy the given single byte to this Msg's Data buffer.
             </summary>
             <param name="b">the source byte to copy from</param>
         </member>
         <member name="M:NetMQ.Msg.Put(System.Byte,System.Int32)">
             <summary>
-            Copy the given single byte to this Msg's data buffer at the given array-index.
+            Copy the given single byte to this Msg's Data buffer at the given array-index.
             </summary>
             <param name="b">the source byte to copy from</param>
-            <param name="i">index within the internal data array to copy that byte to</param>
+            <param name="i">index within the internal Data array to copy that byte to</param>
         </member>
         <member name="M:NetMQ.Msg.Put(System.Text.Encoding,System.String,System.Int32)">
             <summary>
@@ -6966,14 +6966,14 @@
         </member>
         <member name="M:NetMQ.Msg.Put(System.Span{System.Byte},System.Int32)">
             <summary>
-            Copy the given byte-array data to this Msg's data buffer.
+            Copy the given byte-array data to this Msg's Data buffer.
             </summary>
             <param name="src">the source byte-array to copy from</param>
-            <param name="offset">index within the internal data array to copy that byte to</param>
+            <param name="offset">index within the internal Data array to copy that byte to</param>
         </member>
         <member name="P:NetMQ.Msg.Item(System.Int32)">
             <summary>
-            Get and set the byte value in the <see cref="P:NetMQ.Msg.data"/> buffer at a specific index.
+            Get and set the byte value in the <see cref="P:NetMQ.Msg.Data"/> buffer at a specific index.
             </summary>
             <param name="index">The index to access</param>
             <returns></returns>
@@ -7000,9 +7000,9 @@
             <param name="src">the source-Msg to become</param>
             <exception cref="T:NetMQ.FaultException">The object is not initialised.</exception>
         </member>
-        <member name="M:NetMQ.Msg.Clonedata">
+        <member name="M:NetMQ.Msg.CloneData">
             <summary>
-            Returns a new array containing the first <see cref="P:NetMQ.Msg.Size"/> bytes of <see cref="P:NetMQ.Msg.data"/>.
+            Returns a new array containing the first <see cref="P:NetMQ.Msg.Size"/> bytes of <see cref="P:NetMQ.Msg.Data"/>.
             Deprecated: use <see cref="M:NetMQ.Msg.ToArray"/>
             </summary>
         </member>
@@ -7338,7 +7338,7 @@
             <summary>
             Encodes Z85 string
             </summary>
-            <param name="data">data</param>
+            <param name="data">Data</param>
         </member>
         <member name="M:NetMQ.NetMQCertificate.Z85Decode(System.String)">
             <summary>
@@ -7533,7 +7533,7 @@
         <member name="M:NetMQ.NetMQException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
             <summary>Constructor for serialisation.</summary>
         </member>
-        <member name="M:NetMQ.NetMQException.GetObjectdata(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+        <member name="M:NetMQ.NetMQException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
             <inheritdoc />
         </member>
         <member name="M:NetMQ.NetMQException.#ctor(System.Exception,System.String,NetMQ.ErrorCode)">
@@ -8056,7 +8056,7 @@
         <member name="M:NetMQ.NetMQMessage.Append(System.Byte[])">
             <summary>
             Add the given data (in this case a byte-array) to this NetMQMessage, at the highest-indexed position of the frame-stack.
-            data is not copied.
+            Data is not copied.
             </summary>
             <param name="buffer">a byte-array containing the message to append onto the frame-stack of this NetMQMessage</param>
         </member>
@@ -11050,7 +11050,7 @@
             Get the last PEER allocated routing id
             </summary>
         </member>
-        <member name="P:NetMQ.SocketOptions.PgmMaxTransportServicedataUnitLength">
+        <member name="P:NetMQ.SocketOptions.PgmMaxTransportServiceDataUnitLength">
             <summary>
             Controls the maximum datagram size for PGM.
             </summary>

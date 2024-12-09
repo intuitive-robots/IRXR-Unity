@@ -4,45 +4,45 @@
     <name>System.Security.Cryptography.Xml</name>
   </assembly>
   <members>
-    <member name="T:System.Security.Cryptography.Xml.Cipherdata">
-      <summary>Represents the <see langword="&lt;Cipherdata&gt;" /> element in XML encryption. This class cannot be inherited.</summary>
+    <member name="T:System.Security.Cryptography.Xml.CipherData">
+      <summary>Represents the <see langword="&lt;CipherData&gt;" /> element in XML encryption. This class cannot be inherited.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.Cipherdata.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.Cipherdata" /> class.</summary>
+    <member name="M:System.Security.Cryptography.Xml.CipherData.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.Cipherdata.#ctor(System.Byte[])">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.Cipherdata" /> class using a byte array as the <see cref="P:System.Security.Cryptography.Xml.Cipherdata.CipherValue" /> value.</summary>
+    <member name="M:System.Security.Cryptography.Xml.CipherData.#ctor(System.Byte[])">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> class using a byte array as the <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> value.</summary>
       <param name="cipherValue">The encrypted data to use for the <see langword="&lt;CipherValue&gt;" /> element.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="cipherValue" /> parameter is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.Cipherdata.CipherValue" /> property has already been set.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> property has already been set.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.Cipherdata.#ctor(System.Security.Cryptography.Xml.CipherReference)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.Cipherdata" /> class using a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object.</summary>
+    <member name="M:System.Security.Cryptography.Xml.CipherData.#ctor(System.Security.Cryptography.Xml.CipherReference)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> class using a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object.</summary>
       <param name="cipherReference">The <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object to use.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="cipherValue" /> parameter is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.Cipherdata.CipherValue" /> property has already been set.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> property has already been set.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.Cipherdata.GetXml">
-      <summary>Gets the XML values for the <see cref="T:System.Security.Cryptography.Xml.Cipherdata" /> object.</summary>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.Cipherdata.CipherValue" /> property and the <see cref="P:System.Security.Cryptography.Xml.Cipherdata.CipherReference" /> property are <see langword="null" />.</exception>
-      <returns>A <see cref="T:System.Xml.XmlElement" /> object that represents the XML information for the <see cref="T:System.Security.Cryptography.Xml.Cipherdata" /> object.</returns>
+    <member name="M:System.Security.Cryptography.Xml.CipherData.GetXml">
+      <summary>Gets the XML values for the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</summary>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> property and the <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherReference" /> property are <see langword="null" />.</exception>
+      <returns>A <see cref="T:System.Xml.XmlElement" /> object that represents the XML information for the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.Cipherdata.LoadXml(System.Xml.XmlElement)">
-      <summary>Loads XML data from an <see cref="T:System.Xml.XmlElement" /> into a <see cref="T:System.Security.Cryptography.Xml.Cipherdata" /> object.</summary>
+    <member name="M:System.Security.Cryptography.Xml.CipherData.LoadXml(System.Xml.XmlElement)">
+      <summary>Loads XML data from an <see cref="T:System.Xml.XmlElement" /> into a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</summary>
       <param name="value">An <see cref="T:System.Xml.XmlElement" /> that represents the XML data to load.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="value" /> parameter is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.Cipherdata.CipherValue" /> property and the <see cref="P:System.Security.Cryptography.Xml.Cipherdata.CipherReference" /> property are <see langword="null" />.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> property and the <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherReference" /> property are <see langword="null" />.</exception>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.Cipherdata.CipherReference">
+    <member name="P:System.Security.Cryptography.Xml.CipherData.CipherReference">
       <summary>Gets or sets the <see langword="&lt;CipherReference&gt;" /> element.</summary>
-      <exception cref="T:System.ArgumentNullException">The <see cref="P:System.Security.Cryptography.Xml.Cipherdata.CipherReference" /> property was set to <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.Cipherdata.CipherReference" /> property was set more than once.</exception>
+      <exception cref="T:System.ArgumentNullException">The <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherReference" /> property was set to <see langword="null" />.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherReference" /> property was set more than once.</exception>
       <returns>A <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object.</returns>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.Cipherdata.CipherValue">
+    <member name="P:System.Security.Cryptography.Xml.CipherData.CipherValue">
       <summary>Gets or sets the <see langword="&lt;CipherValue&gt;" /> element.</summary>
-      <exception cref="T:System.ArgumentNullException">The <see cref="P:System.Security.Cryptography.Xml.Cipherdata.CipherValue" /> property was set to <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.Cipherdata.CipherValue" /> property was set more than once.</exception>
+      <exception cref="T:System.ArgumentNullException">The <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> property was set to <see langword="null" />.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> property was set more than once.</exception>
       <returns>A byte array that represents the <see langword="&lt;CipherValue&gt;" /> element.</returns>
     </member>
     <member name="T:System.Security.Cryptography.Xml.CipherReference">
@@ -70,58 +70,58 @@
       <param name="value">An <see cref="T:System.Xml.XmlElement" /> object that represents an XML element to use as the reference.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="value" /> provided is <see langword="null" />.</exception>
     </member>
-    <member name="T:System.Security.Cryptography.Xml.dataObject">
+    <member name="T:System.Security.Cryptography.Xml.DataObject">
       <summary>Represents the object element of an XML signature that holds data to be signed.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.dataObject.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.dataObject" /> class.</summary>
+    <member name="M:System.Security.Cryptography.Xml.DataObject.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataObject" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.dataObject.#ctor(System.String,System.String,System.String,System.Xml.XmlElement)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.dataObject" /> class with the specified identification, MIME type, encoding, and data.</summary>
-      <param name="id">The identification to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.dataObject" /> with.</param>
-      <param name="mimeType">The MIME type of the data used to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.dataObject" />.</param>
-      <param name="encoding">The encoding of the data used to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.dataObject" />.</param>
-      <param name="data">The data to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.dataObject" /> with.</param>
+    <member name="M:System.Security.Cryptography.Xml.DataObject.#ctor(System.String,System.String,System.String,System.Xml.XmlElement)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataObject" /> class with the specified identification, MIME type, encoding, and data.</summary>
+      <param name="id">The identification to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.DataObject" /> with.</param>
+      <param name="mimeType">The MIME type of the data used to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.DataObject" />.</param>
+      <param name="encoding">The encoding of the data used to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.DataObject" />.</param>
+      <param name="data">The data to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.DataObject" /> with.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="data" /> parameter is <see langword="null" />.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.dataObject.GetXml">
-      <summary>Returns the XML representation of the <see cref="T:System.Security.Cryptography.Xml.dataObject" /> object.</summary>
-      <returns>The XML representation of the <see cref="T:System.Security.Cryptography.Xml.dataObject" /> object.</returns>
+    <member name="M:System.Security.Cryptography.Xml.DataObject.GetXml">
+      <summary>Returns the XML representation of the <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object.</summary>
+      <returns>The XML representation of the <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.dataObject.LoadXml(System.Xml.XmlElement)">
-      <summary>Loads a <see cref="T:System.Security.Cryptography.Xml.dataObject" /> state from an XML element.</summary>
-      <param name="value">The XML element to load the <see cref="T:System.Security.Cryptography.Xml.dataObject" /> state from.</param>
+    <member name="M:System.Security.Cryptography.Xml.DataObject.LoadXml(System.Xml.XmlElement)">
+      <summary>Loads a <see cref="T:System.Security.Cryptography.Xml.DataObject" /> state from an XML element.</summary>
+      <param name="value">The XML element to load the <see cref="T:System.Security.Cryptography.Xml.DataObject" /> state from.</param>
       <exception cref="T:System.ArgumentNullException">The value from the XML element is <see langword="null" />.</exception>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.dataObject.data">
-      <summary>Gets or sets the data value of the current <see cref="T:System.Security.Cryptography.Xml.dataObject" /> object.</summary>
+    <member name="P:System.Security.Cryptography.Xml.DataObject.Data">
+      <summary>Gets or sets the data value of the current <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object.</summary>
       <exception cref="T:System.ArgumentNullException">The value used to set the property is <see langword="null" />.</exception>
-      <returns>The data of the current <see cref="T:System.Security.Cryptography.Xml.dataObject" />.</returns>
+      <returns>The data of the current <see cref="T:System.Security.Cryptography.Xml.DataObject" />.</returns>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.dataObject.Encoding">
-      <summary>Gets or sets the encoding of the current <see cref="T:System.Security.Cryptography.Xml.dataObject" /> object.</summary>
-      <returns>The type of encoding of the current <see cref="T:System.Security.Cryptography.Xml.dataObject" /> object.</returns>
+    <member name="P:System.Security.Cryptography.Xml.DataObject.Encoding">
+      <summary>Gets or sets the encoding of the current <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object.</summary>
+      <returns>The type of encoding of the current <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object.</returns>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.dataObject.Id">
-      <summary>Gets or sets the identification of the current <see cref="T:System.Security.Cryptography.Xml.dataObject" /> object.</summary>
+    <member name="P:System.Security.Cryptography.Xml.DataObject.Id">
+      <summary>Gets or sets the identification of the current <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object.</summary>
       <returns>The name of the element that contains data to be used.</returns>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.dataObject.MimeType">
-      <summary>Gets or sets the MIME type of the current <see cref="T:System.Security.Cryptography.Xml.dataObject" /> object.</summary>
-      <returns>The MIME type of the current <see cref="T:System.Security.Cryptography.Xml.dataObject" /> object. The default is <see langword="null" />.</returns>
+    <member name="P:System.Security.Cryptography.Xml.DataObject.MimeType">
+      <summary>Gets or sets the MIME type of the current <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object.</summary>
+      <returns>The MIME type of the current <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object. The default is <see langword="null" />.</returns>
     </member>
-    <member name="T:System.Security.Cryptography.Xml.dataReference">
-      <summary>Represents the <see langword="&lt;dataReference&gt;" /> element used in XML encryption. This class cannot be inherited.</summary>
+    <member name="T:System.Security.Cryptography.Xml.DataReference">
+      <summary>Represents the <see langword="&lt;DataReference&gt;" /> element used in XML encryption. This class cannot be inherited.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.dataReference.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.dataReference" /> class.</summary>
+    <member name="M:System.Security.Cryptography.Xml.DataReference.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.dataReference.#ctor(System.String)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.dataReference" /> class using the specified Uniform Resource Identifier (URI).</summary>
+    <member name="M:System.Security.Cryptography.Xml.DataReference.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class using the specified Uniform Resource Identifier (URI).</summary>
       <param name="uri">A Uniform Resource Identifier (URI) that points to the encrypted data.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.dataReference.#ctor(System.String,System.Security.Cryptography.Xml.TransformChain)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.dataReference" /> class using the specified Uniform Resource Identifier (URI) and a <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.</summary>
+    <member name="M:System.Security.Cryptography.Xml.DataReference.#ctor(System.String,System.Security.Cryptography.Xml.TransformChain)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class using the specified Uniform Resource Identifier (URI) and a <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.</summary>
       <param name="uri">A Uniform Resource Identifier (URI) that points to the encrypted data.</param>
       <param name="transformChain">A <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object that describes transforms to do on the encrypted data.</param>
     </member>
@@ -149,22 +149,22 @@
       <summary>Gets or sets the key value represented by a <see cref="T:System.Security.Cryptography.DSA" /> object.</summary>
       <returns>The public key represented by a <see cref="T:System.Security.Cryptography.DSA" /> object.</returns>
     </member>
-    <member name="T:System.Security.Cryptography.Xml.Encrypteddata">
-      <summary>Represents the <see langword="&lt;Encrypteddata&gt;" /> element in XML encryption. This class cannot be inherited.</summary>
+    <member name="T:System.Security.Cryptography.Xml.EncryptedData">
+      <summary>Represents the <see langword="&lt;EncryptedData&gt;" /> element in XML encryption. This class cannot be inherited.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.Encrypteddata.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> class.</summary>
+    <member name="M:System.Security.Cryptography.Xml.EncryptedData.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.Encrypteddata.GetXml">
-      <summary>Returns the XML representation of the <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> object.</summary>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> value is <see langword="null" />.</exception>
-      <returns>An <see cref="T:System.Xml.XmlElement" /> that represents the <see langword="&lt;Encrypteddata&gt;" /> element in XML encryption.</returns>
+    <member name="M:System.Security.Cryptography.Xml.EncryptedData.GetXml">
+      <summary>Returns the XML representation of the <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object.</summary>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> value is <see langword="null" />.</exception>
+      <returns>An <see cref="T:System.Xml.XmlElement" /> that represents the <see langword="&lt;EncryptedData&gt;" /> element in XML encryption.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.Encrypteddata.LoadXml(System.Xml.XmlElement)">
-      <summary>Loads XML information into the <see langword="&lt;Encrypteddata&gt;" /> element in XML encryption.</summary>
-      <param name="value">An <see cref="T:System.Xml.XmlElement" /> object representing an XML element to use for the <see langword="&lt;Encrypteddata&gt;" /> element.</param>
+    <member name="M:System.Security.Cryptography.Xml.EncryptedData.LoadXml(System.Xml.XmlElement)">
+      <summary>Loads XML information into the <see langword="&lt;EncryptedData&gt;" /> element in XML encryption.</summary>
+      <param name="value">An <see cref="T:System.Xml.XmlElement" /> object representing an XML element to use for the <see langword="&lt;EncryptedData&gt;" /> element.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="value" /> provided is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="value" /> parameter does not contain a &lt;<see langword="Cypherdata" />&gt; node.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="value" /> parameter does not contain a &lt;<see langword="CypherData" />&gt; node.</exception>
     </member>
     <member name="T:System.Security.Cryptography.Xml.EncryptedKey">
       <summary>Represents the <see langword="&lt;EncryptedKey&gt;" /> element in XML encryption. This class cannot be inherited.</summary>
@@ -172,9 +172,9 @@
     <member name="M:System.Security.Cryptography.Xml.EncryptedKey.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.EncryptedKey.AddReference(System.Security.Cryptography.Xml.dataReference)">
-      <summary>Adds a <see langword="&lt;dataReference&gt;" /> element to the <see langword="&lt;ReferenceList&gt;" /> element.</summary>
-      <param name="dataReference">A <see cref="T:System.Security.Cryptography.Xml.dataReference" /> object to add to the <see cref="P:System.Security.Cryptography.Xml.EncryptedKey.ReferenceList" /> property.</param>
+    <member name="M:System.Security.Cryptography.Xml.EncryptedKey.AddReference(System.Security.Cryptography.Xml.DataReference)">
+      <summary>Adds a <see langword="&lt;DataReference&gt;" /> element to the <see langword="&lt;ReferenceList&gt;" /> element.</summary>
+      <param name="dataReference">A <see cref="T:System.Security.Cryptography.Xml.DataReference" /> object to add to the <see cref="P:System.Security.Cryptography.Xml.EncryptedKey.ReferenceList" /> property.</param>
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedKey.AddReference(System.Security.Cryptography.Xml.KeyReference)">
       <summary>Adds a <see langword="&lt;KeyReference&gt;" /> element to the <see langword="&lt;ReferenceList&gt;" /> element.</summary>
@@ -189,7 +189,7 @@
       <summary>Loads the specified XML information into the <see langword="&lt;EncryptedKey&gt;" /> element in XML encryption.</summary>
       <param name="value">An <see cref="T:System.Xml.XmlElement" /> representing an XML element to use for the <see langword="&lt;EncryptedKey&gt;" /> element.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="value" /> parameter is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="value" /> parameter does not contain a <see cref="T:System.Security.Cryptography.Xml.Cipherdata" /> element.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="value" /> parameter does not contain a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> element.</exception>
     </member>
     <member name="P:System.Security.Cryptography.Xml.EncryptedKey.CarriedKeyName">
       <summary>Gets or sets the optional <see langword="&lt;CarriedKeyName&gt;" /> element in XML encryption.</summary>
@@ -204,7 +204,7 @@
       <returns>A <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> object.</returns>
     </member>
     <member name="T:System.Security.Cryptography.Xml.EncryptedReference">
-      <summary>Represents the abstract base class used in XML encryption from which the <see cref="T:System.Security.Cryptography.Xml.CipherReference" />, <see cref="T:System.Security.Cryptography.Xml.KeyReference" />, and <see cref="T:System.Security.Cryptography.Xml.dataReference" /> classes derive.</summary>
+      <summary>Represents the abstract base class used in XML encryption from which the <see cref="T:System.Security.Cryptography.Xml.CipherReference" />, <see cref="T:System.Security.Cryptography.Xml.KeyReference" />, and <see cref="T:System.Security.Cryptography.Xml.DataReference" /> classes derive.</summary>
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedReference.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedReference" /> class.</summary>
@@ -253,7 +253,7 @@
       <returns>The Uniform Resource Identifier (URI) of the <see cref="T:System.Security.Cryptography.Xml.EncryptedReference" /> object.</returns>
     </member>
     <member name="T:System.Security.Cryptography.Xml.EncryptedType">
-      <summary>Represents the abstract base class from which the classes <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> and <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> derive.</summary>
+      <summary>Represents the abstract base class from which the classes <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> and <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> derive.</summary>
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedType.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedType" /> class.</summary>
@@ -271,10 +271,10 @@
       <param name="value">An <see cref="T:System.Xml.XmlElement" /> object representing an XML element to use in the <see langword="&lt;EncryptedType&gt;" /> element.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="value" /> provided is <see langword="null" />.</exception>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.EncryptedType.Cipherdata">
-      <summary>Gets or sets the <see cref="T:System.Security.Cryptography.Xml.Cipherdata" /> value for an instance of an <see cref="T:System.Security.Cryptography.Xml.EncryptedType" /> class.</summary>
-      <exception cref="T:System.ArgumentNullException">The <see cref="P:System.Security.Cryptography.Xml.EncryptedType.Cipherdata" /> property was set to <see langword="null" />.</exception>
-      <returns>A <see cref="T:System.Security.Cryptography.Xml.Cipherdata" /> object.</returns>
+    <member name="P:System.Security.Cryptography.Xml.EncryptedType.CipherData">
+      <summary>Gets or sets the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> value for an instance of an <see cref="T:System.Security.Cryptography.Xml.EncryptedType" /> class.</summary>
+      <exception cref="T:System.ArgumentNullException">The <see cref="P:System.Security.Cryptography.Xml.EncryptedType.CipherData" /> property was set to <see langword="null" />.</exception>
+      <returns>A <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</returns>
     </member>
     <member name="P:System.Security.Cryptography.Xml.EncryptedType.Encoding">
       <summary>Gets or sets the <see langword="Encoding" /> attribute of an <see cref="T:System.Security.Cryptography.Xml.EncryptedType" /> instance in XML encryption.</summary>
@@ -384,11 +384,11 @@
     <member name="M:System.Security.Cryptography.Xml.EncryptedXml.ClearKeyNameMappings">
       <summary>Resets all key name mapping.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.Decryptdata(System.Security.Cryptography.Xml.Encrypteddata,System.Security.Cryptography.SymmetricAlgorithm)">
-      <summary>Decrypts an <see langword="&lt;Encrypteddata&gt;" /> element using the specified symmetric algorithm.</summary>
-      <param name="encrypteddata">The data to decrypt.</param>
-      <param name="symmetricAlgorithm">The symmetric key used to decrypt <paramref name="encrypteddata" />.</param>
-      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="encrypteddata" /> parameter is <see langword="null" />.  
+    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptData(System.Security.Cryptography.Xml.EncryptedData,System.Security.Cryptography.SymmetricAlgorithm)">
+      <summary>Decrypts an <see langword="&lt;EncryptedData&gt;" /> element using the specified symmetric algorithm.</summary>
+      <param name="encryptedData">The data to decrypt.</param>
+      <param name="symmetricAlgorithm">The symmetric key used to decrypt <paramref name="encryptedData" />.</param>
+      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="encryptedData" /> parameter is <see langword="null" />.  
   
  -or-  
   
@@ -396,7 +396,7 @@
       <returns>A byte array that contains the raw decrypted plain text.</returns>
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptDocument">
-      <summary>Decrypts all <see langword="&lt;Encrypteddata&gt;" /> elements of the XML document that were specified during initialization of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class.</summary>
+      <summary>Decrypts all <see langword="&lt;EncryptedData&gt;" /> elements of the XML document that were specified during initialization of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class.</summary>
       <exception cref="T:System.Security.Cryptography.CryptographicException">The cryptographic key used to decrypt the document was not found.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptEncryptedKey(System.Security.Cryptography.Xml.EncryptedKey)">
@@ -408,10 +408,10 @@
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptKey(System.Byte[],System.Security.Cryptography.RSA,System.Boolean)">
       <summary>Decrypts an <see langword="&lt;EncryptedKey&gt;" /> element using an asymmetric algorithm.</summary>
-      <param name="keydata">An array of bytes that represents an encrypted <see langword="&lt;EncryptedKey&gt;" /> element.</param>
-      <param name="rsa">The asymmetric key used to decrypt <paramref name="keydata" />.</param>
+      <param name="keyData">An array of bytes that represents an encrypted <see langword="&lt;EncryptedKey&gt;" /> element.</param>
+      <param name="rsa">The asymmetric key used to decrypt <paramref name="keyData" />.</param>
       <param name="useOAEP">A value that specifies whether to use Optimal Asymmetric Encryption Padding (OAEP).</param>
-      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="keydata" /> parameter is <see langword="null" />.  
+      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="keyData" /> parameter is <see langword="null" />.  
   
  -or-  
   
@@ -420,9 +420,9 @@
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptKey(System.Byte[],System.Security.Cryptography.SymmetricAlgorithm)">
       <summary>Decrypts an <see langword="&lt;EncryptedKey&gt;" /> element using a symmetric algorithm.</summary>
-      <param name="keydata">An array of bytes that represents an encrypted <see langword="&lt;EncryptedKey&gt;" /> element.</param>
-      <param name="symmetricAlgorithm">The symmetric key used to decrypt <paramref name="keydata" />.</param>
-      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="keydata" /> parameter is <see langword="null" />.  
+      <param name="keyData">An array of bytes that represents an encrypted <see langword="&lt;EncryptedKey&gt;" /> element.</param>
+      <param name="symmetricAlgorithm">The symmetric key used to decrypt <paramref name="keyData" />.</param>
+      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="keyData" /> parameter is <see langword="null" />.  
   
  -or-  
   
@@ -440,7 +440,7 @@
   
  The value of the <paramref name="certificate" /> parameter is <see langword="null" />.</exception>
       <exception cref="T:System.NotSupportedException">The value of the <paramref name="certificate" /> parameter does not represent an RSA key algorithm.</exception>
-      <returns>An <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> element that represents the encrypted XML data.</returns>
+      <returns>An <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> element that represents the encrypted XML data.</returns>
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedXml.Encrypt(System.Xml.XmlElement,System.String)">
       <summary>Encrypts the outer XML of an element using the specified key in the key mapping table.</summary>
@@ -456,9 +456,9 @@
  -or-  
   
  The cryptographic key described by the <paramref name="keyName" /> parameter is not supported.</exception>
-      <returns>An <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> object that represents the encrypted XML data.</returns>
+      <returns>An <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object that represents the encrypted XML data.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.Encryptdata(System.Byte[],System.Security.Cryptography.SymmetricAlgorithm)">
+    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.EncryptData(System.Byte[],System.Security.Cryptography.SymmetricAlgorithm)">
       <summary>Encrypts data in the specified byte array using the specified symmetric algorithm.</summary>
       <param name="plaintext">The data to encrypt.</param>
       <param name="symmetricAlgorithm">The symmetric algorithm to use for encryption.</param>
@@ -470,7 +470,7 @@
       <exception cref="T:System.Security.Cryptography.CryptographicException">The data could not be encrypted using the specified parameters.</exception>
       <returns>A byte array of encrypted data.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.Encryptdata(System.Xml.XmlElement,System.Security.Cryptography.SymmetricAlgorithm,System.Boolean)">
+    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.EncryptData(System.Xml.XmlElement,System.Security.Cryptography.SymmetricAlgorithm,System.Boolean)">
       <summary>Encrypts the specified element or its contents using the specified symmetric algorithm.</summary>
       <param name="inputElement">The element or its contents to encrypt.</param>
       <param name="symmetricAlgorithm">The symmetric algorithm to use for encryption.</param>
@@ -484,47 +484,47 @@
       <returns>A byte array that contains the encrypted data.</returns>
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedXml.EncryptKey(System.Byte[],System.Security.Cryptography.RSA,System.Boolean)">
-      <summary>Encrypts the key that a recipient uses to decrypt an <see langword="&lt;Encrypteddata&gt;" /> element.</summary>
-      <param name="keydata">The key to encrypt.</param>
-      <param name="rsa">The asymmetric key used to encrypt <paramref name="keydata" />.</param>
+      <summary>Encrypts the key that a recipient uses to decrypt an <see langword="&lt;EncryptedData&gt;" /> element.</summary>
+      <param name="keyData">The key to encrypt.</param>
+      <param name="rsa">The asymmetric key used to encrypt <paramref name="keyData" />.</param>
       <param name="useOAEP">A value that specifies whether to use Optimal Asymmetric Encryption Padding (OAEP).</param>
-      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="keydata" /> parameter is <see langword="null" />.  
+      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="keyData" /> parameter is <see langword="null" />.  
   
  -or-  
   
  The value of the <paramref name="rsa" /> parameter is <see langword="null" />.</exception>
-      <returns>A byte array that represents the encrypted value of the <paramref name="keydata" /> parameter.</returns>
+      <returns>A byte array that represents the encrypted value of the <paramref name="keyData" /> parameter.</returns>
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedXml.EncryptKey(System.Byte[],System.Security.Cryptography.SymmetricAlgorithm)">
-      <summary>Encrypts a key using a symmetric algorithm that a recipient uses to decrypt an <see langword="&lt;Encrypteddata&gt;" /> element.</summary>
-      <param name="keydata">The key to encrypt.</param>
-      <param name="symmetricAlgorithm">The symmetric key used to encrypt <paramref name="keydata" />.</param>
-      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="keydata" /> parameter is <see langword="null" />.  
+      <summary>Encrypts a key using a symmetric algorithm that a recipient uses to decrypt an <see langword="&lt;EncryptedData&gt;" /> element.</summary>
+      <param name="keyData">The key to encrypt.</param>
+      <param name="symmetricAlgorithm">The symmetric key used to encrypt <paramref name="keyData" />.</param>
+      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="keyData" /> parameter is <see langword="null" />.  
   
  -or-  
   
  The value of the <paramref name="symmetricAlgorithm" /> parameter is <see langword="null" />.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">The value of the <paramref name="symmetricAlgorithm" /> parameter is not the Triple DES Key Wrap algorithm or the Advanced Encryption Standard (AES) Key Wrap algorithm (also called Rijndael).</exception>
-      <returns>A byte array that represents the encrypted value of the <paramref name="keydata" /> parameter.</returns>
+      <returns>A byte array that represents the encrypted value of the <paramref name="keyData" /> parameter.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.GetDecryptionIV(System.Security.Cryptography.Xml.Encrypteddata,System.String)">
-      <summary>Retrieves the decryption initialization vector (IV) from an <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> object.</summary>
-      <param name="encrypteddata">The <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> object that contains the initialization vector (IV) to retrieve.</param>
-      <param name="symmetricAlgorithmUri">The Uniform Resource Identifier (URI) that describes the cryptographic algorithm associated with the <paramref name="encrypteddata" /> value.</param>
-      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="encrypteddata" /> parameter is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The value of the <paramref name="encrypteddata" /> parameter has an <see cref="P:System.Security.Cryptography.Xml.EncryptedType.EncryptionMethod" /> property that is null.  
+    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.GetDecryptionIV(System.Security.Cryptography.Xml.EncryptedData,System.String)">
+      <summary>Retrieves the decryption initialization vector (IV) from an <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object.</summary>
+      <param name="encryptedData">The <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object that contains the initialization vector (IV) to retrieve.</param>
+      <param name="symmetricAlgorithmUri">The Uniform Resource Identifier (URI) that describes the cryptographic algorithm associated with the <paramref name="encryptedData" /> value.</param>
+      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="encryptedData" /> parameter is <see langword="null" />.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The value of the <paramref name="encryptedData" /> parameter has an <see cref="P:System.Security.Cryptography.Xml.EncryptedType.EncryptionMethod" /> property that is null.  
   
  -or-  
   
  The value of the <paramref name="symmetricAlgorithmUrisymAlgUri" /> parameter is not a supported algorithm.</exception>
       <returns>A byte array that contains the decryption initialization vector (IV).</returns>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.GetDecryptionKey(System.Security.Cryptography.Xml.Encrypteddata,System.String)">
-      <summary>Retrieves the decryption key from the specified <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> object.</summary>
-      <param name="encrypteddata">The <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> object that contains the decryption key to retrieve.</param>
+    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.GetDecryptionKey(System.Security.Cryptography.Xml.EncryptedData,System.String)">
+      <summary>Retrieves the decryption key from the specified <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object.</summary>
+      <param name="encryptedData">The <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object that contains the decryption key to retrieve.</param>
       <param name="symmetricAlgorithmUri">The size of the decryption key to retrieve.</param>
-      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="encrypteddata" /> parameter is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The encrypteddata parameter has an <see cref="P:System.Security.Cryptography.Xml.EncryptedType.EncryptionMethod" /> property that is null.  
+      <exception cref="T:System.ArgumentNullException">The value of the <paramref name="encryptedData" /> parameter is <see langword="null" />.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The encryptedData parameter has an <see cref="P:System.Security.Cryptography.Xml.EncryptedType.EncryptionMethod" /> property that is null.  
   
  -or-  
   
@@ -537,27 +537,27 @@
       <param name="idValue">A string that represents the ID value.</param>
       <returns>An <see cref="T:System.Xml.XmlElement" /> object that contains an ID indicating how internal Uniform Resource Identifiers (URIs) are to be resolved.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.Replacedata(System.Xml.XmlElement,System.Byte[])">
-      <summary>Replaces an <see langword="&lt;Encrypteddata&gt;" /> element with a specified decrypted sequence of bytes.</summary>
-      <param name="inputElement">The <see langword="&lt;Encrypteddata&gt;" /> element to replace.</param>
-      <param name="decrypteddata">The decrypted data to replace <paramref name="inputElement" /> with.</param>
+    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.ReplaceData(System.Xml.XmlElement,System.Byte[])">
+      <summary>Replaces an <see langword="&lt;EncryptedData&gt;" /> element with a specified decrypted sequence of bytes.</summary>
+      <param name="inputElement">The <see langword="&lt;EncryptedData&gt;" /> element to replace.</param>
+      <param name="decryptedData">The decrypted data to replace <paramref name="inputElement" /> with.</param>
       <exception cref="T:System.ArgumentNullException">The value of the <paramref name="inputElement" /> parameter is <see langword="null" />.  
   
  -or-  
   
- The value of the <paramref name="decrypteddata" /> parameter is <see langword="null" />.</exception>
+ The value of the <paramref name="decryptedData" /> parameter is <see langword="null" />.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.ReplaceElement(System.Xml.XmlElement,System.Security.Cryptography.Xml.Encrypteddata,System.Boolean)">
-      <summary>Replaces the specified element with the specified <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> object.</summary>
-      <param name="inputElement">The element to replace with an <see langword="&lt;Encrypteddata&gt;" /> element.</param>
-      <param name="encrypteddata">The <see cref="T:System.Security.Cryptography.Xml.Encrypteddata" /> object to replace the <paramref name="inputElement" /> parameter with.</param>
+    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.ReplaceElement(System.Xml.XmlElement,System.Security.Cryptography.Xml.EncryptedData,System.Boolean)">
+      <summary>Replaces the specified element with the specified <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object.</summary>
+      <param name="inputElement">The element to replace with an <see langword="&lt;EncryptedData&gt;" /> element.</param>
+      <param name="encryptedData">The <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object to replace the <paramref name="inputElement" /> parameter with.</param>
       <param name="content">
         <see langword="true" /> to replace only the contents of the element; <see langword="false" /> to replace the entire element.</param>
       <exception cref="T:System.ArgumentNullException">The value of the <paramref name="inputElement" /> parameter is <see langword="null" />.  
   
  -or-  
   
- The value of the <paramref name="encrypteddata" /> parameter is <see langword="null" />.</exception>
+ The value of the <paramref name="encryptedData" /> parameter is <see langword="null" />.</exception>
     </member>
     <member name="P:System.Security.Cryptography.Xml.EncryptedXml.DocumentEvidence">
       <summary>Gets or sets the evidence of the <see cref="T:System.Xml.XmlDocument" /> object from which the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object is constructed.</summary>
@@ -950,57 +950,57 @@
       <summary>Gets or sets the Uniform Resource Identifier (URI) of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod" /> object.</summary>
       <returns>The Uniform Resource Identifier (URI) of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod" /> object.</returns>
     </member>
-    <member name="T:System.Security.Cryptography.Xml.KeyInfoX509data">
-      <summary>Represents an <see langword="&lt;X509data&gt;" /> subelement of an XMLDSIG or XML Encryption <see langword="&lt;KeyInfo&gt;" /> element.</summary>
+    <member name="T:System.Security.Cryptography.Xml.KeyInfoX509Data">
+      <summary>Represents an <see langword="&lt;X509Data&gt;" /> subelement of an XMLDSIG or XML Encryption <see langword="&lt;KeyInfo&gt;" /> element.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509data.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> class.</summary>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509data.#ctor(System.Byte[])">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> class from the specified ASN.1 DER encoding of an X.509v3 certificate.</summary>
-      <param name="rgbCert">The ASN.1 DER encoding of an <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> from.</param>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.#ctor(System.Byte[])">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class from the specified ASN.1 DER encoding of an X.509v3 certificate.</summary>
+      <param name="rgbCert">The ASN.1 DER encoding of an <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> from.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509data.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> class from the specified X.509v3 certificate.</summary>
-      <param name="cert">The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> from.</param>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class from the specified X.509v3 certificate.</summary>
+      <param name="cert">The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> from.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="cert" /> parameter is <see langword="null" />.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509data.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate,System.Security.Cryptography.X509Certificates.X509IncludeOption)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> class from the specified X.509v3 certificate.</summary>
-      <param name="cert">The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> from.</param>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate,System.Security.Cryptography.X509Certificates.X509IncludeOption)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class from the specified X.509v3 certificate.</summary>
+      <param name="cert">The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> from.</param>
       <param name="includeOption">One of the <see cref="T:System.Security.Cryptography.X509Certificates.X509IncludeOption" /> values that specifies how much of the certificate chain to include.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="cert" /> parameter is <see langword="null" />.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">The certificate has only a partial certificate chain.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509data.AddCertificate(System.Security.Cryptography.X509Certificates.X509Certificate)">
-      <summary>Adds the specified X.509v3 certificate to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" />.</summary>
-      <param name="certificate">The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</param>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.AddCertificate(System.Security.Cryptography.X509Certificates.X509Certificate)">
+      <summary>Adds the specified X.509v3 certificate to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" />.</summary>
+      <param name="certificate">The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="certificate" /> parameter is <see langword="null" />.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509data.AddIssuerSerial(System.String,System.String)">
-      <summary>Adds the specified issuer name and serial number pair to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</summary>
-      <param name="issuerName">The issuer name portion of the pair to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</param>
-      <param name="serialNumber">The serial number portion of the pair to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</param>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.AddIssuerSerial(System.String,System.String)">
+      <summary>Adds the specified issuer name and serial number pair to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</summary>
+      <param name="issuerName">The issuer name portion of the pair to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</param>
+      <param name="serialNumber">The serial number portion of the pair to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509data.AddSubjectKeyId(System.Byte[])">
-      <summary>Adds the specified subject key identifier (SKI) byte array to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</summary>
-      <param name="subjectKeyId">A byte array that represents the subject key identifier (SKI) to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</param>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.AddSubjectKeyId(System.Byte[])">
+      <summary>Adds the specified subject key identifier (SKI) byte array to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</summary>
+      <param name="subjectKeyId">A byte array that represents the subject key identifier (SKI) to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509data.AddSubjectKeyId(System.String)">
-      <summary>Adds the specified subject key identifier (SKI) string to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</summary>
-      <param name="subjectKeyId">A string that represents the subject key identifier (SKI) to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</param>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.AddSubjectKeyId(System.String)">
+      <summary>Adds the specified subject key identifier (SKI) string to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</summary>
+      <param name="subjectKeyId">A string that represents the subject key identifier (SKI) to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509data.AddSubjectName(System.String)">
-      <summary>Adds the subject name of the entity that was issued an X.509v3 certificate to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</summary>
-      <param name="subjectName">The name of the entity that was issued an X.509 certificate to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</param>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.AddSubjectName(System.String)">
+      <summary>Adds the subject name of the entity that was issued an X.509v3 certificate to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</summary>
+      <param name="subjectName">The name of the entity that was issued an X.509 certificate to add to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509data.GetXml">
-      <summary>Returns an XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</summary>
-      <returns>An XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</returns>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.GetXml">
+      <summary>Returns an XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</summary>
+      <returns>An XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</returns>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509data.LoadXml(System.Xml.XmlElement)">
-      <summary>Parses the input <see cref="T:System.Xml.XmlElement" /> object and configures the internal state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object to match.</summary>
-      <param name="element">The <see cref="T:System.Xml.XmlElement" /> object that specifies the state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</param>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.LoadXml(System.Xml.XmlElement)">
+      <summary>Parses the input <see cref="T:System.Xml.XmlElement" /> object and configures the internal state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object to match.</summary>
+      <param name="element">The <see cref="T:System.Xml.XmlElement" /> object that specifies the state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="element" /> parameter is <see langword="null" />.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="element" /> parameter does not contain an &lt;<see langword="X509IssuerName" />&gt; node.  
   
@@ -1008,25 +1008,25 @@
   
  The <paramref name="element" /> parameter does not contain an &lt;<see langword="X509SerialNumber" />&gt; node.</exception>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.KeyInfoX509data.Certificates">
-      <summary>Gets a list of the X.509v3 certificates contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</summary>
-      <returns>A list of the X.509 certificates contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</returns>
+    <member name="P:System.Security.Cryptography.Xml.KeyInfoX509Data.Certificates">
+      <summary>Gets a list of the X.509v3 certificates contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</summary>
+      <returns>A list of the X.509 certificates contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</returns>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.KeyInfoX509data.CRL">
-      <summary>Gets or sets the Certificate Revocation List (CRL) contained within the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</summary>
-      <returns>The Certificate Revocation List (CRL) contained within the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</returns>
+    <member name="P:System.Security.Cryptography.Xml.KeyInfoX509Data.CRL">
+      <summary>Gets or sets the Certificate Revocation List (CRL) contained within the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</summary>
+      <returns>The Certificate Revocation List (CRL) contained within the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</returns>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.KeyInfoX509data.IssuerSerials">
+    <member name="P:System.Security.Cryptography.Xml.KeyInfoX509Data.IssuerSerials">
       <summary>Gets a list of <see cref="T:System.Security.Cryptography.Xml.X509IssuerSerial" /> structures that represent an issuer name and serial number pair.</summary>
       <returns>A list of <see cref="T:System.Security.Cryptography.Xml.X509IssuerSerial" /> structures that represent an issuer name and serial number pair.</returns>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.KeyInfoX509data.SubjectKeyIds">
-      <summary>Gets a list of the subject key identifiers (SKIs) contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</summary>
-      <returns>A list of the subject key identifiers (SKIs) contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</returns>
+    <member name="P:System.Security.Cryptography.Xml.KeyInfoX509Data.SubjectKeyIds">
+      <summary>Gets a list of the subject key identifiers (SKIs) contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</summary>
+      <returns>A list of the subject key identifiers (SKIs) contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</returns>
     </member>
-    <member name="P:System.Security.Cryptography.Xml.KeyInfoX509data.SubjectNames">
-      <summary>Gets a list of the subject names of the entities contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</summary>
-      <returns>A list of the subject names of the entities contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509data" /> object.</returns>
+    <member name="P:System.Security.Cryptography.Xml.KeyInfoX509Data.SubjectNames">
+      <summary>Gets a list of the subject names of the entities contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</summary>
+      <returns>A list of the subject names of the entities contained in the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> object.</returns>
     </member>
     <member name="T:System.Security.Cryptography.Xml.KeyReference">
       <summary>Represents the <see langword="&lt;KeyReference&gt;" /> element used in XML encryption. This class cannot be inherited.</summary>
@@ -1112,9 +1112,9 @@
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> class.</summary>
     </member>
     <member name="M:System.Security.Cryptography.Xml.ReferenceList.Add(System.Object)">
-      <summary>Adds a <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</summary>
-      <param name="value">A <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to add to the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</param>
-      <exception cref="T:System.ArgumentException">The <paramref name="value" /> parameter is not a <see cref="T:System.Security.Cryptography.Xml.dataReference" /> object.  
+      <summary>Adds a <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</summary>
+      <param name="value">A <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to add to the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</param>
+      <exception cref="T:System.ArgumentException">The <paramref name="value" /> parameter is not a <see cref="T:System.Security.Cryptography.Xml.DataReference" /> object.  
   
  -or-  
   
@@ -1126,10 +1126,10 @@
       <summary>Removes all items from the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</summary>
     </member>
     <member name="M:System.Security.Cryptography.Xml.ReferenceList.Contains(System.Object)">
-      <summary>Determines whether the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection contains a specific <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object.</summary>
-      <param name="value">The <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to locate in the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</param>
+      <summary>Determines whether the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection contains a specific <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object.</summary>
+      <param name="value">The <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to locate in the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</param>
       <returns>
-        <see langword="true" /> if the <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object is found in the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection; otherwise, <see langword="false" />.</returns>
+        <see langword="true" /> if the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object is found in the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection; otherwise, <see langword="false" />.</returns>
     </member>
     <member name="M:System.Security.Cryptography.Xml.ReferenceList.CopyTo(System.Array,System.Int32)">
       <summary>Copies the elements of the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> object to an array, starting at a specified array index.</summary>
@@ -1142,14 +1142,14 @@
     </member>
     <member name="M:System.Security.Cryptography.Xml.ReferenceList.IndexOf(System.Object)">
       <summary>Determines the index of a specific item in the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</summary>
-      <param name="value">The <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to locate in the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</param>
+      <param name="value">The <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to locate in the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</param>
       <returns>The index of <paramref name="value" /> if found in the collection; otherwise, -1.</returns>
     </member>
     <member name="M:System.Security.Cryptography.Xml.ReferenceList.Insert(System.Int32,System.Object)">
-      <summary>Inserts a <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object into the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection at the specified position.</summary>
+      <summary>Inserts a <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object into the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection at the specified position.</summary>
       <param name="index">The zero-based index at which <paramref name="value" /> should be inserted.</param>
-      <param name="value">A <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to insert into the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</param>
-      <exception cref="T:System.ArgumentException">The <paramref name="value" /> parameter is not a <see cref="T:System.Security.Cryptography.Xml.dataReference" /> object.  
+      <param name="value">A <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to insert into the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</param>
+      <exception cref="T:System.ArgumentException">The <paramref name="value" /> parameter is not a <see cref="T:System.Security.Cryptography.Xml.DataReference" /> object.  
   
  -or-  
   
@@ -1157,17 +1157,17 @@
       <exception cref="T:System.ArgumentNullException">The <paramref name="value" /> parameter is <see langword="null" />.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Xml.ReferenceList.Item(System.Int32)">
-      <summary>Returns the <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object at the specified index.</summary>
-      <param name="index">The index of the <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to return.</param>
-      <returns>The <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object at the specified index.</returns>
+      <summary>Returns the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object at the specified index.</summary>
+      <param name="index">The index of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to return.</param>
+      <returns>The <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object at the specified index.</returns>
     </member>
     <member name="M:System.Security.Cryptography.Xml.ReferenceList.Remove(System.Object)">
-      <summary>Removes the first occurrence of a specific <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object from the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</summary>
-      <param name="value">The <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to remove from the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</param>
+      <summary>Removes the first occurrence of a specific <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object from the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</summary>
+      <param name="value">The <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to remove from the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> collection.</param>
     </member>
     <member name="M:System.Security.Cryptography.Xml.ReferenceList.RemoveAt(System.Int32)">
-      <summary>Removes the <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object at the specified index.</summary>
-      <param name="index">The zero-based index of the <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to remove.</param>
+      <summary>Removes the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object at the specified index.</summary>
+      <param name="index">The zero-based index of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to remove.</param>
     </member>
     <member name="P:System.Security.Cryptography.Xml.ReferenceList.Count">
       <summary>Gets the number of elements contained in the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> object.</summary>
@@ -1179,8 +1179,8 @@
         <see langword="true" /> if access to the <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> object is synchronized (thread safe); otherwise, <see langword="false" />.</returns>
     </member>
     <member name="P:System.Security.Cryptography.Xml.ReferenceList.ItemOf(System.Int32)">
-      <summary>Gets or sets the <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object at the specified index.</summary>
-      <param name="index">The index of the <see cref="T:System.Security.Cryptography.Xml.dataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to return.</param>
+      <summary>Gets or sets the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object at the specified index.</summary>
+      <param name="index">The index of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> or <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> object to return.</param>
       <returns>The <see cref="T:System.Security.Cryptography.Xml.ReferenceList" /> object at the specified index.</returns>
     </member>
     <member name="P:System.Security.Cryptography.Xml.ReferenceList.SyncRoot">
@@ -1234,9 +1234,9 @@
     <member name="M:System.Security.Cryptography.Xml.Signature.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.Signature" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.Signature.AddObject(System.Security.Cryptography.Xml.dataObject)">
-      <summary>Adds a <see cref="T:System.Security.Cryptography.Xml.dataObject" /> to the list of objects to be signed.</summary>
-      <param name="dataObject">The <see cref="T:System.Security.Cryptography.Xml.dataObject" /> to be added to the list of objects to be signed.</param>
+    <member name="M:System.Security.Cryptography.Xml.Signature.AddObject(System.Security.Cryptography.Xml.DataObject)">
+      <summary>Adds a <see cref="T:System.Security.Cryptography.Xml.DataObject" /> to the list of objects to be signed.</summary>
+      <param name="dataObject">The <see cref="T:System.Security.Cryptography.Xml.DataObject" /> to be added to the list of objects to be signed.</param>
     </member>
     <member name="M:System.Security.Cryptography.Xml.Signature.GetXml">
       <summary>Returns the XML representation of the <see cref="T:System.Security.Cryptography.Xml.Signature" />.</summary>
@@ -1468,9 +1468,9 @@
       <param name="elem">The <see cref="T:System.Xml.XmlElement" /> object to use to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.SignedXml" />.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="elem" /> parameter is <see langword="null" />.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.SignedXml.AddObject(System.Security.Cryptography.Xml.dataObject)">
-      <summary>Adds a <see cref="T:System.Security.Cryptography.Xml.dataObject" /> object to the list of objects to be signed.</summary>
-      <param name="dataObject">The <see cref="T:System.Security.Cryptography.Xml.dataObject" /> object to add to the list of objects to be signed.</param>
+    <member name="M:System.Security.Cryptography.Xml.SignedXml.AddObject(System.Security.Cryptography.Xml.DataObject)">
+      <summary>Adds a <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object to the list of objects to be signed.</summary>
+      <param name="dataObject">The <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object to add to the list of objects to be signed.</param>
     </member>
     <member name="M:System.Security.Cryptography.Xml.SignedXml.AddReference(System.Security.Cryptography.Xml.Reference)">
       <summary>Adds a <see cref="T:System.Security.Cryptography.Xml.Reference" /> object to the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object that describes a digest method, digest value, and transform to use for creating an XML digital signature.</summary>

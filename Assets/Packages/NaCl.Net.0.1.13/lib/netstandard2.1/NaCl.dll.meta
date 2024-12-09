@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: dc86caf9c6acf82428a616239f9aeb82
+guid: 2a21ef5f1f665384f9242a690069ac4d
 labels:
 - NuGetForUnity
 PluginImporter:
   externalObjects: {}
-  serializedVersion: 2
+  serializedVersion: 3
   iconMap: {}
   executionOrder: {}
   defineConstraints: []
@@ -13,11 +13,17 @@ PluginImporter:
   isExplicitlyReferenced: 0
   validateReferences: 1
   platformData:
-  - first:
-      Any: 
-    second:
+    Any:
       enabled: 1
       settings: {}
+    Editor:
+      enabled: 0
+      settings:
+        DefaultValueInitialized: true
+    WindowsStoreApps:
+      enabled: 0
+      settings:
+        CPU: AnyCPU
   userData: 
   assetBundleName: 
   assetBundleVariant: 

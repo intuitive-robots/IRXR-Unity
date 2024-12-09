@@ -159,8 +159,9 @@ public class SceneLoader : MonoBehaviour {
       }
     }
     body.children.ForEach(body => CreateObject(bodyRoot.transform, body));
-    if (_simObjTrans.ContainsKey(body.name)) Debug.LogWarning($"Duplicate object name found: {body.name}");
-    _simObjTrans[body.name] = bodyRoot.transform;
+    if (_simObjTrans.ContainsKey(body.name)) 
+      _simObjTrans.Remove(body.name);
+    _simObjTrans.Add(body.name, bodyRoot.transform);
     return bodyRoot;
   }
 
