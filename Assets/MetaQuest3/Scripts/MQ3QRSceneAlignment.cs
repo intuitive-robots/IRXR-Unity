@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Anaglyph.BarCodes;
 using Anaglyph.DisplayCapture;
+using Newtonsoft.Json;
 
 public class MQ3QRSceneAlignment : QRSceneAlignment
 {
@@ -19,14 +20,20 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 	}
 
 	private void Start() {
-		QRSceneAlignmentData data = new QRSceneAlignmentData();
-		StartQRTracing(data);
+		IRXRNetManager.Instance.RegisterServiceCallback("AlignQR", StartQRTracingCallback);
 	}
 
 	private void OnDestroy()
 	{
 		if(barCodeReader != null)
 			barCodeReader.OnReadBarCodes -= OnReadBarCodes;
+	}
+
+	public string StartQRTracingCallback(string jsonData) {
+		Debug.Log("called qr-callback");
+		QRSceneAlignmentData _data = JsonConvert.DeserializeObject<QRSceneAlignmentData>(jsonData);
+		StartQRTracing(_data);
+		return "Started QR-Tracing";
 	}
 
 	override public void StartQRTracing(QRSceneAlignmentData data)
