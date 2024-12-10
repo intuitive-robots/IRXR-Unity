@@ -18,6 +18,11 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 		displayCaptureProjection = Matrix4x4.Perspective(Fov, aspect, 1, 100f);
 	}
 
+	private void Start() {
+		QRSceneAlignmentData data = new QRSceneAlignmentData();
+		StartQRTracing(data);
+	}
+
 	private void OnDestroy()
 	{
 		if(barCodeReader != null)
@@ -44,7 +49,7 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 		{
 			if (_data == null) break;
 			// continue if the barcode is not the one we are looking for
-			if (barcodeResult.text != _data.qrText) continue;
+			if (_data.qrText is not null && barcodeResult.text != _data.qrText) continue;
 			// get the head pose at the time the barcode was read
 			float timestampInSeconds = barcodeResult.timestamp * 0.000000001f;
 			OVRPlugin.PoseStatef headPoseState = OVRPlugin.GetNodePoseStateAtTime(timestampInSeconds, OVRPlugin.Node.Head);

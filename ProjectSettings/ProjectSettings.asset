@@ -143,8 +143,6 @@ PlayerSettings:
   bundleVersion: 0.1
   preloadedAssets:
   - {fileID: 11400000, guid: d74a44d505873014abfc713e01964032, type: 2}
-  - {fileID: 11400000, guid: 1bb06a00ec5dec54db1d31bef6527f28, type: 2}
-  - {fileID: -8545116121635861856, guid: c2b75685dd2424a488c3e7ac94fc51fa, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -176,7 +174,7 @@ PlayerSettings:
   overrideDefaultApplicationIdentifier: 1
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 29
-  AndroidTargetSdkVersion: 34
+  AndroidTargetSdkVersion: 32
   AndroidPreferredInstallLocation: 0
   aotOptions: 
   stripEngineCode: 1
@@ -789,7 +787,7 @@ PlayerSettings:
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: MediaProjectionDemo
-  metroPackageVersion: 
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -797,7 +795,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: MediaProjectionDemo
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: MediaProjectionDemo2
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0

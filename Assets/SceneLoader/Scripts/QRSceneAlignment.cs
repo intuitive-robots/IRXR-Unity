@@ -6,8 +6,8 @@ public class QRSceneAlignment : MonoBehaviour {
 
     [Serializable] public class QRSceneAlignmentData {
         public string qrText;
-        public List<float> pos;
-        public List<float> euler;
+        public List<float> pos = new List<float> { 0, 0, 0 };
+        public List<float> euler = new List<float> { 0, 0, 0 };
         public bool fixeZ;
         public Vector3 GetPos() {
             // TODO: add transform

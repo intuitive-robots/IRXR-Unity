@@ -34,8 +34,9 @@ public class MetaQuest3Controller : Streamer
     {
         IRXRNetManager _netManager = IRXRNetManager.Instance;
         string hostName = _netManager.GetHostName();
-        _netManager.SubscribeTopic($"{hostName}/StartVibration", StartVibration);
-        _netManager.SubscribeTopic($"{hostName}/StopVibration", StopVibration);
+        // TODO: Subscribe to vibration topics
+        // _netManager.SubscribeTopic($"{hostName}/StartVibration", StartVibration);
+        // _netManager.SubscribeTopic($"{hostName}/StopVibration", StopVibration);
     }
 
     public void StartVibration(string message) {
@@ -49,7 +50,6 @@ public class MetaQuest3Controller : Streamer
         }
     }
 
-
     public void StopVibration(string message) {
         if (message == "left")
         {
@@ -60,8 +60,6 @@ public class MetaQuest3Controller : Streamer
             OVRInput.SetControllerVibration(0.0f, 0.0f, OVRInput.Controller.RTouch);
         }
     }
-
-
 
     void Update() {
         MetaQuest3InputData inputData = new();
