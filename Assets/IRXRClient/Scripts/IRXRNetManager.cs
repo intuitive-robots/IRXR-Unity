@@ -11,16 +11,17 @@ using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
 
-public enum ClientPort {
-  Discovery = 7720,
-  Service = 7730,
-  Topic = 7731,
+public enum UNITYPORT {
+  DISCOVERY = 7720,
+  UPDATE = 7729,
+  SERVICE = 7730,
+  TOPIC = 7731,
 }
 
 
-public class HostInfo {
+public class NodeInfo {
   public string name;
-  public string instance;
+  public string nodeID;
   public string ip;
   public string type;
   public string servicePort;
@@ -38,8 +39,8 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
   public Action ConnectionSpin;
   private UdpClient _discoveryClient;
   private string _conncetionID = null;
-  public HostInfo _serverInfo = null;
-  private HostInfo _localInfo = new HostInfo();
+  public NodeInfo _serverInfo = null;
+  private NodeInfo _localInfo = new HostInfo();
   private List<NetMQSocket> _sockets;
   // subscriber socket
   private SubscriberSocket _subSocket;
@@ -89,11 +90,90 @@ public class IRXRNetManager : Singleton<IRXRNetManager> {
       _localInfo.name = "UnityClient";
       Debug.Log($"Host Name not found, using default name {_localInfo.name}");
     }
-    _localInfo.instance = Guid.NewGuid().ToString();
+    _localInfo.nodeID = Guid.NewGuid().ToString();
     _localInfo.type = "UnityClient";
-    _localInfo.servicePort = ((int)ClientPort.Service).ToString();
-    _localInfo.topicPort = ((int)ClientPort.Topic).ToString();
+    _localInfo.servicePort = ((int)UNITYPORT.Service).ToString();
+    _localInfo.topicPort = ((int)UNITYPORT.Topic).ToString();
   }
+
+
+    private async Task StartHeartbeatLoop()
+    {
+        try
+        {
+            udpClient = new UdpClient();
+            udpClient.EnableBroadcast = true;
+            udpClient.Client.Bind(new IPEndPoint(IPAddress.Parse(LocalIp), 0)); // Bind to dynamic port
+            Debug.Log($"Net Manager starts broadcasting at {LocalIp}");
+
+            _ = Task.Run(() => UpdateInfoLoop(udpClient)); // Start the update info loop
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to create UDP socket: {ex.Message}");
+            return;
+        }
+
+        while (this != null && isActiveAndEnabled) // Check MonoBehaviour's active state or if it's destroyed
+        {
+            try
+            {
+                // Generate the message to broadcast
+                var msg = GenerateNodeMessage(new { ip = LocalIp, timestamp = DateTime.UtcNow });
+                var broadcastIp = CalculateBroadcastAddress(LocalIp);
+
+                byte[] data = Encoding.UTF8.GetBytes(msg);
+                await udpClient.SendAsync(data, data.Length, new IPEndPoint(IPAddress.Parse(broadcastIp), DiscoveryPort));
+                await Task.Delay(HeartbeatInterval);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to broadcast: {ex.Message}");
+            }
+        }
+
+        Debug.Log("Broadcasting loop has been stopped");
+    }
+
+    private async Task UpdateInfoLoop(UdpClient udpClient)
+    {
+        while (this != null && isActiveAndEnabled) // Check MonoBehaviour's active state or if it's destroyed
+        {
+            try
+            {
+                var result = await udpClient.ReceiveAsync(); // Asynchronously receive messages
+                string msg = Encoding.UTF8.GetString(result.Buffer);
+
+                // Update node information
+                UpdateNodesInfo(JsonSerializer.Deserialize<object>(msg));
+                await Task.Delay(100); // Simulate some processing delay
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Error occurred in update info loop: {ex.Message}");
+            }
+        }
+    }
+
+    private string GenerateNodeMessage(object nodeInfo)
+    {
+        return JsonSerializer.Serialize(nodeInfo);
+    }
+
+    private string CalculateBroadcastAddress(string ip)
+    {
+        // Simple broadcast address calculation for a 255.255.255.0 subnet
+        var parts = ip.Split('.');
+        parts[3] = "255";
+        return string.Join(".", parts);
+    }
+
+    private void UpdateNodesInfo(object nodeInfo)
+    {
+        // Update logic for nodes information
+        Debug.Log($"Node info updated: {JsonSerializer.Serialize(nodeInfo)}");
+    }
+
 
   void Start() {
     // OnServerDiscovered += StartConnection;
