@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class QRSceneAlignment : MonoBehaviour {
 
@@ -22,15 +23,25 @@ public class QRSceneAlignment : MonoBehaviour {
     [SerializeField] private GameObject indicator;
     protected QRSceneAlignmentData _data;
     public bool isTracingQR = false;
-    virtual public void StartQRTracing(QRSceneAlignmentData data) {
-        _data = data;
-        isTracingQR = true;
-        indicator.SetActive(true);
+
+    private void Start() {
+        IRXRNetManager.Instance.RegisterServiceCallback("StartQRTracing", StartQRTracing);
+        IRXRNetManager.Instance.RegisterServiceCallback("StopQRTracing", StopQRTracing);
     }
 
-    virtual public void StopQRTracing() {
+    virtual public string StartQRTracing(string data) {
+        Debug.Log("Start QR Tracing");
+        _data = JsonConvert.DeserializeObject<QRSceneAlignmentData>(data);
+        isTracingQR = true;
+        indicator.SetActive(true);
+        return "OK";
+    }
+
+    virtual public string StopQRTracing(string data) {
+        Debug.Log("Stop QR Tracing");
         isTracingQR = false;
         indicator.SetActive(false);
+        return "OK";
     }
 
     protected void SetSceneOrigin(Pose origin){

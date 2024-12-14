@@ -24,18 +24,20 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 			barCodeReader.OnReadBarCodes -= OnReadBarCodes;
 	}
 
-	override public void StartQRTracing(QRSceneAlignmentData data)
+	override public string StartQRTracing(string data)
 	{
 		base.StartQRTracing(data);
 		if(barCodeReader != null)
 			barCodeReader.OnReadBarCodes += OnReadBarCodes;
+		return "OK";
 	}
 
-	override public void StopQRTracing()
+	override public string StopQRTracing(string data)
 	{
-		base.StopQRTracing();
+		base.StopQRTracing(data);
 		if(barCodeReader != null)
 			barCodeReader.OnReadBarCodes -= OnReadBarCodes;
+		return "OK";
 	}
 
 	private void OnReadBarCodes(IEnumerable<BarCodeReader.Result> barcodeResults)
@@ -44,7 +46,7 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 		{
 			if (_data == null) break;
 			// continue if the barcode is not the one we are looking for
-			if (barcodeResult.text != _data.qrText) continue;
+			if (barcodeResult.text != _data.qrText || _data.qrText == "") continue;
 			// get the head pose at the time the barcode was read
 			float timestampInSeconds = barcodeResult.timestamp * 0.000000001f;
 			OVRPlugin.PoseStatef headPoseState = OVRPlugin.GetNodePoseStateAtTime(timestampInSeconds, OVRPlugin.Node.Head);

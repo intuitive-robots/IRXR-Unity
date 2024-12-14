@@ -33,35 +33,33 @@ public class MetaQuest3Controller : Streamer
     protected override void Initialize()
     {
         IRXRNetManager _netManager = IRXRNetManager.Instance;
-        string hostName = _netManager.GetHostName();
-        _netManager.SubscribeTopic($"{hostName}/StartVibration", StartVibration);
-        _netManager.SubscribeTopic($"{hostName}/StopVibration", StopVibration);
+        // string hostName = _netManager.GetHostName();
+        // _netManager.SubscribeTopic($"{hostName}/StartVibration", StartVibration);
+        // _netManager.SubscribeTopic($"{hostName}/StopVibration", StopVibration);
     }
 
-    public void StartVibration(string message) {
-        if (message == "left")
-        {
-           OVRInput.SetControllerVibration(1.0f, 1.0f, OVRInput.Controller.LTouch);
-        }
-        else if (message == "right")
-        {
-            OVRInput.SetControllerVibration(1.0f, 1.0f, OVRInput.Controller.RTouch);
-        }
-    }
+    // public void StartVibration(string message) {
+    //     if (message == "left")
+    //     {
+    //        OVRInput.SetControllerVibration(1.0f, 1.0f, OVRInput.Controller.LTouch);
+    //     }
+    //     else if (message == "right")
+    //     {
+    //         OVRInput.SetControllerVibration(1.0f, 1.0f, OVRInput.Controller.RTouch);
+    //     }
+    // }
 
 
-    public void StopVibration(string message) {
-        if (message == "left")
-        {
-            OVRInput.SetControllerVibration(0.0f, 0.0f, OVRInput.Controller.LTouch);
-        }
-        else if (message == "right")
-        {
-            OVRInput.SetControllerVibration(0.0f, 0.0f, OVRInput.Controller.RTouch);
-        }
-    }
-
-
+    // public void StopVibration(string message) {
+    //     if (message == "left")
+    //     {
+    //         OVRInput.SetControllerVibration(0.0f, 0.0f, OVRInput.Controller.LTouch);
+    //     }
+    //     else if (message == "right")
+    //     {
+    //         OVRInput.SetControllerVibration(0.0f, 0.0f, OVRInput.Controller.RTouch);
+    //     }
+    // }
 
     void Update() {
         MetaQuest3InputData inputData = new();
