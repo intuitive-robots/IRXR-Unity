@@ -337,18 +337,10 @@ namespace IRXRNode
 		public async Task HeartbeatLoop(IPEndPoint masterAddress)
 		{
 			UdpClient udpClient = new UdpClient();
-			// udpClient.EnableBroadcast = true;
 			udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, UnityPortSet.HEARTBEAT));
-			try
-			{
-				// Start the update info loop
-				updateInfoTask = Task.Run(async () => await UpdateInfoLoop(udpClient, 3 * HEARTBEAT_INTERVAL), cancellationTokenSource.Token);
-			}
-			catch (Exception e)
-			{
-				Debug.LogError($"Failed to create UDP socket: {e}");
-				throw new Exception("Failed to create UDP socket");
-			}
+			// Start the update info loop
+			CancellationTokenSource cts = new CancellationTokenSource();
+			updateInfoTask = Task.Run(async () => await UpdateInfoLoop(udpClient, 3 * HEARTBEAT_INTERVAL), cancellationTokenSource.Token);
 			Debug.Log($"The Net Manager starts heartbeat at {localInfo.addr.ip}:{localInfo.addr.port}");
 			while (isConnected)
 			{
@@ -359,12 +351,19 @@ namespace IRXRNode
 					await udpClient.SendAsync(msg, msg.Length, masterAddress);
 					await Task.Delay(HEARTBEAT_INTERVAL);
 				}
+				catch (SocketException ex)
+				{
+					Debug.Log($"SocketException: {ex.Message}");
+					isConnected = false;
+					break;
+				}
 				catch (Exception e)
 				{
-					Debug.LogError($"Failed to send heartbeat: {e}");
+					Debug.LogError($"Failed to send heartbeat: {e.Message}");
 				}
 			}
 			updateInfoTask?.Wait();
+			udpClient.Close();
 			Debug.Log("Heartbeat loop has been stopped, waiting for other master node.");
 		}
 
@@ -390,9 +389,15 @@ namespace IRXRNode
 						isConnected = false;
 					}
 				}
+				catch (SocketException ex)
+				{
+					Debug.Log($"SocketException: {ex.Message}");
+					isConnected = false;
+					break;
+				}
 				catch (Exception e)
 				{
-					Debug.LogError($"Error occurred in update info loop: {e}");
+					Debug.LogError($"Error occurred in update info loop: {e.Message}");
 				}
 			}
 		}
