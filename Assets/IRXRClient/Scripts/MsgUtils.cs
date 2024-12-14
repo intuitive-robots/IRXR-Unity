@@ -1,8 +1,9 @@
+using UnityEngine;
 using System;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
-using IRXRNode;
+using IRXR.Node;
 
 namespace IRXR.Utilities
 {
@@ -21,9 +22,12 @@ namespace IRXR.Utilities
 
 	public static class MsgUtils
 	{
+
+		public const string SEPARATOR = "|";
+
 		public static byte[][] SplitByte(byte[] bytesMsg)
 		{
-			int separatorIndex = Array.IndexOf(bytesMsg, (byte)'|');
+			int separatorIndex = Array.IndexOf(bytesMsg, Encoding.UTF8.GetBytes(SEPARATOR)[0]);
 			if (separatorIndex == -1)
 			{
 				return new byte[][] { bytesMsg, Array.Empty<byte>() };
@@ -60,7 +64,7 @@ namespace IRXR.Utilities
 			string nodeId = nodeInfo.nodeID; // Assuming NodeInfo has a property "NodeID"
 			string serializedInfo = JsonConvert.SerializeObject(nodeInfo);
 
-			string combinedMessage = $"{nodeId}|{serializedInfo}";
+			string combinedMessage = $"{nodeId}{SEPARATOR}{serializedInfo}";
 			return ConcatenateByteArrays(EchoHeader.HEARTBEAT, Encoding.UTF8.GetBytes(combinedMessage));
 		}
 
@@ -73,7 +77,13 @@ namespace IRXR.Utilities
 		public static T Deserialize2Object<T>(byte[] byteMessage)
 		{
 			string jsonString = Encoding.UTF8.GetString(byteMessage);
+			Debug.Log(jsonString);
 			return JsonConvert.DeserializeObject<T>(jsonString);
+		}
+
+		public static string CombineHeaderWithMessage(string header, string message)
+		{
+			return $"{header}{SEPARATOR}{message}";
 		}
 
 	}
