@@ -35,7 +35,7 @@
       <param name="message">The error message that explains the reason for the exception.</param>
       <param name="inner">The exception that is the cause of the current exception. If <paramref name="inner" /> is not null, the current exception is raised in a <see langword="catch" /> block that handles the inner exception.</param>
     </member>
-    <member name="M:System.Security.Principal.IdentityNotMappedException.GetObjectdata(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+    <member name="M:System.Security.Principal.IdentityNotMappedException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
       <summary>Gets serialization information with the data needed to create an instance of this <see cref="T:System.Security.Principal.IdentityNotMappedException" /> object.</summary>
       <param name="serializationInfo">The object that holds the serialized object data about the exception being thrown.</param>
       <param name="streamingContext">The object that contains contextual information about the source or destination.</param>
@@ -953,7 +953,7 @@
       <summary>Implements the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface and is called back by the deserialization event when deserialization is complete.</summary>
       <param name="sender">The source of the deserialization event.</param>
     </member>
-    <member name="M:System.Security.Principal.WindowsIdentity.System#Runtime#Serialization#ISerializable#GetObjectdata(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+    <member name="M:System.Security.Principal.WindowsIdentity.System#Runtime#Serialization#ISerializable#GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
       <summary>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the logical context information needed to recreate an instance of this execution context.</summary>
       <param name="info">An object containing the information required to serialize the <see cref="T:System.Collections.Hashtable" />.</param>
       <param name="context">An object containing the source and destination of the serialized stream associated with the <see cref="T:System.Collections.Hashtable" />.</param>

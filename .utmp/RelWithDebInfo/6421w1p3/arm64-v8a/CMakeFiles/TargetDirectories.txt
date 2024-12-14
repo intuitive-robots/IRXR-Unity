@@ -1,0 +1,8 @@
+C:/Users/Ahmad/Desktop/project/unity/IRXR-Unity/.utmp/RelWithDebInfo/6421w1p3/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/Ahmad/Desktop/project/unity/IRXR-Unity/.utmp/RelWithDebInfo/6421w1p3/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/Ahmad/Desktop/project/unity/IRXR-Unity/.utmp/RelWithDebInfo/6421w1p3/arm64-v8a/GameActivity/CMakeFiles/game.dir
+C:/Users/Ahmad/Desktop/project/unity/IRXR-Unity/.utmp/RelWithDebInfo/6421w1p3/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+C:/Users/Ahmad/Desktop/project/unity/IRXR-Unity/.utmp/RelWithDebInfo/6421w1p3/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir
+C:/Users/Ahmad/Desktop/project/unity/IRXR-Unity/.utmp/RelWithDebInfo/6421w1p3/arm64-v8a/FramePacing/CMakeFiles/swappywrapper.dir
+C:/Users/Ahmad/Desktop/project/unity/IRXR-Unity/.utmp/RelWithDebInfo/6421w1p3/arm64-v8a/FramePacing/CMakeFiles/edit_cache.dir
+C:/Users/Ahmad/Desktop/project/unity/IRXR-Unity/.utmp/RelWithDebInfo/6421w1p3/arm64-v8a/FramePacing/CMakeFiles/rebuild_cache.dir

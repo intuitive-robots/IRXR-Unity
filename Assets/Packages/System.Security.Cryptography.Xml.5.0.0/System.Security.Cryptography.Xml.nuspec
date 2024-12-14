@@ -15,12 +15,12 @@
     <description>Provides classes to support the creation and validation of XML digital signatures. The classes in this namespace implement the World Wide Web Consortium Recommendation, "XML-Signature Syntax and Processing", described at http://www.w3.org/TR/xmldsig-core/.
 
 Commonly Used Types:
-System.Security.Cryptography.Xml.Cipherdata
+System.Security.Cryptography.Xml.CipherData
 System.Security.Cryptography.Xml.CipherReference
-System.Security.Cryptography.Xml.dataObject
-System.Security.Cryptography.Xml.dataReference
+System.Security.Cryptography.Xml.DataObject
+System.Security.Cryptography.Xml.DataReference
 System.Security.Cryptography.Xml.DSAKeyValue
-System.Security.Cryptography.Xml.Encrypteddata
+System.Security.Cryptography.Xml.EncryptedData
 System.Security.Cryptography.Xml.EncryptedKey
 System.Security.Cryptography.Xml.EncryptedReference
 System.Security.Cryptography.Xml.EncryptedType
@@ -34,7 +34,7 @@ System.Security.Cryptography.Xml.KeyInfoEncryptedKey
 System.Security.Cryptography.Xml.KeyInfoName
 System.Security.Cryptography.Xml.KeyInfoNode
 System.Security.Cryptography.Xml.KeyInfoRetrievalMethod
-System.Security.Cryptography.Xml.KeyInfoX509data
+System.Security.Cryptography.Xml.KeyInfoX509Data
 System.Security.Cryptography.Xml.KeyReference
 System.Security.Cryptography.Xml.Reference
 System.Security.Cryptography.Xml.ReferenceList
