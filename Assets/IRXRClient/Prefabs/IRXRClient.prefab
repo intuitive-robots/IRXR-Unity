@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 980812101842878387}
   - component: {fileID: 6061640762099415726}
+  - component: {fileID: 2422481625191870672}
   m_Layer: 0
   m_Name: IRXRClient
   m_TagString: Untagged
@@ -44,3 +45,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98589490932ca12fb84a61b64c399c6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2422481625191870672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956348136357179381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a53e1e9ea2018bc11880eb260d936e0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  telemetryEnabled: 1

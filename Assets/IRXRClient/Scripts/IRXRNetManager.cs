@@ -12,6 +12,7 @@ using System.Net.Sockets;
 using IRXR.Utilities;
 
 using UnityEditor.UI;
+using UnityEditor.Experimental.GraphView;
 
 namespace IRXRNode
 {
@@ -238,18 +239,6 @@ namespace IRXRNode
 		public async Task NodeTask()
 		{
 			Debug.Log("Node task started");
-			UdpClient udpClient = new UdpClient();
-			try
-			{
-				udpClient.EnableBroadcast = true;
-				// In Unity projects, the broadcast IP should be listening to all interfaces
-				udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
-			}
-			catch (Exception ex)
-			{
-				Debug.LogError($"Failed to create UDP socket: {ex.Message}");
-				isRunning = false;
-			}
 			while (isRunning)
 			{
 				try
@@ -259,8 +248,8 @@ namespace IRXRNode
 					{
 						Debug.Log("Master node found and ready to send heartbeat.");
 						IPEndPoint masterEndPoint = new IPEndPoint(IPAddress.Parse(masterAddress.ip), masterAddress.port);
-						await HeartbeatLoop(udpClient, masterEndPoint);
-						updateInfoTask?.Wait();
+						await HeartbeatLoop(masterEndPoint);
+						
 					}
 					await Task.Delay(500);
 				}
@@ -271,7 +260,6 @@ namespace IRXRNode
 				}
 			}
 			updateInfoTask?.Wait();
-			udpClient?.Close();
 			Debug.Log("Node task stopped.");
 		}
 
@@ -312,13 +300,12 @@ namespace IRXRNode
 				{
 					UdpClient udpClient = new UdpClient();
 					udpClient.EnableBroadcast = true;
-					udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
-
+					udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, UnityPortSet.HEARTBEAT));
 					Debug.Log("Sending ping message..." + udpClient.Available);
 					byte[] pingMessage = EchoHeader.PING;
 					// await send so we don't need to worry about broadcasting in the loop by mistake
-					// await udpClient.SendAsync(pingMessage, pingMessage.Length, new IPEndPoint(IPAddress.Broadcast, UnityPortSet.DISCOVERY));
-					udpClient.Send(pingMessage, pingMessage.Length, new IPEndPoint(IPAddress.Broadcast, UnityPortSet.DISCOVERY));
+					await udpClient.SendAsync(pingMessage, pingMessage.Length, new IPEndPoint(IPAddress.Broadcast, UnityPortSet.DISCOVERY));
+					// udpClient.Send(pingMessage, pingMessage.Length, new IPEndPoint(IPAddress.Broadcast, UnityPortSet.DISCOVERY));
 					// waiting for receive of ping
 					var receiveTask = udpClient.ReceiveAsync();
 					if (await Task.WhenAny(receiveTask, Task.Delay(timeout)) == receiveTask)
@@ -347,8 +334,11 @@ namespace IRXRNode
 			return masterAddress;
 		}
 
-		public async Task HeartbeatLoop(UdpClient udpClient, IPEndPoint masterAddress)
+		public async Task HeartbeatLoop(IPEndPoint masterAddress)
 		{
+			UdpClient udpClient = new UdpClient();
+			// udpClient.EnableBroadcast = true;
+			udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, UnityPortSet.HEARTBEAT));
 			try
 			{
 				// Start the update info loop
@@ -374,6 +364,7 @@ namespace IRXRNode
 					Debug.LogError($"Failed to send heartbeat: {e}");
 				}
 			}
+			updateInfoTask?.Wait();
 			Debug.Log("Heartbeat loop has been stopped, waiting for other master node.");
 		}
 
