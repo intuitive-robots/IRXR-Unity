@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using NetMQ;
 using NetMQ.Sockets;
 using UnityEngine;
@@ -11,102 +10,8 @@ using System.Net;
 using System.Net.Sockets;
 using IRXR.Utilities;
 
-
 namespace IRXR.Node
 {
-
-	public static class UnityPortSet
-	{
-		public static readonly int DISCOVERY = 7720;
-		public static readonly int SERVICE = 7730;
-		public static readonly int TOPIC = 7731;
-	}
-
-	public class NodeInfo
-	{
-		public string name;
-		public string nodeID;
-		public string ip;
-		public string type;
-		public int servicePort;
-		public int topicPort;
-		public List<string> serviceList = new();
-		public List<string> topicList = new();
-	}
-
-
-
-	public class NodeInfoManager
-	{
-		private Dictionary<string, NodeInfo> _nodesInfo;
-		private NodeInfo _localInfo;
-		// Unity node is not master node
-		private NodeInfo _serverInfo;
-		private string _nodeId;
-
-		public NodeInfoManager(NodeInfo localInfo)
-		{
-			_localInfo = localInfo;
-			_nodeId = localInfo.nodeID;
-			_nodesInfo = new Dictionary<string, NodeInfo>
-			{
-				{ localInfo.nodeID, localInfo }
-			};
-		}
-
-		public void UpdateNodesInfo(Dictionary<string, NodeInfo> nodesInfoDict, IRXRNetManager node)
-		{
-			_nodesInfo = nodesInfoDict;
-			_localInfo = _nodesInfo[_nodeId];
-			node.localInfo = _localInfo;
-		}
-
-		public byte[] GetNodesInfoMessage()
-		{
-			string json = JsonConvert.SerializeObject(_nodesInfo);
-			return Encoding.UTF8.GetBytes(json);
-		}
-
-		public bool CheckNode(string nodeId)
-		{
-			return _nodesInfo.ContainsKey(nodeId);
-		}
-
-		public NodeInfo GetNode(string nodeId)
-		{
-			if (_nodesInfo.ContainsKey(nodeId))
-			{
-				return _nodesInfo[nodeId];
-			}
-			return null;
-		}
-
-		public NodeInfo CheckService(string serviceName)
-		{
-			foreach (var info in _nodesInfo.Values)
-			{
-				if (info.serviceList.Contains(serviceName))
-				{
-					return info;
-				}
-			}
-			return null;
-		}
-
-		public NodeInfo CheckTopic(string topicName)
-		{
-			foreach (var info in _nodesInfo.Values)
-			{
-				if (info.topicList.Contains(topicName))
-				{
-					return info;
-				}
-			}
-			return null;
-		}
-
-	}
-
 
 	public class IRXRNetManager : MonoBehaviour
 	{
@@ -114,10 +19,14 @@ namespace IRXR.Node
 		public static IRXRNetManager Instance { get; private set; }
 		// Node information
 		public NodeInfo localInfo { get; set; }
-		public NodeInfoManager nodeInfoManager { get; private set; }
+		public NodeInfo masterInfo { get; set; }
+		// public NodeInfoManager nodeInfoManager { get; private set; }
 		// UDP Task management
 		private CancellationTokenSource cancellationTokenSource;
 		private Task nodeTask;
+		// Lock for updating action in the main thread
+        private object updateActionLock = new();
+        private Action updateAction;
 		public Action OnConnectionStart;
 		public Action OnDisconnected;
 		// ZMQ Sockets for communication, in this stage, we run them in the main thread
@@ -125,18 +34,17 @@ namespace IRXR.Node
 		public PublisherSocket _pubSocket;
 		// response socket for service running in the local node
 		public ResponseSocket _resSocket;
-		public Dictionary<string, Func<string, string>> serviceCallbacks { get; private set; }
-		// TODO: subscriber socket for receiving messages from only master node
+		public Dictionary<string, Func<byte[], byte[]>> serviceCallbacks { get; private set; }
+		// subscriber socket for receiving messages from only master node
 		private SubscriberSocket _subSocket;
 		public Dictionary<string, Action<byte[]>> subscribeCallbacks { get; private set; }
-		// TODO: Request socket for sending service request to only master node
+		// Request socket for sending service request to only master node
 		private RequestSocket _reqSocket;
 		private List<NetMQSocket> _sockets;
 		public Action ConnectionSpin;
 		// Status flags
 		private bool isRunning = false;
 		private bool isConnected = false;
-
 		// Constants
 		private const int HEARTBEAT_INTERVAL = 500;
 
@@ -155,14 +63,13 @@ namespace IRXR.Node
 			{
 				name = "UnityNode",
 				nodeID = Guid.NewGuid().ToString(),
-				ip = null,
-				type = "UnityNode",
+				addr = null,
+				type = NodeTypes.XR,
 				servicePort = UnityPortSet.SERVICE,
 				topicPort = UnityPortSet.TOPIC,
 				serviceList = new List<string>(),
 				topicList = new List<string>()
 			};
-			nodeInfoManager = new NodeInfoManager(localInfo);
 			// Default host name
 			if (PlayerPrefs.HasKey("HostName"))
 			{
@@ -184,12 +91,12 @@ namespace IRXR.Node
 			_subSocket = new SubscriberSocket();
 			_reqSocket = new RequestSocket();
 			_sockets = new List<NetMQSocket>() { _pubSocket, _resSocket, _subSocket, _reqSocket };
-			serviceCallbacks = new Dictionary<string, Func<string, string>>();
-			subscribeCallbacks = new Dictionary<string, Action<byte[]>>();
+			serviceCallbacks = new ();
+			subscribeCallbacks = new ();
 			cancellationTokenSource = new CancellationTokenSource();
 			// Action setting
-			OnConnectionStart += () => { isConnected = true; };
-			OnDisconnected += () => { isConnected = false; };
+			OnConnectionStart += () => RunOnMainThread(() => StartConnection());
+			OnDisconnected += () => RunOnMainThread(() => StopConnection());
 		}
 
 		private void Start()
@@ -201,12 +108,24 @@ namespace IRXR.Node
 
 		private void Update() {
 			ConnectionSpin?.Invoke();
+			lock (updateActionLock) {
+				updateAction?.Invoke();
+				updateAction = null;
+			}
 		}
 
-		private void StopTask()
+        void RunOnMainThread(Action action)
+        {
+            lock (updateActionLock)
+            {
+                updateAction += action;
+            }
+        }
+
+		private void OnDestroy()
 		{
 			Debug.Log("Stopping task...");
-			isConnected = false;
+			if (isConnected) StopConnection();
 			isRunning = false;
 			if (cancellationTokenSource != null)
 			{
@@ -217,17 +136,11 @@ namespace IRXR.Node
 			}
 		}
 
-		private void OnDestroy()
-		{
-			StopTask();
-		}
-
 		private void OnApplicationQuit()
 		{
 			Debug.Log("Net Manager is being destroyed.");
 			foreach (var sock in _sockets)
 			{
-				// sock.Close();
 				sock?.Dispose();
 			}
 			NetMQConfig.Cleanup();
@@ -235,33 +148,36 @@ namespace IRXR.Node
 
 	public void StartConnection() {
 		if (isConnected) StopConnection();
-		_subSocket.Connect($"tcp://{serverInfo.addr.ip}:{serverInfo.topicPort}");
+		isConnected = true;
+		// subscription
+		_subSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
 		_subSocket.Subscribe("");
 		ConnectionSpin += SubscriptionSpin;
-		CheckService(serverInfo);
-		// Debug.Log($"Connected topic to {serverInfo.ip}:{serverInfo.topicPort}");
+		Debug.Log($"Start subscribing to {masterInfo.addr.ip}:{masterInfo.topicPort}");
+		// local service
 		_resSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
-		Debug.Log($"Starting service connection at {localInfo.addr.ip}:{UnityPortSet.SERVICE}");
 		ConnectionSpin += ServiceRespondSpin;
-		// _reqSocket.Connect($"tcp://{serverInfo.ip}:{serverInfo.servicePort}");
-		// Debug.Log($"Starting service connection to {serverInfo.ip}:{serverInfo.servicePort}");
+		Debug.Log($"Starting service connection at {localInfo.addr.ip}:{UnityPortSet.SERVICE}");
+		// request to master node
+		_reqSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
+		Debug.Log($"Starting service connection to {masterInfo.addr.ip}:{masterInfo.servicePort}");
+		// local publish
 		_pubSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
 		Debug.Log($"Starting publish topic at {localInfo.addr.ip}:{UnityPortSet.TOPIC}");
-		// CaculateTimestampOffset();
+		// CalculateTimestampOffset();
 	}
 
 	public void StopConnection() {
 		if (isConnected) {
-		// _subSocket.Disconnect($"tcp://{serverInfo.ip}:{serverInfo.topicPort}");
-		while (_subSocket.HasIn) _subSocket.SkipFrame();
+			while (_subSocket.HasIn) _subSocket.SkipFrame();
 		}
-		ConnectionSpin -= TopicUpdateSpin;
+		ConnectionSpin = () => { };
 		// It is not necessary to clear the topics callbacks
 		// _topicsCallbacks.Clear();
-		_resSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Service}");
-		ConnectionSpin -= ServiceRespondSpin;
-		_pubSocket.Unbind($"tcp://{_localInfo.ip}:{(int)ClientPort.Topic}");
-		_reqSocket.Disconnect($"tcp://{_serverInfo.ip}:{_serverInfo.servicePort}");
+		_resSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
+		_pubSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
+		_reqSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
+		_subSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
 		isConnected = false;
 		Debug.Log("Disconnected");
 	}
@@ -273,50 +189,55 @@ namespace IRXR.Node
 			{
 				try
 				{
-					var masterAddress = await SearchForMasterNode();
-					if (masterAddress is not null)
+					var nodeInfo = await SearchForMasterNode();
+					if (nodeInfo is not null)
 					{
+						masterInfo = nodeInfo;
+						OnConnectionStart?.Invoke();
 						Debug.Log("Master node found and ready to send heartbeat.");
-						IPEndPoint masterEndPoint = new IPEndPoint(IPAddress.Parse(masterAddress.ip), masterAddress.port);
-						await HeartbeatLoop(masterEndPoint);
+						await HeartbeatLoop();
 					}
 					await Task.Delay(500);
 				}
 				catch (Exception e)
 				{
-					Debug.LogError($"Error in NodeTask: {e.Message}");
+					Debug.LogError($"Error in NodeTask: {e.StackTrace}");
 					break;
 				}
 			}
-			updateInfoTask?.Wait();
 			Debug.Log("Node task stopped.");
 		}
 
 		public async Task<NodeInfo> SearchForMasterNode(int timeout = 500)
 		{
+			NodeInfo nodeInfo = null;
 			Debug.Log("Searching for the master node...");
 			try
 			{
 				while (isRunning)
 				{
-					UdpClient udpClient = new UdpClient();
+					// Now sure why we need to create a new udp client every time
+					// If not it wouldn't receive the response when the master node started later
+					UdpClient udpClient = NetworkUtils.CreateUDPClient(UnityPortSet.HEARTBEAT);
 					udpClient.EnableBroadcast = true;
-					udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, UnityPortSet.DISCOVERY));
-					Debug.Log("Sending ping message..." + udpClient.Available);
+					// Debug.Log("Sending ping message...");
 					byte[] pingMessage = EchoHeader.PING;
 					// await send so we don't need to worry about broadcasting in the loop by mistake
-					// udpClient.Send(pingMessage, pingMessage.Length, new IPEndPoint(IPAddress.Broadcast, UnityPortSet.DISCOVERY));
+					await udpClient.SendAsync(EchoHeader.PING, 1, new IPEndPoint(IPAddress.Any, UnityPortSet.DISCOVERY));
 					// waiting for receive of ping
 					var receiveTask = udpClient.ReceiveAsync();
 					if (await Task.WhenAny(receiveTask, Task.Delay(timeout)) == receiveTask)
 					{
-						Debug.Log("Received ping response.");
+						// Debug.Log("Received ping response.");
 						var response = receiveTask.Result;
-						byte[][] responseMessage = MsgUtils.SplitByte(response.Buffer);
-						NodeInfo nodesInfo = MsgUtils.Deserialize2Object<NodeInfo>(receiveTask.Result);
-						Debug.Log($"Found master node at {masterAddress.ip}:{masterAddress.port}");
-						// pubSocket.Bind($"tcp://{masterAddress.ip}:{UnityPortSet.TOPIC}");
-						OnConnectionStart?.Invoke();
+						byte[][] msgSeparated = MsgUtils.SplitByte(response.Buffer);
+						if (msgSeparated[1] == null)
+						{
+							continue;
+						}
+						nodeInfo = MsgUtils.BytesDeserialize2Object<NodeInfo>(msgSeparated[0]);
+						localInfo.addr = MsgUtils.BytesDeserialize2Object<NodeAddress>(msgSeparated[1]);
+						Debug.Log($"Found master node at {nodeInfo.addr.ip}:{nodeInfo.addr.port}");
 						udpClient.Close();
 						break;
 					}
@@ -331,24 +252,36 @@ namespace IRXR.Node
 			{
 				Debug.LogError($"Error during master node discovery: {e.StackTrace}");
 			}
-			return masterAddress;
+			return nodeInfo;
 		}
 
-		public async Task HeartbeatLoop(IPEndPoint masterAddress)
+		public async Task HeartbeatLoop(int timeout = 200)
 		{
-			UdpClient udpClient = new UdpClient();
-			udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, UnityPortSet.HEARTBEAT));
+			UdpClient udpClient = NetworkUtils.CreateUDPClient(new IPEndPoint(IPAddress.Any, UnityPortSet.HEARTBEAT));
+			IPEndPoint masterEndPoint = new IPEndPoint(IPAddress.Parse(masterInfo.addr.ip), masterInfo.addr.port);
 			// Start the update info loop
-			CancellationTokenSource cts = new CancellationTokenSource();
-			updateInfoTask = Task.Run(async () => await UpdateInfoLoop(udpClient, 3 * HEARTBEAT_INTERVAL), cancellationTokenSource.Token);
 			Debug.Log($"The Net Manager starts heartbeat at {localInfo.addr.ip}:{localInfo.addr.port}");
 			while (isConnected)
 			{
 				try
 				{
-					byte[] msg = MsgUtils.GenerateNodeMsg(localInfo);
-					Debug.Log($"Sending heartbeat to {masterAddress}");
-					await udpClient.SendAsync(msg, msg.Length, masterAddress);
+					byte[] heartbeatMessage = MsgUtils.GenerateHeartbeat(localInfo);
+					await udpClient.SendAsync(heartbeatMessage, heartbeatMessage.Length, masterEndPoint);
+					var receiveTask = udpClient.ReceiveAsync();
+					// If didn't receive the heartbeat response within timeout
+					if (await Task.WhenAny(receiveTask, Task.Delay(timeout)) != receiveTask)
+					{
+						Debug.LogWarning("Timeout: The master node is offline");
+						throw new SocketException();
+					}
+					var result = await receiveTask;
+					NodeInfo nodeInfo = MsgUtils.BytesDeserialize2Object<NodeInfo>(result.Buffer);
+					if (nodeInfo.nodeID != masterInfo.nodeID)
+					{
+						Debug.Log("The master node has been changed, restarting a new connection");
+						throw new SocketException();
+					}
+					// Debug.Log($"Sending heartbeat to {masterInfo.addr.ip}:{masterInfo.addr.port}");
 					await Task.Delay(HEARTBEAT_INTERVAL);
 				}
 				catch (SocketException ex)
@@ -362,44 +295,8 @@ namespace IRXR.Node
 					Debug.LogError($"Failed to send heartbeat: {e.StackTrace}");
 				}
 			}
-			updateInfoTask?.Wait();
 			udpClient.Close();
 			Debug.Log("Heartbeat loop has been stopped, waiting for other master node.");
-		}
-
-		public async Task UpdateInfoLoop(UdpClient udpClient, int timeout)
-		{
-			Debug.Log("Start update info loop");
-			while (isConnected)
-			{
-				try
-				{
-					Debug.Log("Updating node info...");
-					var receiveTask = udpClient.ReceiveAsync();
-					if (await Task.WhenAny(receiveTask, Task.Delay(timeout)) == receiveTask)
-					{
-						var result = await receiveTask;
-						Debug.Log("Received node info." + Encoding.UTF8.GetString(result.Buffer));
-						Dictionary<string, NodeInfo> nodesInfo = MsgUtils.Deserialize2Object<Dictionary<string, NodeInfo>>(result.Buffer);
-						nodeInfoManager.UpdateNodesInfo(nodesInfo, this);
-					}
-					else
-					{
-						Debug.LogWarning("Timeout: The master node is offline");
-						OnDisconnected?.Invoke();
-					}
-				}
-				catch (SocketException ex)
-				{
-					Debug.Log($"SocketException: {ex.Message}");
-					OnDisconnected?.Invoke();
-					break;
-				}
-				catch (Exception e)
-				{
-					Debug.LogError($"Error occurred in update info loop: {e.StackTrace}");
-				}
-			}
 		}
 
 		public void SubscriptionSpin()
@@ -409,15 +306,16 @@ namespace IRXR.Node
 			while (_subSocket.HasIn)
 			{
 				byte[][] msgSeparated = MsgUtils.SplitByte(_subSocket.ReceiveFrameBytes());
-				string topic = Encoding.UTF8.GetString(msgSeparated[0]);
-				if (subscribeCallbacks.ContainsKey(topic))
+				string topic_name = MsgUtils.Bytes2String(msgSeparated[0]);
+				if (subscribeCallbacks.ContainsKey(topic_name))
 				{
-					messageProcessed[topic] = msgSeparated[1];
+					// Debug.Log($"Received message from {topic_name}");
+					messageProcessed[topic_name] = msgSeparated[1];
 				}
 			}
-			foreach (var (topic, msg) in messageProcessed)
+			foreach (var (topic_name, msg) in messageProcessed)
 			{
-				subscribeCallbacks[topic](msg);
+				subscribeCallbacks[topic_name](msg);
 			}
 		}
 
@@ -428,51 +326,53 @@ namespace IRXR.Node
 			// TODO: make it running in the sub thread
 			// now we need to carefully handle the service request
 			// make sure that it would not block the main thread
-			string messageReceived = _resSocket.ReceiveFrameString();
-			string[] messageSplit = messageReceived.Split(MsgUtils.SEPARATOR, 2);
-			Debug.Log($"Received service request {messageSplit[0]}");
-			if (serviceCallbacks.ContainsKey(messageSplit[0]))
+			byte[] messageReceived = _resSocket.ReceiveFrameBytes();
+			byte[][] messageSplit = MsgUtils.SplitByte(messageReceived);
+			Debug.Log($"Received service request {MsgUtils.Bytes2String(messageSplit[0])}");
+			// foreach (var item in serviceCallbacks)
+			// {
+			// 	Debug.Log($"Service {MsgUtils.Bytes2String(item.Key)} and {MsgUtils.Bytes2String(messageSplit[0])}");
+			// 	Debug.Log($"Service {item.Key.Length} and {messageSplit[0].Length}");
+			// }
+			string serviceName = MsgUtils.Bytes2String(messageSplit[0]);
+			if (serviceCallbacks.ContainsKey(serviceName))
 			{
-				string response = serviceCallbacks[messageSplit[0]](messageSplit[1]);
+				byte[] response = serviceCallbacks[serviceName](messageSplit[1]);
 				_resSocket.SendFrame(response);
 			}
 			else
 			{
-				Debug.LogWarning($"Service {messageSplit[0]} not found");
-				_resSocket.SendFrame(MSG.SERVICE_ERROR);
+				Debug.LogWarning($"Service {serviceName} not found");
+				IRXRSignal response = new IRXRSignal(IRXRSignal.TIMEOUT);
+				_resSocket.SendFrame(response.ToBytes());
 			}
 		}
 
 		// TODO: make it as a generic request type
 		public byte[] CallBytesService(string service_name, string request)
 		{
-			_reqSocket.SendFrame($"{service_name}:{request}");
+			_reqSocket.SendFrame($"{service_name}{MsgUtils.SEPARATOR}{request}");
 			if (!_reqSocket.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(10000), out byte[] bytes, out bool more)) {
 				Debug.LogWarning($"Request Timeout");
 				return new byte[] { };
 			}
-
 			List<byte> result = new List<byte>(bytes);
 			result.AddRange(bytes);
 			while (more) result.AddRange(_reqSocket.ReceiveFrameBytes(out more));
 			return result.ToArray();
 		}
 
-		public RequestSocket CreateRequestSocket()
+		public ResponseType CallService<RequestType, ResponseType>(string serviceName, RequestType request)
 		{
-			RequestSocket requestSocket = new RequestSocket();
-			_sockets.Add(requestSocket);
-			return requestSocket;
-		}
-
-		public SubscriberSocket CreateSubscriberSocket()
-		{
-			SubscriberSocket subscriberSocket = new SubscriberSocket();
-			_sockets.Add(subscriberSocket);
-			return subscriberSocket;
+			byte[] requestBytes = MsgUtils.Serialize2Byte(request);
+			byte[] responseBytes = CallBytesService(serviceName, Encoding.UTF8.GetString(requestBytes));
+			if (typeof(ResponseType) == typeof(string))
+			{
+				string result = Encoding.UTF8.GetString(responseBytes);
+				return (ResponseType)(object)result;
+			}
+			return MsgUtils.BytesDeserialize2Object<ResponseType>(responseBytes);
 		}
 
 	}
-
-
 }

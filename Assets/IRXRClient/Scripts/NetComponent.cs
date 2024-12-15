@@ -5,6 +5,7 @@ using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
 using IRXR.Utilities;
+using UnityEditor.Experimental.GraphView;
 
 
 namespace IRXR.Node
@@ -20,7 +21,7 @@ namespace IRXR.Node
 			string hostName = _netManager.localInfo.name;
 			_topic = $"{hostName}/{topic}";
 			_pubSocket = _netManager._pubSocket;
-			if (_netManager.nodeInfoManager.CheckTopic(_topic) == null)
+			if (!_netManager.localInfo.topicList.Contains(_topic))
 			{
 				_netManager.localInfo.topicList.Add(_topic);
 			}
@@ -29,7 +30,7 @@ namespace IRXR.Node
 		public void Publish(MsgType data)
 		{
 			string msg = MsgUtils.CombineHeaderWithMessage(_topic, JsonConvert.SerializeObject(data));
-			_pubSocket.SendFrame(Encoding.UTF8.GetBytes(msg));
+			_pubSocket.SendFrame(MsgUtils.String2Bytes(msg));
 		}
 	}
 
@@ -47,9 +48,14 @@ namespace IRXR.Node
 		public void StartSubscription()
 		{
             IRXRNetManager _netManager = IRXRNetManager.Instance;
-			if (_netManager.nodeInfoManager.CheckTopic(_topic) != null)
+			if (_netManager.masterInfo.topicList.Contains(_topic))
 			{
+				Debug.Log($"Start subscribing to topic {_topic}");
 				_netManager.subscribeCallbacks[_topic] = OnReceive;
+			}
+			else
+			{
+				Debug.LogWarning($"Topic {_topic} is not found in the master node");
 			}
 		}
 
@@ -68,15 +74,17 @@ namespace IRXR.Node
 		public void Unsubscribe()
 		{
             IRXRNetManager _netManager = IRXRNetManager.Instance;
-			if (_netManager.nodeInfoManager.CheckTopic(_topic) != null)
+			if (_netManager.masterInfo.topicList.Contains(_topic))
 			{
 				_netManager.subscribeCallbacks.Remove(_topic);
+				Debug.Log($"Unsubscribe from topic {_topic}");
 			}
 		}
 
 	}
 
-    // Service class: Since it is running in the main thread, so we don't need to have a deconstructor
+    // Service class: Since it is running in the main thread, 
+	// so we don't need to destroy it
     public class Service<RequestType, ResponseType>
     {
         protected string _serviceName;
@@ -94,21 +102,21 @@ namespace IRXR.Node
             {
                 _serviceName = $"{hostName}/{serviceName}";
             }
-            _onRequest = onRequest;
-			if (_netManager.nodeInfoManager.CheckService(_serviceName) == null)
+			if (_netManager.localInfo.topicList.Contains(_serviceName))
 			{
-				_netManager.localInfo.serviceList.Add(_serviceName);
-				_netManager.serviceCallbacks[serviceName] = ServiceCallback;
+				throw new ArgumentException($"Service {_serviceName} is already registered");
 			}
+            _onRequest = onRequest;
+			_netManager.localInfo.serviceList.Add(_serviceName);
+			_netManager.serviceCallbacks[_serviceName] = BytesCallback;
             Debug.Log($"Service {_serviceName} is registered");
         }
 
-        public string ServiceCallback(string request)
-        {
-            RequestType req = JsonConvert.DeserializeObject<RequestType>(request);
-            ResponseType response = _onRequest(req);
-            return MsgUtils.CombineHeaderWithMessage(_serviceName, JsonConvert.SerializeObject(response));
-        }
+		private byte[] BytesCallback(byte[] bytes)
+		{
+			RequestType req = MsgUtils.BytesDeserialize2Object<RequestType>(bytes);
+			return MsgUtils.ObjectSerialize2Bytes(_onRequest(req));
+		}
 
     }
 

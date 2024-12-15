@@ -5,11 +5,12 @@ using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using IRXR.Node;
+using IRXR.Utilities;
 
 namespace IRXR.SceneLoader
 {
 
-    public class SceneLoader : MonoBehaviour
+    public class SimLoader : MonoBehaviour
     {
 
         private object updateActionLock = new();
@@ -23,26 +24,24 @@ namespace IRXR.SceneLoader
         private Dictionary<string, List<Tuple<SimMesh, MeshFilter>>> _pendingMesh = new();
         private Dictionary<string, List<Tuple<SimTexture, Material>>> _pendingTexture = new();
         // Services
-        private Service<string, string> loadSimSceneService;
-
+        private Service<SimScene, IRXRSignal> loadSimSceneService;
 
         void Start()
         {
             _netManager = IRXRNetManager.Instance;
-            _netManager.OnDisconnected += ClearScene;
             updateAction = () => { };
             OnSceneLoaded += () => Debug.Log("Scene Loaded");
             OnSceneCleared += () => Debug.Log("Scene Cleared");
-            loadSimSceneService = new Service<string, string>("LoadSimScene", LoadSimScene, true);
+            loadSimSceneService = new Service<SimScene, IRXRSignal>("LoadSimScene", LoadSimScene, true);
         }
 
-        private string LoadSimScene(string simSceneJsonStr)
+        private IRXRSignal LoadSimScene(SimScene simScene)
         {
             ClearScene();
-            _simScene = JsonConvert.DeserializeObject<SimScene>(simSceneJsonStr);
+            _simScene = simScene;
             updateAction += BuildScene;
             Debug.Log("Downloaded scene json and starting to build scene");
-            return "Received Scene";
+            return new IRXRSignal(IRXRSignal.SUCCESS);
         }
 
         void BuildScene()
@@ -198,6 +197,7 @@ namespace IRXR.SceneLoader
             _pendingMesh.Clear();
             _pendingTexture.Clear();
             _simObjTrans.Clear();
+            Debug.Log("Scene Cleared");
         }
 
         public Material BuildMaterial(SimMaterial simMat, string objName)

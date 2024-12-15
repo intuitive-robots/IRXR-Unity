@@ -4,10 +4,77 @@ using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
 
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using NetMQ;
+using NetMQ.Sockets;
+using UnityEngine;
 
-namespace IRXR.Utilities.Network
+
+
+namespace IRXR.Utilities
 {
 
+	public static class UnityPortSet
+	{
+		public static readonly int DISCOVERY = 7720;
+		public static readonly int HEARTBEAT = 7721;
+		public static readonly int SERVICE = 7730;
+		public static readonly int TOPIC = 7731;
+	}
+
+	public static class NodeTypes
+	{
+		public static readonly string MASTER = "master";
+		public static readonly string XR = "xr";
+		public static readonly string SLAVE = "slave";
+	}
+
+	public class NodeAddress
+	{
+		public string ip;
+		public int port;
+		public NodeAddress(string ip, int port)
+		{
+			this.ip = ip;
+			this.port = port;
+		}
+	}
+
+	public class NodeInfo
+	{
+		public string name;
+		public string nodeID;
+		public NodeAddress addr;
+		public string type;
+		public int servicePort;
+		public int topicPort;
+		public List<string> serviceList = new();
+		public List<string> topicList = new();
+	}
+
+	public static class NetworkUtils
+	{
+
+		public static UdpClient CreateUDPClient(IPEndPoint endPoint)
+		{
+			UdpClient udpClient = new UdpClient();
+			udpClient.Client.Bind(endPoint);
+			return udpClient;
+		}
+
+		public static UdpClient CreateUDPClient(int port)
+		{
+			return CreateUDPClient(new IPEndPoint(IPAddress.Any, port));
+		}
+
+		public static UdpClient CreateUDPClient(string localIP, int port)
+		{
+			IPAddress ipAddress = IPAddress.Parse(localIP);
+			return CreateUDPClient(new IPEndPoint(ipAddress, port));
+		}
 
 		public static string GetLocalIPsInSameSubnet(string inputIPAddress)
 		{
@@ -56,6 +123,5 @@ namespace IRXR.Utilities.Network
 			return true;
 		}
 
-
-
 	}
+}
