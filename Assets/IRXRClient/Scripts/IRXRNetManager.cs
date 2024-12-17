@@ -343,7 +343,7 @@ namespace IRXR.Node
 			else
 			{
 				Debug.LogWarning($"Service {serviceName} not found");
-				IRXRSignal response = new IRXRSignal(IRXRSignal.TIMEOUT);
+				IRXRSignal response = new IRXRSignal(IRXRSignal.NOSERVICE);
 				_resSocket.SendFrame(response.ToBytes());
 			}
 		}

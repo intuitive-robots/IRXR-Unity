@@ -23,13 +23,15 @@ namespace IRXR.Utilities
 
 	public class IRXRSignal
 	{
+		public static readonly string EMPTY = "EMPTY";
 		public static readonly string SUCCESS = "SUCCESS";
 		public static readonly string ERROR = "ERROR";
+		public static readonly string NOSERVICE = "NOSERVICE";
 		public static readonly string TIMEOUT = "TIMEOUT";
-		public string response;
-		public IRXRSignal(string response)
+		public string signal;
+		public IRXRSignal(string signal)
 		{
-			this.response = response;
+			this.signal = signal;
 		}
 		public byte[] ToBytes()
 		{
