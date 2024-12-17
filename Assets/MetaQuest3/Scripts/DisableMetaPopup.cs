@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 
@@ -18,3 +19,4 @@ public class DisableMetaPopup : MonoBehaviour
         telemetryEnabled = EditorPrefs.GetBool(TelemetryEnabledKey, false);
     }
 }
+#endif

@@ -223,7 +223,7 @@ namespace IRXR.Node
 					// Debug.Log("Sending ping message...");
 					byte[] pingMessage = EchoHeader.PING;
 					// await send so we don't need to worry about broadcasting in the loop by mistake
-					await udpClient.SendAsync(EchoHeader.PING, 1, new IPEndPoint(IPAddress.Any, UnityPortSet.DISCOVERY));
+					await udpClient.SendAsync(EchoHeader.PING, 1, new IPEndPoint(IPAddress.Broadcast, UnityPortSet.DISCOVERY));
 					// waiting for receive of ping
 					var receiveTask = udpClient.ReceiveAsync();
 					if (await Task.WhenAny(receiveTask, Task.Delay(timeout)) == receiveTask)

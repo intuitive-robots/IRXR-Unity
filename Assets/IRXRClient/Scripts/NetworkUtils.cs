@@ -4,15 +4,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
 
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using NetMQ;
-using NetMQ.Sockets;
-using UnityEngine;
-
-
 
 namespace IRXR.Utilities
 {
