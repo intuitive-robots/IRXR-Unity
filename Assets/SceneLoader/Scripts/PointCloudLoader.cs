@@ -1,5 +1,6 @@
 using UnityEngine;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 
 class PointCloudData {
@@ -14,28 +15,23 @@ public class PointCloudLoader : MonoBehaviour
     private ParticleSystem.Particle[] voxels;
     bool voxelsUpdated = false;
     private IRXRNetManager _netManager;
+    private Subscriber<PointCloudData> _pointCloudUpdateSubscriber;
 
     // Start is called before the first frame update
     void Start()
     {
         _particleSystem = GetComponent<ParticleSystem>();
         _netManager = IRXRNetManager.Instance;
-        _netManager.RegisterServiceCallback("LoadPointCloud", LoadPointCloud);
+        _netManager.RegisterServiceCallback("CreatePointCloud", CreatePointCloud);
+        _pointCloudUpdateSubscriber = new Subscriber<PointCloudData>("PointCloudUpdate", UpdatePointCloud);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void UpdatePointCloud(PointCloudData pointCloudData)
     {
-        if (voxelsUpdated)
+        if (voxels == null)
         {
-            _particleSystem.SetParticles(voxels, voxels.Length);
-            voxelsUpdated = false;
+            return;
         }
-    }
-
-    private string LoadPointCloud(string pointCloudStrData)
-    {
-        PointCloudData pointCloudData = JsonConvert.DeserializeObject<PointCloudData>(pointCloudStrData);
         // Convert the data to the format that Unity's Particle System can use
         Vector3[] positions = new Vector3[pointCloudData.positions.Length / 3];
         Color[] colors = new Color[pointCloudData.colors.Length / 4];
@@ -50,14 +46,19 @@ public class PointCloudLoader : MonoBehaviour
             colors[i] = new Color(colorArray[i * 4], colorArray[i * 4 + 1], colorArray[i * 4 + 2], colorArray[i * 4 + 3]);
         }
         SetVoxels(positions, colors);
-        return "Downloaded Point Cloud";
+    }
+
+    private string CreatePointCloud(string numPointsStr)
+    {
+        voxels = new ParticleSystem.Particle[int.Parse(numPointsStr)];
+        return "Created Point Cloud";
     }
 
     public void SetVoxels(Vector3[] positions, Color[] colors)
     {
-        if (voxels == null || voxels.Length != positions.Length)
+        if (voxels == null)
         {
-            voxels = new ParticleSystem.Particle[positions.Length];
+            return;
         }
         for (int i = 0; i < positions.Length; i++)
         {
@@ -65,7 +66,7 @@ public class PointCloudLoader : MonoBehaviour
             voxels[i].startColor = colors[i];
             voxels[i].startSize = 0.01f;
         }
-        voxelsUpdated = true;
+        _particleSystem.SetParticles(voxels, voxels.Length);
     }
 
 }
