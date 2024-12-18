@@ -1,69 +1,96 @@
-# Intuitive Robot & Mixed Reality (IRXR-Unity)
+# Quest Display Access Demo
 
-![FancyGym](./Docs/Pictures/fancy_gym_example.gif)
-![Libero](./Docs/Pictures/libero_example.gif)
-![Robocasa](./Docs/Pictures/robocasa_example.gif)
+Developers want camera access on the Meta Quest. Meta hasn't let us have it yet. The next best thing is display access. Thanks to Android's MediaProjector API, you can copy the display image to a texture in your Unity project in 'near realtime' (several frames of latency) as demonstrated here. No PC, embedded browser, or dev mode required
 
-This repository aims to enhance robot simulation by making it more intuitive and interactive through Mixed Reality (MR). 
-Current visualization devices, such as XR/AR/VR glasses, support only basic physics simulations and are not tailored for research-driven simulation due to their limited computational resources.
-To ensure the reproducibility of simulation results, we have decoupled the simulation and rendering processes onto two separate machines. 
+![scrcpy_VmJvDrjcQL](https://github.com/user-attachments/assets/522bc5ea-8b91-4ee9-91cd-0385fffc93a3)
 
-![System Overview](./Docs/Pictures/SystemOverview.png)
+## Special thanks
 
-This framework allows for more efficient and accurate simulations. 
-The Unity and simulation are interconnected via [SimPublisher](https://github.com/intuitive-robots/SimPublisher.git), which simplifies the process of remotely rendering simulated objects from the simulation.
-This repo is the implementation of rendering.
+[@t-34400's QuestMediaProjection repo](https://github.com/t-34400/QuestMediaProjection) demonstrated using Google's ML barcode reader.
 
-### Deploy Unity Project
+[@Gustorvo](https://github.com/Gustorvo)'s pull request replaced a texture copy over the JNI with a pointer 
 
-Clone this repo:
+## Setup
 
-```bash
-git clone https://github.com/intuitive-robots/IRXR-Unity.git
-git fetch
+- Add the 'DisplayCapture' and 'DepthKit' folders to your project.
+
+![Screenshot_1](https://github.com/user-attachments/assets/bf96301b-badf-42fb-a05f-1da018dd33e3)
+
+- Open your player settings and set your Android Target API level to `Android 14.0 (API level 34)`
+
+![image](https://github.com/user-attachments/assets/98791394-e4fa-433d-bac2-c23b30a090a5)
+
+- Make sure you're using custom Main Manifest and Main Gradle Template files
+
+![Screenshot_2](https://github.com/user-attachments/assets/31a7ff38-13dc-4f3b-9d6b-0127e2355521)
+
+- Update your `AndroidManifest.xml` file with these lines:
+
+```
+<!--ADD THESE LINES TO YOUR MANIFEST <MANIFEST> SECTION!!!-->
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+<!--ADD THESE LINES TO YOUR MANIFEST <MANIFEST> SECTION!!!-->
 ```
 
-If you are using Meta Quest 3, run
-```bash
-git checkout meta-quest3-dev
 ```
-and the follow the [Meta Quest 3 deploy instruction](./Docs/MetaQuest3Deploy.md). 
-
-If you are using Meta Quest 3, run
-```bash
-git checkout hololens2-dev
+<!--ADD THESE LINES TO YOUR MANIFEST <APPLICATION> SECTION!!!-->
+<activity android:name="com.trev3d.DisplayCapture.DisplayCaptureRequestActivity" android:exported="false" />
+<service android:name="com.trev3d.DisplayCapture.DisplayCaptureNotificationService" android:exported="false" android:foregroundServiceType="mediaProjection" />
+<!--ADD THESE LINES TO YOUR MANIFEST <APPLICATION> SECTION!!!-->
 ```
-and the follow the [HoloLens2 instruction](./Docs/HoloLens2Deploy.md). 
 
+![image](https://github.com/user-attachments/assets/55c56c9a-8f6f-476d-b8b4-4446b51e6db1)
 
-### Run your application
+- Update your `mainTemplate.gradle` file with these lines:
 
-We use [SimPublisher](https://github.com/intuitive-robots/SimPublisher.git) to make the communication eaiser. 
-It is also highly recommanded to create your own application by using this repo.
-
-Keep your XR/AR/VR device and your simulation PC in a subnet.
-Run the server and this Unity application from the XR/AR/VR device,
-and this Unity project will automatically search available PC in the subnet and connect.
-
-## Application
-
-### HDAR: Create human demonstration by Augmented Reality
-
-
-Please contact me (xinkai.jiang@kit.edu) if you have question.
-
-[Submodule Code](https://github.com/intuitive-robots/HDAR) | [Paper Website](https://intuitive-robots.github.io/HDAR-Simulator/)
-
-The [HDAR](https://github.com/intuitive-robots/HDAR) applicatin is used to create human demonstration by Augmented Reality.
-
-This application supports our paper ["A Comprehensive User Study on Augmented Reality-Based data Collection Interfaces for Robot Learning"](https://intuitive-robots.github.io/HDAR-Simulator/), which was published on HRI2024. If you find our work useful, please consider citing.
-
-```latex
-@inproceedings{jiang2024comprehensive,
-title={A Comprehensive User Study on Augmented Reality-Based data Collection Interfaces for Robot Learning},
-author={Jiang, Xinkai and Mattes, Paul and Jia, Xiaogang and Schreiber, Nicolas and Neumann, Gerhard and Lioutikov, Rudolf},
-booktitle={Proceedings of the 2024 ACM/IEEE International Conference on Human-Robot Interaction},
-pages={333--342},
-year={2024}
-}
 ```
+/* ADD THESE LINES TO YOUR GRADLE DEPENDENCIES SECTION */
+implementation 'androidx.appcompat:appcompat:1.6.1'
+implementation 'com.google.mlkit:barcode-scanning:17.3.0'
+implementation 'com.google.code.gson:gson:2.11.0'
+/* ADD THESE LINES TO YOUR GRADLE DEPENDENCIES SECTION */
+```
+
+![image](https://github.com/user-attachments/assets/c40f34b3-de5c-4fa1-a472-842115bc7062)
+
+- Refer to `Demo.scene` on setting up the necessary components. I'll update and document these in a future commit (sorry)
+
+![image](https://github.com/user-attachments/assets/e7167678-b36e-44e6-86ae-774b7ab714c2)
+
+
+## ⚠️ Issues (please read)!
+
+### To fix 
+
+⚠️ MediaProjection stop callback doesn't seem to work correctly
+
+### Gotchas
+
+⚠️⚠️⚠️ Google's ML barcode scanner annoyingly reorders corner point order so that codes always face 'up' relative to the viewer. This makes it near impossible to properly track the orientation of flat-facing codes as the orientation will always face 'toward' you. You can get around this by using two codes and the vector between them as your orientation
+
+⚠️ While display capture and QR code reading will work on any headset, QR code *tracking* will only work on Quest 3 / Quest 3S due to other headsets lacking depth estimation features.
+
+⚠️ Display capture is expensive, as is QR code tracking
+
+⚠️ You may need to be on Quest system software v68 or higher
+
+⚠️ This only works on-headset. This will not work through QuestLink
+
+⚠️ You cannot video record the display 'normally' while this app's MediaProjector session is running. You can instead use [scrcpy](https://github.com/Genymobile/scrcpy) to record any prototypes or demos you make with this.
+
+⚠️ This still isn't proper camera access. Any virtual elements will obscure physical objects in the image. If you need to track something, you must not render anything on top of it!
+
+### Other info
+
+- The captured view is ~82 degrees in horizontal and vertical FOV on Quest 3
+- The capture texture is 1024x1024
+- MediaProjection currently captures frames from the left eye buffer
+- Quest system camera settings do not affect the capture resolution, framerate, or eye
+
+## Reference
+
+- [https://developer.oculus.com/documentation/native/native-media-projection/](https://developer.oculus.com/documentation/native/native-media-projection/)
+- [https://developer.android.com/media/grow/media-projection](https://developer.android.com/media/grow/media-projection)
+- [https://github.com/android/media-samples/tree/main/ScreenCapture](https://github.com/android/media-samples/tree/main/ScreenCapture)
+- [https://developers.google.com/android/reference/com/google/mlkit/vision/barcode/common/Barcode](https://developers.google.com/android/reference/com/google/mlkit/vision/barcode/common/Barcode)
