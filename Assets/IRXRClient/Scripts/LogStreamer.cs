@@ -1,42 +1,41 @@
-using UnityEngine;
+// using UnityEngine;
 
-namespace IRXR.Node
-{
+// namespace IRXR.Node
+// {
 
-    public class LogStreamer : Streamer
-    {
+//     public class LogStreamer : MonoBehaviour
+//     {
 
-        private int frameCounter = 0;
-        private float timer = 0;
+// 		protected string _topic;
+// 		protected Publisher<string> _publisher;
 
-        void HandleLog(string logString, string stackTrace, LogType type)
-        {
-            _publisher.Publish(logString);
-        }
+// 		void Start()
+// 		{
+// 			_publisher = new Publisher<string>("Log");
+//             Application.logMessageReceived += HandleLog;
+//             timer = Time.realtimeSinceStartup;
+// 		}
 
-        protected override void SetupTopic()
-        {
-            _topic = "Log";
-        }
+//         private int frameCounter = 0;
+//         private float timer = 0;
 
-        protected override void Initialize()
-        {
-            Application.logMessageReceived += HandleLog;
-            timer = Time.realtimeSinceStartup;
-        }
+//         void HandleLog(string logString, string stackTrace, LogType type)
+//         {
+//             _publisher.Publish(logString);
+//         }
 
-        void Update()
-        {
-            frameCounter += 1;
-            float totalTime = Time.realtimeSinceStartup - timer;
-            if (totalTime > 5.0f)
-            {
-                float fps = frameCounter / totalTime;
-                HandleLog("Average FPS in the last 5s: " + fps, null, LogType.Log);
-                timer = Time.realtimeSinceStartup;
-                frameCounter = 0;
-            }
-        }
+//         void Update()
+//         {
+//             frameCounter += 1;
+//             float totalTime = Time.realtimeSinceStartup - timer;
+//             if (totalTime > 5.0f)
+//             {
+//                 float fps = frameCounter / totalTime;
+//                 HandleLog("Average FPS in the last 5s: " + fps, null, LogType.Log);
+//                 timer = Time.realtimeSinceStartup;
+//                 frameCounter = 0;
+//             }
+//         }
 
-    }
-}
+//     }
+// }

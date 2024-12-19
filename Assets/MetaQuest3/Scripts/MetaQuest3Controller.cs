@@ -35,10 +35,9 @@
 //     protected override void Initialize()
 //     {
 //         IRXRNetManager _netManager = IRXRNetManager.Instance;
-//         string hostName = _netManager.GetHostName();
 //         // TODO: Subscribe to vibration topics
-//         // _netManager.SubscribeTopic($"{hostName}/StartVibration", StartVibration);
-//         // _netManager.SubscribeTopic($"{hostName}/StopVibration", StopVibration);
+//         _netManager.SubscribeTopic($"{_netManager.localInfo.name}/StartVibration", StartVibration);
+//         _netManager.SubscribeTopic($"{_netManager.localInfo.name}/StopVibration", StopVibration);
 //     }
 
 //     public void StartVibration(string message) {

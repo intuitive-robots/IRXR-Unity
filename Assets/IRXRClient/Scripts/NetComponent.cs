@@ -14,11 +14,17 @@ namespace IRXR.Node
 		protected PublisherSocket _pubSocket;
 		protected string _topic;
 
-		public Publisher(string topic)
+		public Publisher(string topic, bool globalNameSpace = true)
 		{
 			IRXRNetManager _netManager = IRXRNetManager.Instance;
-			string hostName = _netManager.localInfo.name;
-			_topic = $"{hostName}/{topic}";
+			if (globalNameSpace)
+			{
+				_topic = topic;
+			}
+			else
+			{
+				_topic = $"{_netManager.localInfo.name}/{topic}";
+			}
 			_pubSocket = _netManager._pubSocket;
 			if (!_netManager.localInfo.topicList.Contains(_topic))
 			{

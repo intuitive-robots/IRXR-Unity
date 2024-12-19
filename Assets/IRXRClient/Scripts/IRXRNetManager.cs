@@ -373,7 +373,7 @@ namespace IRXR.Node
 		{
 			Dictionary<string, string> req = MsgUtils.BytesDeserialize2Object<Dictionary<string, string>>(nameBytes);
 			localInfo.name = req["name"];
-			PlayerPrefs.SetString("HostName", name);
+			PlayerPrefs.SetString("HostName", localInfo.name);
 			Debug.Log($"Change Host Name to {localInfo.name}");
 			PlayerPrefs.Save();
 			return new IRXRSignal(IRXRSignal.SUCCESS).ToBytes();
