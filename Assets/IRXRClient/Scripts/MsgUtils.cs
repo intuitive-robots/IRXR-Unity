@@ -15,28 +15,13 @@ namespace IRXR.Utilities
 		public static readonly byte[] NODES = new byte[] { 0x02 };
 	}
 
-	public static class MSG
-	{
-		public static readonly byte[] SERVICE_ERROR = new byte[] { 0x03 };
-		public static readonly byte[] SERVICE_TIMEOUT = new byte[] { 0x04 };
-	}
-
-	public class IRXRSignal
+	public static class IRXRSignal
 	{
 		public static readonly string EMPTY = "EMPTY";
 		public static readonly string SUCCESS = "SUCCESS";
 		public static readonly string ERROR = "ERROR";
 		public static readonly string NOSERVICE = "NOSERVICE";
 		public static readonly string TIMEOUT = "TIMEOUT";
-		public string signal;
-		public IRXRSignal(string signal)
-		{
-			this.signal = signal;
-		}
-		public byte[] ToBytes()
-		{
-			return MsgUtils.ObjectSerialize2Bytes(this);
-		}
 	}
 
 	public static class MsgUtils
@@ -113,6 +98,11 @@ namespace IRXR.Utilities
 		public static string CombineHeaderWithMessage(string header, string message)
 		{
 			return $"{header}{SEPARATOR}{message}";
+		}
+
+		public static byte[] CombineHeaderWithMessage(string header, byte[] message)
+		{
+			return ConcatenateByteArrays(String2Bytes(header), Encoding.UTF8.GetBytes(SEPARATOR), message);
 		}
 
 	}

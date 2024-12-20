@@ -29,7 +29,8 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 		transform.position = (leftPos + rightPos) / 2;
 		Quaternion leftRot = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
 		Quaternion rightRot = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
-        transform.rotation = Quaternion.Slerp(leftRot, rightRot, 0.5f);
+        Vector3 euler = Quaternion.Slerp(leftRot, rightRot, 0.5f).eulerAngles;
+		transform.rotation = Quaternion.Euler(0, euler.y, 0);
 	}
 
 }

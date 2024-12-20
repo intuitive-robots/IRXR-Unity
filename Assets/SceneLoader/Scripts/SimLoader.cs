@@ -24,7 +24,7 @@ namespace IRXR.SceneLoader
         private Dictionary<string, List<Tuple<SimMesh, MeshFilter>>> _pendingMesh = new();
         private Dictionary<string, List<Tuple<SimTexture, Material>>> _pendingTexture = new();
         // Services
-        private Service<SimScene, IRXRSignal> loadSimSceneService;
+        private Service<SimScene, string> loadSimSceneService;
 
         void Start()
         {
@@ -32,16 +32,16 @@ namespace IRXR.SceneLoader
             updateAction = () => { };
             OnSceneLoaded += () => Debug.Log("Scene Loaded");
             OnSceneCleared += () => Debug.Log("Scene Cleared");
-            loadSimSceneService = new Service<SimScene, IRXRSignal>("LoadSimScene", LoadSimScene, true);
+            loadSimSceneService = new Service<SimScene, string>("LoadSimScene", LoadSimScene, true);
         }
 
-        private IRXRSignal LoadSimScene(SimScene simScene)
+        private string LoadSimScene(SimScene simScene)
         {
             ClearScene();
             _simScene = simScene;
             updateAction += BuildScene;
             Debug.Log("Downloaded scene json and starting to build scene");
-            return new IRXRSignal(IRXRSignal.SUCCESS);
+            return IRXRSignal.SUCCESS;
         }
 
         void BuildScene()

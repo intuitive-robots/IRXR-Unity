@@ -47,6 +47,8 @@ namespace IRXR.Node
 		private bool isConnected = false;
 		// Constants
 		private const int HEARTBEAT_INTERVAL = 500;
+		// Rename Service
+		private Service<string, string> renameService;
 
 		private void Awake()
 		{
@@ -92,12 +94,13 @@ namespace IRXR.Node
 			_reqSocket = new RequestSocket();
 			_sockets = new List<NetMQSocket>() { _pubSocket, _resSocket, _subSocket, _reqSocket };
 			serviceCallbacks = new ();
-			serviceCallbacks["Rename"] = Rename;
 			subscribeCallbacks = new ();
 			cancellationTokenSource = new CancellationTokenSource();
 			// Action setting
 			OnConnectionStart += () => RunOnMainThread(() => StartConnection());
 			OnDisconnected += () => RunOnMainThread(() => StopConnection());
+			// Initialize the service callbacks
+			renameService = new Service<string, string>("Rename", Rename, true);
 		}
 
 		private void Start()
@@ -337,8 +340,7 @@ namespace IRXR.Node
 			else
 			{
 				Debug.LogWarning($"Service {serviceName} not found");
-				IRXRSignal response = new IRXRSignal(IRXRSignal.NOSERVICE);
-				_resSocket.SendFrame(response.ToBytes());
+				_resSocket.SendFrame(IRXRSignal.NOSERVICE);
 			}
 		}
 
@@ -369,14 +371,13 @@ namespace IRXR.Node
 		}
 
 		// TODO: make it as a generic request type
-		public byte[] Rename(byte[] nameBytes)
+		public string Rename(string newName)
 		{
-			Dictionary<string, string> req = MsgUtils.BytesDeserialize2Object<Dictionary<string, string>>(nameBytes);
-			localInfo.name = req["name"];
+			localInfo.name = newName;
 			PlayerPrefs.SetString("HostName", localInfo.name);
 			Debug.Log($"Change Host Name to {localInfo.name}");
 			PlayerPrefs.Save();
-			return new IRXRSignal(IRXRSignal.SUCCESS).ToBytes();
+			return IRXRSignal.SUCCESS;
 		}
 	}
 }

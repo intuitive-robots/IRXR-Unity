@@ -6,7 +6,8 @@ using IRXR.Utilities;
 
 public class QRSceneAlignment : MonoBehaviour {
 
-    [Serializable] public class QRSceneAlignmentData {
+    // [Serializable]
+    public class QRSceneAlignmentData {
         public string qrText;
         public List<float> pos;
         public List<float> euler;
@@ -28,8 +29,8 @@ public class QRSceneAlignment : MonoBehaviour {
     [SerializeField] protected GameObject indicator;
     protected QRSceneAlignmentData _data;
     public bool isTracingQR = false;
-    private Service<QRSceneAlignmentData, IRXRSignal> startAlignmentService;
-    private Service<IRXRSignal, IRXRSignal> stopAlignmentService;
+    private Service<QRSceneAlignmentData, string> startAlignmentService;
+    private Service<string, string> stopAlignmentService;
 
     private void Start() {
         startAlignmentService = new("StartQRAlignment", StartQRAlignment);
@@ -44,21 +45,21 @@ public class QRSceneAlignment : MonoBehaviour {
         }
     }
 
-    public IRXRSignal StartQRAlignment(QRSceneAlignmentData data) {
+    public string StartQRAlignment(QRSceneAlignmentData data) {
         _data = data;
         isTracingQR = true;
         indicator.SetActive(true);
         Debug.Log("Start QR Tracking");
         StartQRTracking(_data);
-        return new IRXRSignal(IRXRSignal.SUCCESS);
+        return IRXRSignal.SUCCESS;
     }
 
-    public IRXRSignal StopQRAlignment(IRXRSignal signal) {
+    public string StopQRAlignment(string signal) {
         isTracingQR = false;
         indicator.SetActive(false);
         Debug.Log("Stop QR Tracking");
         StopQRTracking();
-        return new IRXRSignal(IRXRSignal.SUCCESS);
+        return IRXRSignal.SUCCESS;
     }
 
     public virtual void StartQRTracking(QRSceneAlignmentData data) {

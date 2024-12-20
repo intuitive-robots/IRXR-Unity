@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using IRXR.Node;
+using System;
 
 namespace IRXR.SceneLoader
 {
 
+    // [Serializable]
     public class StreamMessage
     {
         public Dictionary<string, List<float>> updateData;

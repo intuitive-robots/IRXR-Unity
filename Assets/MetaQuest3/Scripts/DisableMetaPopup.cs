@@ -11,7 +11,7 @@ public class DisableMetaPopup : MonoBehaviour
     private void OnValidate()
     {
         EditorPrefs.SetBool(TelemetryEnabledKey, telemetryEnabled);
-        Debug.Log($"Meta Telemetry Enabled set to: {telemetryEnabled}");
+        // Debug.Log($"Meta Telemetry Enabled set to: {telemetryEnabled}");
     }
 
     private void OnEnable()
