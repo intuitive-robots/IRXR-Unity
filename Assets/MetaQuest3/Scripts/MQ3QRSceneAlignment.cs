@@ -24,6 +24,8 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 
 	private void OnTrackingMotionController()
 	{
+		var activeController = OVRInput.GetActiveController();
+		if (activeController != OVRInput.Controller.Touch) return;
         Vector3 leftPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
 		Vector3 rightPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
 		transform.position = (leftPos + rightPos) / 2;

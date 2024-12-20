@@ -12,7 +12,7 @@ namespace IRXR.SceneLoader
 
     public class SimLoader : MonoBehaviour
     {
-
+        [SerializeField] private Material defaultMaterial;
         private object updateActionLock = new();
         private Action updateAction;
         public Action OnSceneLoaded;
@@ -202,7 +202,7 @@ namespace IRXR.SceneLoader
 
         public Material BuildMaterial(SimMaterial simMat, string objName)
         {
-            Material mat = new Material(Shader.Find("Standard"));
+            Material mat = new Material(defaultMaterial);
             if (simMat.color.Count == 3)
             {
                 simMat.color.Add(1.0f);
