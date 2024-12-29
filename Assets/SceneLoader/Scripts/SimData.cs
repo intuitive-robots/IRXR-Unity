@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace IRXR.SceneLoader
 {
-	// [Serializable]
+
 	public class SimTransform
 	{
 		public List<float> pos;
@@ -28,7 +28,6 @@ namespace IRXR.SceneLoader
 
 	}
 
-	// [Serializable]
 	public class SimVisual
 	{
 		public string type;
@@ -37,7 +36,6 @@ namespace IRXR.SceneLoader
 		public SimTransform trans;
 	}
 
-	// [Serializable]
 	public class SimBody
 	{
 		public string name;
@@ -46,20 +44,19 @@ namespace IRXR.SceneLoader
 		public List<SimBody> children;
 	}
 
-	// [Serializable]
 	public class SimScene
 	{
 		public string id;
 		public SimBody root;
 	}
 
-	// [Serializable]
+	
 	public class SimAsset
 	{
 		public string name;
 	}
 
-	// [Serializable]
+	
 	public class SimMesh : SimAsset
 	{
 		public string hash;
@@ -70,7 +67,7 @@ namespace IRXR.SceneLoader
 
 	}
 
-	// [Serializable]
+	
 	public class SimMaterial : SimAsset
 	{
 		public string hash;
@@ -82,7 +79,7 @@ namespace IRXR.SceneLoader
 		public SimTexture texture;
 	}
 
-	// [Serializable]
+	
 	public class SimTexture : SimAsset
 	{
 		public string hash;

@@ -52,7 +52,7 @@ namespace IRXR.Node
 
 		private void Awake()
 		{
-			AsyncIO.ForceDotNet.Force();
+			// Singleton pattern
 			if (Instance != null && Instance != this)
 			{
 				Destroy(gameObject);
@@ -60,6 +60,8 @@ namespace IRXR.Node
 			}
 			Instance = this;
 			DontDestroyOnLoad(gameObject);
+			// Force to use .NET implementation of NetMQ
+			AsyncIO.ForceDotNet.Force();
 			// Initialize local node info
 			localInfo = new NodeInfo
 			{
@@ -107,7 +109,7 @@ namespace IRXR.Node
 		{
 			// Start tasks
 			isRunning = true;
-			nodeTask = Task.Run(async () => await NodeTask(), cancellationTokenSource.Token);
+			nodeTask = Task.Run(async () => await NodeTask(cancellationTokenSource.Token));
 		}
 
 		private void Update() {
@@ -133,10 +135,10 @@ namespace IRXR.Node
 			if (cancellationTokenSource != null)
 			{
 				cancellationTokenSource.Cancel();
-				nodeTask?.Wait();
 				cancellationTokenSource.Dispose();
-				Debug.Log("Task has been stopped safely.");
 			}
+			nodeTask?.Wait();
+			Debug.Log("Task has been stopped safely.");
 		}
 
 		private void OnApplicationQuit()
@@ -183,34 +185,38 @@ namespace IRXR.Node
 		Debug.Log("Disconnected");
 	}
 
-		public async Task NodeTask()
+		public async Task NodeTask(CancellationToken token)
 		{
 			Debug.Log("Node task starts and listening for master node...");
 			while (isRunning)
 			{
 				try
 				{
-					var nodeInfo = await SearchForMasterNode();
+					var nodeInfo = await SearchForMasterNode(token, 500);
 					if (nodeInfo is not null)
 					{
 						masterInfo = nodeInfo;
 						OnConnectionStart?.Invoke();
 						isConnected = true;
 						Debug.Log("Master node found and ready to send heartbeat.");
-						await HeartbeatLoop();
+						await HeartbeatLoop(token, 200);
 					}
-					await Task.Delay(500);
+					await Task.Delay(500, token);
+				}
+				catch (TaskCanceledException)
+				{
+					Debug.Log("Task was cancelled via exception");
 				}
 				catch (Exception e)
 				{
-					Debug.LogError($"Error in NodeTask: {e.StackTrace}");
+					Debug.LogWarning($"Error in NodeTask: {e.StackTrace}");
 					break;
 				}
 			}
 			Debug.Log("Node task stopped.");
 		}
 
-		public async Task<NodeInfo> SearchForMasterNode(int timeout = 500)
+		public async Task<NodeInfo> SearchForMasterNode(CancellationToken token, int timeout)
 		{
 			NodeInfo nodeInfo = null;
 			Debug.Log("Searching for the master node...");
@@ -228,7 +234,7 @@ namespace IRXR.Node
 					await udpClient.SendAsync(EchoHeader.PING, 1, new IPEndPoint(IPAddress.Broadcast, UnityPortSet.DISCOVERY));
 					// waiting for receive of ping
 					var receiveTask = udpClient.ReceiveAsync();
-					if (await Task.WhenAny(receiveTask, Task.Delay(timeout)) == receiveTask)
+					if (await Task.WhenAny(receiveTask, Task.Delay(timeout, token)) == receiveTask)
 					{
 						// Debug.Log("Received ping response.");
 						var response = receiveTask.Result;
@@ -250,14 +256,18 @@ namespace IRXR.Node
 			{
 				Debug.Log("No response, retrying...");
 			}
+			catch (TaskCanceledException)
+			{
+				Debug.Log("Task was cancelled via exception");
+			}
 			catch (Exception e)
 			{
-				Debug.LogError($"Error during master node discovery: {e.StackTrace}");
+				Debug.LogWarning($"Error during master node discovery: {e.StackTrace}");
 			}
 			return nodeInfo;
 		}
 
-		public async Task HeartbeatLoop(int timeout = 200)
+		public async Task HeartbeatLoop(CancellationToken token, int timeout)
 		{
 			UdpClient udpClient = NetworkUtils.CreateUDPClient(new IPEndPoint(IPAddress.Any, UnityPortSet.HEARTBEAT));
 			IPEndPoint masterEndPoint = new IPEndPoint(IPAddress.Parse(masterInfo.addr.ip), masterInfo.addr.port);
@@ -271,7 +281,7 @@ namespace IRXR.Node
 					await udpClient.SendAsync(heartbeatMessage, heartbeatMessage.Length, masterEndPoint);
 					var receiveTask = udpClient.ReceiveAsync();
 					// If didn't receive the heartbeat response within timeout
-					if (await Task.WhenAny(receiveTask, Task.Delay(timeout)) != receiveTask)
+					if (await Task.WhenAny(receiveTask, Task.Delay(timeout, token)) != receiveTask)
 					{
 						Debug.LogWarning("Timeout: The master node is offline");
 						throw new SocketException();
@@ -293,9 +303,16 @@ namespace IRXR.Node
 					isConnected = false;
 					break;
 				}
+				catch (TaskCanceledException)
+				{
+					Debug.Log("Task was cancelled via exception");
+					OnDisconnected?.Invoke();
+					isConnected = false;
+					break;
+				}
 				catch (Exception e)
 				{
-					Debug.LogError($"Failed to send heartbeat: {e.StackTrace}");
+					Debug.LogWarning($"Failed to send heartbeat: {e.StackTrace}");
 				}
 			}
 			udpClient.Close();

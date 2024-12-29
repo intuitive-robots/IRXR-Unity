@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/MetaQuest3/Scripts/MetaQuest3Controller.cs.meta
 guid: 8952cff8c752b574aa5278895ac3177f
+========
+guid: 5eb617c758ddde3b092b558937a5af82
+>>>>>>>> main:Assets/IRXRClient/Scripts/MsgUtils.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

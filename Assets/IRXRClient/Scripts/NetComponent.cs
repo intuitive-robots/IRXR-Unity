@@ -14,7 +14,7 @@ namespace IRXR.Node
 		protected PublisherSocket _pubSocket;
 		protected string _topic;
 
-		public Publisher(string topic, bool globalNameSpace = true)
+		public Publisher(string topic, bool globalNameSpace = false)
 		{
 			IRXRNetManager _netManager = IRXRNetManager.Instance;
 			if (globalNameSpace)
@@ -35,20 +35,39 @@ namespace IRXR.Node
 
 		public void Publish(string data)
 		{
+			// Combine topic and message
 			string msg = MsgUtils.CombineHeaderWithMessage(_topic, data);
-			_pubSocket.SendFrame(MsgUtils.String2Bytes(msg));
+			// Send the message
+			TryPublish(MsgUtils.String2Bytes(msg));
 		}
 
 		public void Publish(byte[] data)
 		{
-			_pubSocket.SendFrame(MsgUtils.CombineHeaderWithMessage(_topic, data));
+			TryPublish(MsgUtils.CombineHeaderWithMessage(_topic, data));
 		}
 
 		public void Publish(MsgType data)
 		{
 			string msg = MsgUtils.CombineHeaderWithMessage(_topic, JsonConvert.SerializeObject(data));
-			_pubSocket.SendFrame(MsgUtils.String2Bytes(msg));
+			TryPublish(MsgUtils.String2Bytes(msg));
 		}
+
+		private void TryPublish(byte[] msg)
+		{
+			try
+			{
+				_pubSocket.SendFrame(msg);
+			}
+			catch (TerminatingException ex)
+			{
+				Debug.LogWarning($"Publish failed: NetMQ context terminated. Error: {ex.Message}");
+			}
+			catch (Exception ex)
+			{
+				Debug.LogWarning($"Publish failed: Unexpected error occurred. Error: {ex.Message}");
+			}
+		}
+
 	}
 
 	public class Subscriber<MsgType>
@@ -133,7 +152,7 @@ namespace IRXR.Node
 			}
 			catch (Exception ex)
 			{
-				Debug.LogError($"Error processing message for topic {_topic}: {ex.Message}");
+				Debug.LogWarning($"Error processing message for topic {_topic}: {ex.Message}");
 			}
 		}
 
@@ -227,7 +246,7 @@ namespace IRXR.Node
 			}
 			catch (Exception ex)
 			{
-				Debug.LogError($"Error processing request for service {_serviceName}: {ex.Message}");
+				Debug.LogWarning($"Error processing request for service {_serviceName}: {ex.Message}");
 				return HandleErrorResponse(ex);
 			}
 		}
