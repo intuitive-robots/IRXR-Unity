@@ -29,7 +29,6 @@ namespace IRXR.Node
         private Action updateAction;
 		public Action OnConnectionStart;
 		public Action OnDisconnected;
-		public Func<NodeInfo, NodeInfo> OnUpdateLocalInfo;
 		// ZMQ Sockets for communication, in this stage, we run them in the main thread
 		// publisher socket for sending messages to other nodes
 		public PublisherSocket _pubSocket;
@@ -108,7 +107,6 @@ namespace IRXR.Node
 
 		private void Start()
 		{
-			localInfo = OnUpdateLocalInfo?.Invoke(localInfo);
 			// Start tasks
 			isRunning = true;
 			nodeTask = Task.Run(async () => await NodeTask(cancellationTokenSource.Token));
