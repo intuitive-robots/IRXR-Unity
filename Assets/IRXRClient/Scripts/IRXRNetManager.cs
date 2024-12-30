@@ -162,10 +162,10 @@ namespace IRXR.Node
 		// local service
 		_resSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
 		ConnectionSpin += ServiceRespondSpin;
-		Debug.Log($"Starting service connection at {localInfo.addr.ip}:{UnityPortSet.SERVICE}");
+		Debug.Log($"Starting local service at {localInfo.addr.ip}:{UnityPortSet.SERVICE}");
 		// request to master node
 		_reqSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
-		Debug.Log($"Starting service connection to {masterInfo.addr.ip}:{masterInfo.servicePort}");
+		Debug.Log($"Starting connecting to server at {masterInfo.addr.ip}:{masterInfo.servicePort}");
 		// local publish
 		_pubSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
 		Debug.Log($"Starting publish topic at {localInfo.addr.ip}:{UnityPortSet.TOPIC}");
