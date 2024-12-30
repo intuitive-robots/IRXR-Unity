@@ -16,13 +16,6 @@ namespace IRXR.Utilities
 		public static readonly int TOPIC = 7731;
 	}
 
-	public static class NodeTypes
-	{
-		public static readonly string MASTER = "master";
-		public static readonly string XR = "xr";
-		public static readonly string SLAVE = "slave";
-	}
-
 	public class NodeAddress
 	{
 		public string ip;

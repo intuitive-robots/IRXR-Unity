@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 980812101842878387}
-  - component: {fileID: 5832729445623490539}
-  - component: {fileID: 9004782405653955561}
+  - component: {fileID: 6061640762099415726}
+  - component: {fileID: 2422481625191870672}
   m_Layer: 0
   m_Name: IRXRClient
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5832729445623490539
+--- !u!114 &6061640762099415726
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,11 +42,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1956348136357179381}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ea543980d7f8014582c156390e33b5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 98589490932ca12fb84a61b64c399c6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  host: UnityEditor
---- !u!114 &9004782405653955561
+--- !u!114 &2422481625191870672
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

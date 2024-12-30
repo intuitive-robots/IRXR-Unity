@@ -29,6 +29,7 @@ namespace IRXR.Node
         private Action updateAction;
 		public Action OnConnectionStart;
 		public Action OnDisconnected;
+		public Func<NodeInfo, NodeInfo> OnUpdateLocalInfo;
 		// ZMQ Sockets for communication, in this stage, we run them in the main thread
 		// publisher socket for sending messages to other nodes
 		public PublisherSocket _pubSocket;
@@ -68,7 +69,7 @@ namespace IRXR.Node
 				name = "UnityNode",
 				nodeID = Guid.NewGuid().ToString(),
 				addr = null,
-				type = NodeTypes.XR,
+				type = "UnityNode",
 				servicePort = UnityPortSet.SERVICE,
 				topicPort = UnityPortSet.TOPIC,
 				serviceList = new List<string>(),
@@ -107,6 +108,7 @@ namespace IRXR.Node
 
 		private void Start()
 		{
+			localInfo = OnUpdateLocalInfo?.Invoke(localInfo);
 			// Start tasks
 			isRunning = true;
 			nodeTask = Task.Run(async () => await NodeTask(cancellationTokenSource.Token));
@@ -143,9 +145,8 @@ namespace IRXR.Node
 
 		private void OnApplicationQuit()
 		{
-			Debug.Log("Stopping task...");
+			Debug.Log("On Application Quit");
 			StopConnection();
-			Debug.Log("Net Manager is being destroyed.");
 			foreach (var sock in _sockets)
 			{
 				sock?.Dispose();
@@ -178,11 +179,11 @@ namespace IRXR.Node
 		ConnectionSpin = () => { };
 		// It is not necessary to clear the topics callbacks
 		// _topicsCallbacks.Clear();
+		if (!isConnected) return;
 		_resSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
 		_pubSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
 		_reqSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
 		_subSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
-		Debug.Log("Disconnected");
 	}
 
 		public async Task NodeTask(CancellationToken token)
