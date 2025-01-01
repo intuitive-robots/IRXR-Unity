@@ -235,7 +235,6 @@ namespace IRXR.Node
 					var receiveTask = udpClient.ReceiveAsync();
 					if (await Task.WhenAny(receiveTask, Task.Delay(timeout, token)) == receiveTask)
 					{
-						// Debug.Log("Received ping response.");
 						var response = receiveTask.Result;
 						byte[][] msgSeparated = MsgUtils.SplitByte(response.Buffer);
 						if (msgSeparated[1] == null)
@@ -243,7 +242,12 @@ namespace IRXR.Node
 							continue;
 						}
 						nodeInfo = MsgUtils.BytesDeserialize2Object<NodeInfo>(msgSeparated[0]);
-						localInfo.addr = MsgUtils.BytesDeserialize2Object<NodeAddress>(msgSeparated[1]);
+						string localIP = NetworkUtils.GetLocalIPsInSameSubnet(nodeInfo.addr.ip);
+						if (localIP == null)
+						{
+							continue;
+						}
+						localInfo.addr = new NodeAddress(localIP, UnityPortSet.HEARTBEAT);
 						Debug.Log($"Found master node at {nodeInfo.addr.ip}:{nodeInfo.addr.port}");
 						udpClient.Close();
 						break;
