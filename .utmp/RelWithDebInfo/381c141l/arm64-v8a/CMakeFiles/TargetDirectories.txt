@@ -1,0 +1,5 @@
+C:/Users/Xinkai/IRXR-Unity/IRXR-Unity-MetaQuest3/.utmp/RelWithDebInfo/381c141l/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/Xinkai/IRXR-Unity/IRXR-Unity-MetaQuest3/.utmp/RelWithDebInfo/381c141l/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/Xinkai/IRXR-Unity/IRXR-Unity-MetaQuest3/.utmp/RelWithDebInfo/381c141l/arm64-v8a/FramePacing/CMakeFiles/swappywrapper.dir
+C:/Users/Xinkai/IRXR-Unity/IRXR-Unity-MetaQuest3/.utmp/RelWithDebInfo/381c141l/arm64-v8a/FramePacing/CMakeFiles/edit_cache.dir
+C:/Users/Xinkai/IRXR-Unity/IRXR-Unity-MetaQuest3/.utmp/RelWithDebInfo/381c141l/arm64-v8a/FramePacing/CMakeFiles/rebuild_cache.dir
