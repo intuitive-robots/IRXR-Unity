@@ -26,7 +26,6 @@ namespace IRXR.Node
 		private Task nodeTask;
 		// Lock for updating action in the main thread
         private object updateActionLock = new();
-        private Action updateAction;
 		public Action OnConnectionStart;
 		public Action OnDisconnected;
 		// ZMQ Sockets for communication, in this stage, we run them in the main thread
@@ -99,8 +98,10 @@ namespace IRXR.Node
 			subscribeCallbacks = new ();
 			cancellationTokenSource = new CancellationTokenSource();
 			// Action setting
-			OnConnectionStart += () => RunOnMainThread(() => StartConnection());
-			OnDisconnected += () => RunOnMainThread(() => StopConnection());
+			// OnConnectionStart += () => RunOnMainThread(() => StartConnection());
+			OnConnectionStart += StartConnection;
+			// OnDisconnected += () => RunOnMainThread(() => StopConnection());
+			OnDisconnected += StopConnection;
 			// Initialize the service callbacks
 			renameService = new Service<string, string>("Rename", Rename, true);
 		}
@@ -113,20 +114,11 @@ namespace IRXR.Node
 		}
 
 		private void Update() {
-			ConnectionSpin?.Invoke();
 			lock (updateActionLock) {
-				updateAction?.Invoke();
-				updateAction = null;
+				ConnectionSpin?.Invoke();
 			}
 		}
 
-        void RunOnMainThread(Action action)
-        {
-            lock (updateActionLock)
-            {
-                updateAction += action;
-            }
-        }
 
 		private void OnDestroy()
 		{
@@ -152,37 +144,41 @@ namespace IRXR.Node
 			NetMQConfig.Cleanup();
 		}
 
-	public void StartConnection() {
-		// if (isConnected) StopConnection();
-		// subscription
-		_subSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
-		_subSocket.Subscribe("");
-		ConnectionSpin += SubscriptionSpin;
-		Debug.Log($"Start subscribing to {masterInfo.addr.ip}:{masterInfo.topicPort}");
-		// local service
-		_resSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
-		ConnectionSpin += ServiceRespondSpin;
-		Debug.Log($"Starting local service at {localInfo.addr.ip}:{UnityPortSet.SERVICE}");
-		// request to master node
-		_reqSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
-		Debug.Log($"Starting connecting to server at {masterInfo.addr.ip}:{masterInfo.servicePort}");
-		// local publish
-		_pubSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
-		Debug.Log($"Starting publish topic at {localInfo.addr.ip}:{UnityPortSet.TOPIC}");
-		// CalculateTimestampOffset();
-	}
+		public void StartConnection() {
+			if (isConnected) StopConnection();
+			// subscription
+			_subSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
+			_subSocket.Subscribe("");
+			Debug.Log($"Start subscribing to {masterInfo.addr.ip}:{masterInfo.topicPort}");
+			// local service
+			_resSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
+			lock (updateActionLock) {
+				ConnectionSpin += SubscriptionSpin;
+				ConnectionSpin += ServiceRespondSpin;
+			}
+			Debug.Log($"Starting local service at {localInfo.addr.ip}:{UnityPortSet.SERVICE}");
+			// request to master node
+			_reqSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
+			Debug.Log($"Starting connecting to server at {masterInfo.addr.ip}:{masterInfo.servicePort}");
+			// local publish
+			_pubSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
+			Debug.Log($"Starting publish topic at {localInfo.addr.ip}:{UnityPortSet.TOPIC}");
+			// CalculateTimestampOffset();
+		}
 
-	public void StopConnection() {
-		while (_subSocket.HasIn) _subSocket.SkipFrame();
-		ConnectionSpin = () => { };
-		// It is not necessary to clear the topics callbacks
-		// _topicsCallbacks.Clear();
-		if (!isConnected) return;
-		_resSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
-		_pubSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
-		_reqSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
-		_subSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
-	}
+		public void StopConnection() {
+			while (_subSocket.HasIn) _subSocket.SkipFrame();
+			ConnectionSpin = () => { };
+			// It is not necessary to clear the topics callbacks
+			// _topicsCallbacks.Clear();
+			if (!isConnected) return;
+			_resSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
+			_pubSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
+			_reqSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
+			_subSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
+			Debug.Log("Stop connection");
+			isConnected = false;
+		}
 
 		public async Task NodeTask(CancellationToken token)
 		{
