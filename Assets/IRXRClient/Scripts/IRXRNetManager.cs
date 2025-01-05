@@ -26,7 +26,6 @@ namespace IRXR.Node
 		private Task nodeTask;
 		// Lock for updating action in the main thread
         private object updateActionLock = new();
-        private Action updateAction;
 		public Action OnConnectionStart;
 		public Action OnDisconnected;
 		// ZMQ Sockets for communication, in this stage, we run them in the main thread
@@ -68,7 +67,7 @@ namespace IRXR.Node
 				name = "UnityNode",
 				nodeID = Guid.NewGuid().ToString(),
 				addr = null,
-				type = NodeTypes.XR,
+				type = "UnityNode",
 				servicePort = UnityPortSet.SERVICE,
 				topicPort = UnityPortSet.TOPIC,
 				serviceList = new List<string>(),
@@ -99,8 +98,10 @@ namespace IRXR.Node
 			subscribeCallbacks = new ();
 			cancellationTokenSource = new CancellationTokenSource();
 			// Action setting
-			OnConnectionStart += () => RunOnMainThread(() => StartConnection());
-			OnDisconnected += () => RunOnMainThread(() => StopConnection());
+			// OnConnectionStart += () => RunOnMainThread(() => StartConnection());
+			OnConnectionStart += StartConnection;
+			// OnDisconnected += () => RunOnMainThread(() => StopConnection());
+			OnDisconnected += StopConnection;
 			// Initialize the service callbacks
 			renameService = new Service<string, string>("Rename", Rename, true);
 		}
@@ -113,20 +114,11 @@ namespace IRXR.Node
 		}
 
 		private void Update() {
-			ConnectionSpin?.Invoke();
 			lock (updateActionLock) {
-				updateAction?.Invoke();
-				updateAction = null;
+				ConnectionSpin?.Invoke();
 			}
 		}
 
-        void RunOnMainThread(Action action)
-        {
-            lock (updateActionLock)
-            {
-                updateAction += action;
-            }
-        }
 
 		private void OnDestroy()
 		{
@@ -143,9 +135,8 @@ namespace IRXR.Node
 
 		private void OnApplicationQuit()
 		{
-			Debug.Log("Stopping task...");
+			Debug.Log("On Application Quit");
 			StopConnection();
-			Debug.Log("Net Manager is being destroyed.");
 			foreach (var sock in _sockets)
 			{
 				sock?.Dispose();
@@ -153,37 +144,41 @@ namespace IRXR.Node
 			NetMQConfig.Cleanup();
 		}
 
-	public void StartConnection() {
-		// if (isConnected) StopConnection();
-		// subscription
-		_subSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
-		_subSocket.Subscribe("");
-		ConnectionSpin += SubscriptionSpin;
-		Debug.Log($"Start subscribing to {masterInfo.addr.ip}:{masterInfo.topicPort}");
-		// local service
-		_resSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
-		ConnectionSpin += ServiceRespondSpin;
-		Debug.Log($"Starting service connection at {localInfo.addr.ip}:{UnityPortSet.SERVICE}");
-		// request to master node
-		_reqSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
-		Debug.Log($"Starting service connection to {masterInfo.addr.ip}:{masterInfo.servicePort}");
-		// local publish
-		_pubSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
-		Debug.Log($"Starting publish topic at {localInfo.addr.ip}:{UnityPortSet.TOPIC}");
-		// CalculateTimestampOffset();
-	}
+		public void StartConnection() {
+			if (isConnected) StopConnection();
+			// subscription
+			_subSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
+			_subSocket.Subscribe("");
+			Debug.Log($"Start subscribing to {masterInfo.addr.ip}:{masterInfo.topicPort}");
+			// local service
+			_resSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
+			lock (updateActionLock) {
+				ConnectionSpin += SubscriptionSpin;
+				ConnectionSpin += ServiceRespondSpin;
+			}
+			Debug.Log($"Starting local service at {localInfo.addr.ip}:{UnityPortSet.SERVICE}");
+			// request to master node
+			_reqSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
+			Debug.Log($"Starting connecting to server at {masterInfo.addr.ip}:{masterInfo.servicePort}");
+			// local publish
+			_pubSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
+			Debug.Log($"Starting publish topic at {localInfo.addr.ip}:{UnityPortSet.TOPIC}");
+			// CalculateTimestampOffset();
+		}
 
-	public void StopConnection() {
-		while (_subSocket.HasIn) _subSocket.SkipFrame();
-		ConnectionSpin = () => { };
-		// It is not necessary to clear the topics callbacks
-		// _topicsCallbacks.Clear();
-		_resSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
-		_pubSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
-		_reqSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
-		_subSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
-		Debug.Log("Disconnected");
-	}
+		public void StopConnection() {
+			while (_subSocket.HasIn) _subSocket.SkipFrame();
+			ConnectionSpin = () => { };
+			// It is not necessary to clear the topics callbacks
+			// _topicsCallbacks.Clear();
+			if (!isConnected) return;
+			_resSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
+			_pubSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
+			_reqSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
+			_subSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
+			Debug.Log("Stop connection");
+			isConnected = false;
+		}
 
 		public async Task NodeTask(CancellationToken token)
 		{
@@ -236,7 +231,6 @@ namespace IRXR.Node
 					var receiveTask = udpClient.ReceiveAsync();
 					if (await Task.WhenAny(receiveTask, Task.Delay(timeout, token)) == receiveTask)
 					{
-						// Debug.Log("Received ping response.");
 						var response = receiveTask.Result;
 						byte[][] msgSeparated = MsgUtils.SplitByte(response.Buffer);
 						if (msgSeparated[1] == null)
@@ -244,7 +238,12 @@ namespace IRXR.Node
 							continue;
 						}
 						nodeInfo = MsgUtils.BytesDeserialize2Object<NodeInfo>(msgSeparated[0]);
-						localInfo.addr = MsgUtils.BytesDeserialize2Object<NodeAddress>(msgSeparated[1]);
+						string localIP = NetworkUtils.GetLocalIPsInSameSubnet(nodeInfo.addr.ip);
+						if (localIP == null)
+						{
+							continue;
+						}
+						localInfo.addr = new NodeAddress(localIP, UnityPortSet.HEARTBEAT);
 						Debug.Log($"Found master node at {nodeInfo.addr.ip}:{nodeInfo.addr.port}");
 						udpClient.Close();
 						break;

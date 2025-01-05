@@ -16,13 +16,6 @@ namespace IRXR.Utilities
 		public static readonly int TOPIC = 7731;
 	}
 
-	public static class NodeTypes
-	{
-		public static readonly string MASTER = "master";
-		public static readonly string XR = "xr";
-		public static readonly string SLAVE = "slave";
-	}
-
 	public class NodeAddress
 	{
 		public string ip;
@@ -69,6 +62,10 @@ namespace IRXR.Utilities
 
 		public static string GetLocalIPsInSameSubnet(string inputIPAddress)
 		{
+			if (inputIPAddress == "127.0.0.1")
+			{
+				return "127.0.0.1";
+			}
 			IPAddress inputIP;
 			if (!IPAddress.TryParse(inputIPAddress, out inputIP))
 			{
@@ -90,12 +87,12 @@ namespace IRXR.Utilities
 						// Check if the IP is in the same subnet
 						if (IsInSameSubnet(inputIP, localIP, subnetMask))
 						{
-							return localIP.ToString(); ;
+							return localIP.ToString();
 						}
 					}
 				}
 			}
-			return "127.0.0.1";
+			return null;
 		}
 
 		private static bool IsInSameSubnet(IPAddress ip1, IPAddress ip2, IPAddress subnetMask)

@@ -6,15 +6,9 @@ namespace IRXR.SceneLoader
     {
         [Header("Light Settings")]
         public float lightIntensity = 0.5f; // Intensity of each light
+        public float lightHeight = 10f; // Angle of the lights
+        public float lightOffset = 10f; // Range of the lights
         public Color lightColor = Color.white; // Color of the lights
-
-        private Vector3[] lightPositions = new Vector3[]
-        {
-            new Vector3(-10, 10, -10),
-            new Vector3(10, 10, -10),
-            new Vector3(-10, 10, 10),
-            new Vector3(10, 10, 10)
-        };
 
         private void Start()
         {
@@ -23,6 +17,13 @@ namespace IRXR.SceneLoader
 
         private void CreateLights()
         {
+            Vector3[] lightPositions = new Vector3[]
+                    {
+                        new Vector3(-lightOffset, lightHeight, -lightOffset),
+                        new Vector3(lightOffset, lightHeight, -lightOffset),
+                        new Vector3(-lightOffset, lightHeight, lightOffset),
+                        new Vector3(lightOffset, lightHeight, lightOffset)
+                    };
             for (int i = 0; i < lightPositions.Length; i++)
             {
                 // Create a new GameObject for the light
@@ -44,7 +45,6 @@ namespace IRXR.SceneLoader
                 // Parent the light object under this GameObject
                 lightObject.transform.parent = this.transform;
             }
-
             Debug.Log("Directional lights created by LightManager.");
         }
     }
