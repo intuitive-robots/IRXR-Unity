@@ -21,8 +21,9 @@ public class PointCloudTest : MonoBehaviour
     {
         _particleSystem = GetComponent<ParticleSystem>();
         _subSocket = new SubscriberSocket();
-        _subSocket.Connect("tcp://localhost:5556");
+        _subSocket.Connect("tcp://127.0.0.1:5556");
         _subSocket.Subscribe("");
+        Debug.Log("Connected to the server");
     }
 
     public static float[] ByteArrayToFloatArray(byte[] byteArray)
@@ -41,6 +42,7 @@ public class PointCloudTest : MonoBehaviour
     {
         if (_subSocket.HasIn)
         {
+            Debug.Log("Received point cloud data");
             UpdatePointCloud(_subSocket.ReceiveFrameBytes());
         }
         while (_subSocket.HasIn) _subSocket.SkipFrame();
@@ -60,13 +62,18 @@ public class PointCloudTest : MonoBehaviour
         if (voxels == null || voxels.Length != pointNum)
         {
             voxels = new ParticleSystem.Particle[pointNum];
+            
         }
+        Debug.Log("pointNum: " + pointNum);
         for (int i = 0; i < pointNum; i++)
         {
             voxels[i].position = new Vector3(pointCloud[i * 6], pointCloud[i * 6 + 1], pointCloud[i * 6 + 2]);
-            voxels[i].startColor = new Color(pointCloud[i * 6 + 3], pointCloud[i * 6 + 4], pointCloud[i * 6 + 5]);
-            voxels[i].startSize = 0.01f;
+            // voxels[i].startColor = new Color(pointCloud[i * 6 + 3], pointCloud[i * 6 + 4], pointCloud[i * 6 + 5]);
+            voxels[i].startColor = new Color(1.0f, 1.0f, 1.0f);
+            voxels[i].startSize = 1.0f;
         }
+        Debug.Log("Set particles");
+        _particleSystem.SetParticles(voxels);
     }
 
 
