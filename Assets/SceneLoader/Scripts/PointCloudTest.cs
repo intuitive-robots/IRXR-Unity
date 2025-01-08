@@ -11,7 +11,6 @@ public class PointCloudTest : MonoBehaviour
     private ParticleSystem _particleSystem = null;
     private ParticleSystem.Particle[] voxels;
     private SubscriberSocket _subSocket;
-    bool voxelsUpdated = false;
 
     private void Awake()
     {
