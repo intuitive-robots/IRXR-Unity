@@ -68,9 +68,8 @@ public class PointCloudTest : MonoBehaviour
         for (int i = 0; i < pointNum; i++)
         {
             voxels[i].position = new Vector3(pointCloud[i * 6], pointCloud[i * 6 + 1], pointCloud[i * 6 + 2]);
-            // voxels[i].startColor = new Color(pointCloud[i * 6 + 3], pointCloud[i * 6 + 4], pointCloud[i * 6 + 5]);
-            voxels[i].startColor = new Color(1.0f, 1.0f, 1.0f);
-            voxels[i].startSize = 1.0f;
+            voxels[i].startColor = new Color(pointCloud[i * 6 + 3], pointCloud[i * 6 + 4], pointCloud[i * 6 + 5]);
+            voxels[i].startSize = 0.01f;
         }
         Debug.Log("Set particles");
         _particleSystem.SetParticles(voxels);
