@@ -25,7 +25,7 @@ namespace IRXR.Node
 		private CancellationTokenSource cancellationTokenSource;
 		private Task nodeTask;
 		// Lock for updating action in the main thread
-        private object updateActionLock = new();
+		private object updateActionLock = new();
 		public Action OnConnectionStart;
 		public Action OnDisconnected;
 		// ZMQ Sockets for communication, in this stage, we run them in the main thread
@@ -94,8 +94,8 @@ namespace IRXR.Node
 			_subSocket = new SubscriberSocket();
 			_reqSocket = new RequestSocket();
 			_sockets = new List<NetMQSocket>() { _pubSocket, _resSocket, _subSocket, _reqSocket };
-			serviceCallbacks = new ();
-			subscribeCallbacks = new ();
+			serviceCallbacks = new();
+			subscribeCallbacks = new();
 			cancellationTokenSource = new CancellationTokenSource();
 			// Action setting
 			// OnConnectionStart += () => RunOnMainThread(() => StartConnection());
@@ -113,8 +113,10 @@ namespace IRXR.Node
 			nodeTask = Task.Run(async () => await NodeTask(cancellationTokenSource.Token));
 		}
 
-		private void Update() {
-			lock (updateActionLock) {
+		private void Update()
+		{
+			lock (updateActionLock)
+			{
 				ConnectionSpin?.Invoke();
 			}
 		}
@@ -144,7 +146,8 @@ namespace IRXR.Node
 			NetMQConfig.Cleanup();
 		}
 
-		public void StartConnection() {
+		public void StartConnection()
+		{
 			if (isConnected) StopConnection();
 			// subscription
 			_subSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
@@ -152,7 +155,8 @@ namespace IRXR.Node
 			Debug.Log($"Start subscribing to {masterInfo.addr.ip}:{masterInfo.topicPort}");
 			// local service
 			_resSocket.Bind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
-			lock (updateActionLock) {
+			lock (updateActionLock)
+			{
 				ConnectionSpin += SubscriptionSpin;
 				ConnectionSpin += ServiceRespondSpin;
 			}
@@ -166,12 +170,14 @@ namespace IRXR.Node
 			// CalculateTimestampOffset();
 		}
 
-		public void StopConnection() {
+		public void StopConnection()
+		{
 			while (_subSocket.HasIn) _subSocket.SkipFrame();
 			ConnectionSpin = () => { };
 			// It is not necessary to clear the topics callbacks
 			// _topicsCallbacks.Clear();
 			if (!isConnected) return;
+			// TODO: remove the unbind to keep sending the log message
 			_resSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.SERVICE}");
 			_pubSocket.Unbind($"tcp://{localInfo.addr.ip}:{UnityPortSet.TOPIC}");
 			_reqSocket.Disconnect($"tcp://{masterInfo.addr.ip}:{masterInfo.servicePort}");
@@ -182,6 +188,29 @@ namespace IRXR.Node
 
 		public async Task NodeTask(CancellationToken token)
 		{
+			UdpClient udpClient = NetworkUtils.CreateUDPClient(UnityPortSet.DISCOVERY);
+			if (udpClient.Available == 0) return; // there's no message to read
+			IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
+			while (isRunning)
+			{
+				byte[] result = udpClient.Receive(ref endPoint);
+				string[] message = MsgUtils.SplitByteToStr(result);
+				// check if the message is from the same server
+				if (masterInfo.nodeID != message[0])
+				{
+					if (isConnected) OnDisconnected.Invoke();
+					masterInfo.nodeID = message[0];
+					masterInfo = MsgUtils.BytesDeserialize2Object<NodeInfo>(MsgUtils.String2Bytes(message[1]));
+					localInfo.addr.ip = NetworkUtils.GetLocalIPsInSameSubnet(masterInfo.addr.ip);
+					Debug.Log($"Discovered server at {masterInfo.addr.ip} with local IP {localInfo.addr.ip}");
+					StartConnection();
+					RegisterInfo2Server();
+					OnConnectionStart.Invoke();
+				}
+			}
+			lastTimeStamp = Time.realtimeSinceStartup;
+
+
 			Debug.Log("Node task starts and listening for master node...");
 			while (isRunning)
 			{
@@ -205,7 +234,7 @@ namespace IRXR.Node
 				catch (Exception e)
 				{
 					Debug.LogWarning($"Error in NodeTask: {e.StackTrace}");
-					break;
+					// break;
 				}
 			}
 			Debug.Log("Node task stopped.");
@@ -364,7 +393,8 @@ namespace IRXR.Node
 		public byte[] CallBytesService(string service_name, string request)
 		{
 			_reqSocket.SendFrame($"{service_name}{MsgUtils.SEPARATOR}{request}");
-			if (!_reqSocket.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(10000), out byte[] bytes, out bool more)) {
+			if (!_reqSocket.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(10000), out byte[] bytes, out bool more))
+			{
 				Debug.LogWarning($"Request Timeout");
 				return new byte[] { };
 			}
