@@ -157,3 +157,7 @@ crashlytics-build.properties
 
 # Unity Editor Crash Reporter
 mono_crash.*
+
+
+# Meta Quest3 compiler files
+.utmp
