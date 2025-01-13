@@ -83,6 +83,11 @@ namespace IRXR.Utilities
 			return String2Bytes(JsonConvert.SerializeObject(data));
 		}
 
+		public static T StringDeserialize2Object<T>(string jsonString)
+		{
+			return JsonConvert.DeserializeObject<T>(jsonString);
+		}
+
 		public static T BytesDeserialize2Object<T>(byte[] byteMessage)
 		{
 			string jsonString = Encoding.UTF8.GetString(byteMessage);

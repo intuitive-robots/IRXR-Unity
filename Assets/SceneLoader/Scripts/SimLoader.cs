@@ -31,7 +31,6 @@ namespace IRXR.SceneLoader
             _netManager = IRXRNetManager.Instance;
             updateAction = () => { };
             OnSceneLoaded += () => Debug.Log("Scene Loaded");
-            OnSceneCleared += () => Debug.Log("Scene Cleared");
             loadSimSceneService = new Service<SimScene, string>("LoadSimScene", LoadSimScene, true);
         }
 
@@ -55,7 +54,7 @@ namespace IRXR.SceneLoader
             local_watch.Stop();
             Debug.Log($"Building Scene in {local_watch.ElapsedMilliseconds} ms");
             Task.Run(() => DownloadAssets());
-            OnSceneLoaded.Invoke();
+            OnSceneLoaded?.Invoke();
         }
 
         public void DownloadAssets()
@@ -192,7 +191,7 @@ namespace IRXR.SceneLoader
 
         void ClearScene()
         {
-            OnSceneCleared.Invoke();
+            OnSceneCleared?.Invoke();
             if (_simSceneObj != null) Destroy(_simSceneObj);
             _pendingMesh.Clear();
             _pendingTexture.Clear();

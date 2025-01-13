@@ -24,6 +24,10 @@ namespace IRXR.Node
             _publisher.Publish(logString);
         }
 
+        private void OnApplicationQuit() {
+            Application.logMessageReceived -= HandleLog;
+        }
+
         void Update()
         {
             frameCounter += 1;
