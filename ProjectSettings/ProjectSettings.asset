@@ -165,7 +165,7 @@ PlayerSettings:
   androidMinAspectRatio: 1
   applicationIdentifier:
     Android: com.IntuitiveRobotsLab.IRXRUnity
-    Standalone: com.DefaultCompany.IRXR-Unity
+    Standalone: com.IntuitiveRobotsLab.IRXR-Unity
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -783,7 +783,7 @@ PlayerSettings:
     tvOS: 1
   incrementalIl2cppBuild: {}
   suppressCommonWarnings: 1
-  allowUnsafeCode: 0
+  allowUnsafeCode: 1
   useDeterministicCompilation: 1
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 1

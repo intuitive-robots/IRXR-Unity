@@ -2,17 +2,21 @@ using UnityEngine;
 using System.Net;
 using System.IO;
 using System.Threading;
+using IRXR.Node;
+using Anaglyph.DisplayCapture;
+using System;
 
 public class MjpegServer : MonoBehaviour
 {
     // public Camera streamCamera;
-    public Texture2D frameTexture;
     public int serverPort = 8080;
 
     private HttpListener httpListener;
+    private Texture2D frameTexture;
     private bool isRunning = false;
     // private Texture2D _frameTexture;
     private RenderTexture renderTex;
+
 
     void Start()
     {
@@ -27,6 +31,9 @@ public class MjpegServer : MonoBehaviour
         httpListener.Start();
         isRunning = true;
         ThreadPool.QueueUserWorkItem(ListenerLoop);
+
+        frameTexture = DisplayCaptureManager.Instance.ScreenCaptureTexture;
+        IRXRNetManager.Instance.serviceCallbacks.Add("ActivateScreenStreaming", ActivateScreenStreaming);
     }
 
     void OnDestroy()
@@ -78,5 +85,14 @@ public class MjpegServer : MonoBehaviour
                 }
             }
         }
+    }
+
+    byte[] ActivateScreenStreaming(byte[] message)
+    {
+        isRunning = true;
+        HttpListenerContext context = httpListener.GetContext();
+        HttpListenerRequest request = context.Request;
+        Uri url = request.Url;
+        return System.Text.Encoding.UTF8.GetBytes(url.AbsolutePath);
     }
 }
