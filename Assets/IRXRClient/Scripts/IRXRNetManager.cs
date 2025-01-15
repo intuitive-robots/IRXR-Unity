@@ -41,6 +41,10 @@ namespace IRXR.Node
 		// Request socket for sending service request to only master node
 		private RequestSocket _reqSocket;
 		private List<NetMQSocket> _sockets;
+		private List<IPublisher> _publishers;
+		private List<ISubscriber> _subscribers;
+		private List<IService> _services;
+		
 		public Action ConnectionSpin;
 		// Status flags
 		private bool isRunning = false;
@@ -63,16 +67,12 @@ namespace IRXR.Node
 			// Force to use .NET implementation of NetMQ
 			AsyncIO.ForceDotNet.Force();
 			// Initialize local node info
-			localInfo = new NodeInfo
+			localInfo = new NodeInfo()
 			{
 				name = "UnityNode",
 				nodeID = Guid.NewGuid().ToString(),
-				addr = new NodeAddress("127.0.0.1", 0),
+				addr = new NetAddress("127.0.0.1", 0),
 				type = "UnityNode",
-				servicePort = UnityPortSet.SERVICE,
-				topicPort = UnityPortSet.TOPIC,
-				serviceList = new List<string>(),
-				topicList = new List<string>()
 			};
 			// Default host name
 			if (PlayerPrefs.HasKey("HostName"))
@@ -90,10 +90,8 @@ namespace IRXR.Node
 			}
 			// NOTE: Since the NetZMQ setting is initialized in "AsyncIO.ForceDotNet.Force();"
 			// NOTE: we should initialize the sockets after that
-			_pubSocket = new PublisherSocket();
-			_resSocket = new ResponseSocket();
-			_subSocket = new SubscriberSocket();
 			_reqSocket = new RequestSocket();
+			
 			_sockets = new List<NetMQSocket>() { _pubSocket, _resSocket, _subSocket, _reqSocket };
 			serviceCallbacks = new();
 			subscribeCallbacks = new();
@@ -164,6 +162,10 @@ namespace IRXR.Node
 			lock (updateActionLock)
 			{
 				// subscription
+				foreach (var subscriber in _subscribers)
+				{
+					subscriber.Connect();
+				}
 				_subSocket.Connect($"tcp://{masterInfo.addr.ip}:{masterInfo.topicPort}");
 				_subSocket.Subscribe("");
 				Debug.Log($"Start subscribing to {masterInfo.addr.ip}:{masterInfo.topicPort}");

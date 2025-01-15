@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
-
+using NetMQ;
 
 namespace IRXR.Utilities
 {
@@ -16,31 +16,82 @@ namespace IRXR.Utilities
 		public static readonly int TOPIC = 7731;
 	}
 
-	public class NodeAddress
+	public class NetAddress
 	{
-		public string ip;
-		public int port;
-		public NodeAddress(string ip, int port)
+		public string ip { get; set; }  // IP address as a string
+		public int port { get; set; }   // Port as an integer
+
+		public NetAddress(string ip, int port)
 		{
 			this.ip = ip;
 			this.port = port;
 		}
 	}
 
+
+	public class NetComponentInfo
+	{
+		public string name { get; set; }
+		public string type { get; set; }
+		public string nodeID { get; set; }  // Assuming HashIdentifier is a string
+		public NetAddress addr { get; set; }
+
+		public NetComponentInfo(string name, string type, string nodeID, NetAddress addr)
+		{
+			this.name = name;
+			this.type = type;
+			this.nodeID = nodeID;
+			this.addr = addr;
+		}
+	}
+
+
 	public class NodeInfo
 	{
-		public string name;
-		public string nodeID;
-		public NodeAddress addr;
-		public string type;
-		public int servicePort;
-		public int topicPort;
-		public List<string> serviceList = new();
-		public List<string> topicList = new();
+		public string name { get; set; }
+		public string nodeID { get; set; }  // Hash code represented as string
+		public NetAddress addr { get; set; }
+		public string type { get; set; }
+		public Dictionary<string, NetComponentInfo> services { get; set; }
+		public Dictionary<string, NetComponentInfo> topics { get; set; }
+
+		public NodeInfo(string name, string nodeID, NetAddress addr, string type)
+		{
+			this.name = name;
+			this.nodeID = nodeID;
+			this.addr = addr;
+			this.type = type;
+			this.services = new Dictionary<string, NetComponentInfo>();
+			this.topics = new Dictionary<string, NetComponentInfo>();
+		}
+	}
+
+
+	public class NetInfo
+	{
+		public NodeInfo master { get; set; }
+		public Dictionary<string, NetComponentInfo> topics { get; set; }
+		public Dictionary<string, NetComponentInfo> services { get; set; }
+
+		public NetInfo(NodeInfo master)
+		{
+			this.master = master;
+			this.topics = new Dictionary<string, NetComponentInfo>();
+			this.services = new Dictionary<string, NetComponentInfo>();
+		}
 	}
 
 	public static class NetworkUtils
 	{
+
+		public static int GetZMQSocketPort(NetMQSocket socket)
+		{
+			// Retrieve the actual endpoint (e.g., "tcp://127.0.0.1:12345")
+			string endpoint = socket.Options.LastEndpoint;
+			// Extract the port number from the endpoint
+			int port = int.Parse(endpoint.Split(':')[2]);
+			return port;
+		}
 
 		public static UdpClient CreateUDPClient(IPEndPoint endPoint)
 		{

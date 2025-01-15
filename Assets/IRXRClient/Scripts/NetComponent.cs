@@ -5,33 +5,52 @@ using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
 using IRXR.Utilities;
+using UnityEditor.Networking.PlayerConnection;
 
 
 namespace IRXR.Node
 {
-	public class Publisher<MsgType>
+
+	public interface IPublisher
+	{
+		void Bind(string ip, int port);
+	}
+
+	public class Publisher<MsgType> : IPublisher
 	{
 		protected PublisherSocket _pubSocket;
 		protected string _topic;
 
 		public Publisher(string topic, bool globalNameSpace = false)
 		{
-			IRXRNetManager _netManager = IRXRNetManager.Instance;
+			IRXRNetManager netManager = IRXRNetManager.Instance;
+			_pubSocket = new PublisherSocket();
 			if (globalNameSpace)
 			{
 				_topic = topic;
 			}
 			else
 			{
-				_topic = $"{_netManager.localInfo.name}/{topic}";
+				_topic = $"{netManager.localInfo.name}/{topic}";
 			}
-			_pubSocket = _netManager._pubSocket;
-			if (!_netManager.localInfo.topicList.Contains(_topic))
+			_pubSocket = netManager._pubSocket;
+			if (!netManager.localInfo.topics.ContainsKey(_topic))
 			{
-				_netManager.localInfo.topicList.Add(_topic);
+				Debug.LogWarning($"Publisher for topic {_topic} is already created");
 			}
 			Debug.Log($"Publisher for topic {_topic} is created");
 		}
+
+		public void Bind(string ip, int port = 0)
+		{
+			IRXRNetManager netManager = IRXRNetManager.Instance;
+			_pubSocket.Bind($"tcp://{ip}:{port}");
+			port = NetworkUtils.GetZMQSocketPort(_pubSocket);
+			netManager.localInfo.topics[_topic] = new NetComponentInfo(
+				_topic, "Publisher", netManager.localInfo.nodeID, new NetAddress(ip, port)
+			);
+		}
+
 
 		public void Publish(string data)
 		{
@@ -70,28 +89,40 @@ namespace IRXR.Node
 
 	}
 
-	public class Subscriber<MsgType>
+	public interface ISubscriber
 	{
-		protected string _topic;
+		void Connect(string ip, int port);
+		void StartSubscription();
+		void Unsubscribe();
+	}
+
+	public class Subscriber<MsgType> : ISubscriber
+	{
+		private string _topic;
+		private SubscriberSocket _subSocket;
 		private Action<MsgType> _receiveAction;
 		private Func<byte[], MsgType> _onProcessMsg;
 
 		public Subscriber(string topic, Action<MsgType> receiveAction)
 		{
             _topic = topic;
+			_subSocket = new SubscriberSocket();
 			_receiveAction = receiveAction;
+		}
+
+		public void Connect(string ip, int port)
+		{
+			IRXRNetManager netManager = IRXRNetManager.Instance;
+			_subSocket.Connect($"tcp://{ip}:{port}");
+			_subSocket.Subscribe("");
+			netManager.localInfo.topics[_topic] = new NetComponentInfo(
+				_topic, "Subscriber", netManager.localInfo.nodeID, new NetAddress(ip, 0)
+			);
 		}
 
 		public void StartSubscription()
 		{
-			IRXRNetManager _netManager = IRXRNetManager.Instance;
-
-			// if (!_netManager.masterInfo.topicList.Contains(_topic))
-			// {
-			// 	Debug.LogWarning($"Topic {_topic} is not found in the master node");
-			// 	return;
-			// }
-
+			IRXRNetManager netManager = IRXRNetManager.Instance;
 			if (typeof(MsgType) == typeof(string))
 			{
 				_onProcessMsg = OnReceiveAsString;
@@ -104,15 +135,7 @@ namespace IRXR.Node
 			{
 				_onProcessMsg = OnReceiveAsJson;
 			}
-			// else if (typeof(MsgType).IsSerializable)
-			// {
-			// 	_onProcessMsg = OnReceiveAsJson;
-			// }
-			// else
-			// {
-			// 	throw new NotSupportedException($"Type {typeof(MsgType)} is not supported for subscription.");
-			// }
-			_netManager.subscribeCallbacks[_topic] = OnReceive;
+			netManager.subscribeCallbacks[_topic] = OnReceive;
 			Debug.Log($"Subscribed to topic {_topic}");
 		}
 
@@ -159,21 +182,28 @@ namespace IRXR.Node
 
 		public void Unsubscribe()
 		{
-            IRXRNetManager _netManager = IRXRNetManager.Instance;
-			if (_netManager.masterInfo.topicList.Contains(_topic))
+            IRXRNetManager netManager = IRXRNetManager.Instance;
+			if (netManager.masterInfo.topics.ContainsKey(_topic))
 			{
-				_netManager.subscribeCallbacks.Remove(_topic);
+				netManager.subscribeCallbacks.Remove(_topic);
 				Debug.Log($"Unsubscribe from topic {_topic}");
 			}
 		}
 
 	}
 
+
+	public interface IService
+	{
+		void Bind(string ip, int port);
+	}
+
     // Service class: Since it is running in the main thread, 
 	// so we don't need to destroy it
 	public class Service<RequestType, ResponseType>
 	{
-		protected string _serviceName;
+		private string _serviceName;
+		private ResponseSocket _resSocket;
 		private readonly Func<RequestType, ResponseType> _onRequest;
 		private Func<byte[], RequestType> ProcessRequestFunc;
 		private Func<ResponseType, byte[]> ProcessResponseFunc;
@@ -183,11 +213,11 @@ namespace IRXR.Node
 			IRXRNetManager netManager = IRXRNetManager.Instance;
 			string hostName = netManager.localInfo.name;
 			_serviceName = globalNameSpace ? serviceName : $"{hostName}/{serviceName}";
-			if (netManager.localInfo.serviceList.Contains(_serviceName))
+			if (netManager.localInfo.services.ContainsKey(_serviceName))
 			{
 				throw new ArgumentException($"Service {_serviceName} is already registered");
 			}
-			netManager.localInfo.serviceList.Add(_serviceName);
+			_resSocket = new ResponseSocket();
 			netManager.serviceCallbacks[_serviceName] = BytesCallback;
 			Debug.Log($"Service {_serviceName} is registered");
 			_onRequest = onRequest ?? throw new ArgumentNullException(nameof(onRequest));
@@ -204,14 +234,6 @@ namespace IRXR.Node
 			{
 				ProcessRequestFunc = bytes => MsgUtils.BytesDeserialize2Object<RequestType>(bytes);
 			}
-			// else if (typeof(RequestType).IsSerializable)
-			// {
-			// 	ProcessRequestFunc = bytes => MsgUtils.BytesDeserialize2Object<RequestType>(bytes);
-			// }
-			// else
-			// {
-			// 	throw new NotSupportedException($"Type {typeof(RequestType)} is not supported for service request.");
-			// }
 
 			// Initialize Response Processor
 			if (typeof(ResponseType) == typeof(string))
@@ -226,14 +248,16 @@ namespace IRXR.Node
 			{
 				ProcessResponseFunc = response => MsgUtils.ObjectSerialize2Bytes(response);
 			}
-			// else if (typeof(ResponseType).IsSerializable)
-			// {
-			// 	ProcessResponseFunc = response => MsgUtils.ObjectSerialize2Bytes(response);
-			// }
-			// else
-			// {
-			// 	throw new NotSupportedException($"Type {typeof(ResponseType)} is not supported for service response.");
-			// }
+		}
+
+		public void Bind(string ip, int port = 0)
+		{
+			IRXRNetManager netManager = IRXRNetManager.Instance;
+			_resSocket.Bind($"tcp://{ip}:{port}");
+			port = NetworkUtils.GetZMQSocketPort(_resSocket);
+			netManager.localInfo.services[_serviceName] = new NetComponentInfo(
+				_serviceName, "Service", netManager.localInfo.nodeID, new NetAddress(ip, port)
+			);
 		}
 
 		private byte[] BytesCallback(byte[] bytes)
@@ -266,9 +290,9 @@ namespace IRXR.Node
 		{
 			IRXRNetManager netManager = IRXRNetManager.Instance;
 
-			if (netManager.localInfo.serviceList.Contains(_serviceName))
+			if (netManager.localInfo.services.ContainsKey(_serviceName))
 			{
-				netManager.localInfo.serviceList.Remove(_serviceName);
+				netManager.localInfo.services.Remove(_serviceName);
 				netManager.serviceCallbacks.Remove(_serviceName);
 				Debug.Log($"Service {_serviceName} is unregistered");
 			}
