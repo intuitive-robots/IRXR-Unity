@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1817450283232457565}
   - component: {fileID: 5552327243606421420}
   - component: {fileID: 7136934837751640320}
+  - component: {fileID: 8268757596579056516}
   m_Layer: 0
   m_Name: SimScene
   m_TagString: Untagged
@@ -72,4 +73,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lightIntensity: 0.5
+  lightHeight: 10
+  lightOffset: 10
   lightColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &8268757596579056516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1715612398501171564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c39df7ce9a0d563ebaeed9c7bfff40b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -21,6 +21,7 @@ namespace IRXR.SceneLoader
         private GameObject _simSceneObj;
         private SimScene _simScene;
         private Dictionary<string, Transform> _simObjTrans = new();
+        private Dictionary<string, MeshFilter> _simObjMeshes = new();
         private Dictionary<string, List<Tuple<SimMesh, MeshFilter>>> _pendingMesh = new();
         private Dictionary<string, List<Tuple<SimTexture, Material>>> _pendingTexture = new();
         // Services
@@ -144,6 +145,7 @@ namespace IRXR.SceneLoader
                                     _pendingMesh[simMesh.hash] = new List<Tuple<SimMesh, MeshFilter>>();
                                 }
                                 _pendingMesh[simMesh.hash].Add(new(simMesh, visualObj.GetComponent<MeshFilter>()));
+                                _simObjMeshes.Add(body.name, visualObj.GetComponent<MeshFilter>());
                                 break;
                             }
                         case "CUBE":
@@ -278,6 +280,12 @@ namespace IRXR.SceneLoader
         {
             return _simSceneObj;
         }
+
+        public Dictionary<string, MeshFilter> GetObjectMeshes()
+        {
+            return _simObjMeshes;
+        }
+
 
     }
 }
