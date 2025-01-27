@@ -38,12 +38,12 @@ public class PointCloudLoader : MonoBehaviour
         Debug.Log("Received point cloud data");
         // Convert the byte array to a string
         float[] pointCloud = ByteArrayToFloatArray(pointCloudMsg);
-        if (pointCloud.Length % 6 != 0)
+        if (pointCloud.Length % 7 != 0)
         {
             Debug.LogError("Invalid point cloud data");
             return;
         }
-        int pointNum = pointCloud.Length / 6;
+        int pointNum = pointCloud.Length / 7;
         // Convert the data to the format that Unity's Particle System can use
         if (voxels == null || voxels.Length != pointNum)
         {
@@ -53,9 +53,9 @@ public class PointCloudLoader : MonoBehaviour
         Debug.Log("pointNum: " + pointNum);
         for (int i = 0; i < pointNum; i++)
         {
-            voxels[i].position = new Vector3(pointCloud[i * 6], pointCloud[i * 6 + 1], pointCloud[i * 6 + 2]);
-            voxels[i].startColor = new Color(pointCloud[i * 6 + 3], pointCloud[i * 6 + 4], pointCloud[i * 6 + 5]);
-            voxels[i].startSize = 0.01f;
+            voxels[i].position = new Vector3(pointCloud[i * 7], pointCloud[i * 7 + 1], pointCloud[i * 7 + 2]);
+            voxels[i].startColor = new Color(pointCloud[i * 7 + 3], pointCloud[i * 7 + 4], pointCloud[i * 7 + 5]);
+            voxels[i].startSize = pointCloud[i * 7 + 6];
         }
         Debug.Log("Set particles");
         _particleSystem.SetParticles(voxels);
