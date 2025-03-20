@@ -86,11 +86,11 @@ namespace IRXR.Node
 		{
 			IRXRNetManager _netManager = IRXRNetManager.Instance;
 
-			if (!_netManager.masterInfo.topicList.Contains(_topic))
-			{
-				Debug.LogWarning($"Topic {_topic} is not found in the master node");
-				return;
-			}
+			// if (!_netManager.masterInfo.topicList.Contains(_topic))
+			// {
+			// 	Debug.LogWarning($"Topic {_topic} is not found in the master node");
+			// 	return;
+			// }
 
 			if (typeof(MsgType) == typeof(string))
 			{
