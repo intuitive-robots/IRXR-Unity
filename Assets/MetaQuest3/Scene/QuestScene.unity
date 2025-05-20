@@ -3958,6 +3958,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: QR-Tracking
       objectReference: {fileID: 0}
+    - target: {fileID: 2739748375570366947, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
