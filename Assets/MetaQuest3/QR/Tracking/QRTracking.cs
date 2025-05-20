@@ -7,11 +7,11 @@ public class QRTracking : MonoBehaviour
     [SerializeField] private bool startTrackingOnStart = true;
     [SerializeField] private WebCamTextureManager webCamTextureManager;
     [SerializeField] private PassthroughCameraPermissions cameraPermissions;
-    [SerializeField] private GameObject prefab;
+    // [SerializeField] private GameObject prefab;
     [SerializeField] private EnvironmentRayCastSampleManager environmentRayCastSampleManager;
 
     private WebCamTexture texture;
-    private GameObject markerGO;
+    public GameObject markerGO;
     private Vector3[] cornerPoints = new Vector3[3];
     private bool tracking;
 
@@ -92,7 +92,7 @@ public class QRTracking : MonoBehaviour
     public void StartTracking()
     {
         if(PassthroughCameraPermissions.HasCameraPermission != true) cameraPermissions.AskCameraPermissions();
-        markerGO = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        // markerGO = Instantiate(prefab, Vector3.zero, Quaternion.identity);
         markerGO.SetActive(false);
         tracking = true;
     }
@@ -100,7 +100,7 @@ public class QRTracking : MonoBehaviour
     public void StopTracking()
     {
         tracking = false;
-        Destroy(markerGO);
+        markerGO.SetActive(true);
     }
 
     private int getIndexWithMinDistance(Vector3[] points, Vector3 point)
