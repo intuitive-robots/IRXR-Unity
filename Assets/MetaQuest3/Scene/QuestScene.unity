@@ -342,7 +342,15 @@ MonoBehaviour:
   resetHmdPoseOnRelease: 1
   resetHmdPoseByMiddleMouseButton: 1
   activateKeys: 3201000031010000
+  activateKeyBindings:
+  - <Keyboard>/leftCtrl
+  - <Keyboard>/rightCtrl
+  - <Keyboard>/f1
   pitchKeys: 3401000033010000
+  pitchKeyBindings:
+  - <Keyboard>/leftAlt
+  - <Keyboard>/rightAlt
+  - <Keyboard>/f2
 --- !u!114 &66071955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -355,10 +363,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e933e81d3c20c74ea6fdc708a67e3a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useRecommendedMSAALevel: 1
   _monoscopic: 0
   _sharpenType: 0
-  enableDynamicResolution: 1
+  _enableDynamicResolution: 0
   minDynamicResolutionScale: 1
   maxDynamicResolutionScale: 1
   quest2MinDynamicResolutionScale: 0.7
@@ -3939,6 +3946,67 @@ Transform:
   - {fileID: 1967726103}
   m_Father: {fileID: 1927476451}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &653854864
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 104565970247915755, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_Name
+      value: QR-Tracking
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.42137498
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.248125
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8911989060071759499, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: prefab
+      value: 
+      objectReference: {fileID: 4985561527546214594, guid: 56c13545b5fad2141b2d703e924e8d2c, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
 --- !u!1 &660562264
 GameObject:
   m_ObjectHideFlags: 0
@@ -11143,3 +11211,4 @@ SceneRoots:
   - {fileID: 118015491}
   - {fileID: 730623243}
   - {fileID: 529538743}
+  - {fileID: 653854864}
