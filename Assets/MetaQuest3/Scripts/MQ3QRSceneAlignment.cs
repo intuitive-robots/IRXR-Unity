@@ -3,23 +3,26 @@ using IRXR.Node;
 
 public class MQ3QRSceneAlignment : QRSceneAlignment
 {
+	[SerializeField] private QRTracking qrTracking;
 	private bool isTracking = false;
 
 	private void Update() {
-		if (isTracking) {
-			OnTrackingMotionController();
-		}
+		// if (isTracking) {
+		// 	OnTrackingMotionController();
+		// }
 	}
 
 	public override void StartQRTracking(QRSceneAlignmentData data)
 	{
-		isTracking = true;
+		qrTracking.StartTracking();
+		// isTracking = true;
 		ApplyOffset();
 	}
 
 	public override void StopQRTracking()
 	{
-		isTracking = false;
+		qrTracking.StopTracking();
+		// isTracking = false;
 	}
 
 	private void OnTrackingMotionController()
