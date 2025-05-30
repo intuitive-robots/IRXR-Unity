@@ -96,15 +96,20 @@ public class QRTracking : MonoBehaviour
                 up = Vector3.up;
                 break;
         }
-        
 
-        Quaternion forwardQuaternion = Quaternion.LookRotation(forward);
+
+
         if (markerGO != null)
         {
-            Vector3 center = (positions[0] + positions[1] + positions[2]) / 3;
-            markerGO.transform.SetPositionAndRotation(center, forwardQuaternion);
-            Quaternion upRot = Quaternion.FromToRotation(markerGO.transform.up, up);
-            markerGO.transform.rotation *= upRot;
+            // Quaternion forwardQuaternion = Quaternion.LookRotation(Vector3.forward, up);
+            // Vector3 center = (positions[0] + positions[1] + positions[2]) / 3;
+            // markerGO.transform.SetPositionAndRotation(center, forwardQuaternion);
+            // Quaternion upRot = Quaternion.FromToRotation(markerGO.transform.up, up);
+            // markerGO.transform.rotation *= upRot;
+
+            // Experiment
+            markerGO.transform.up = up;
+            markerGO.transform.LookAt(forward);
         }
 
         if (useAxisMarker && axisMarkerGO != null)
