@@ -8,14 +8,21 @@ using Meta.XR;
 
 public class MQ3QRSceneAlignment : QRSceneAlignment
 {
-	[SerializeField] private TRACKING_STYLE trackingStyle = TRACKING_STYLE.QR;
-	[SerializeField] private bool startTrackingOnStart = true;
-	private bool isTracking = false;
-
-	// QR-specific fields
-	[SerializeField] private bool calculateForwardDirFromQR = true;
-	[SerializeField] private UPDirection upDirection = UPDirection.POINTCLOUD;
 	private static string SPATIAL_PERMISSION = "com.oculus.permission.USE_SCENE";
+
+	[SerializeField] private bool startTrackingOnStart = true;
+	[SerializeField] private TRACKING_STYLE trackingStyle = TRACKING_STYLE.QR;
+
+	[Header("QR-specific fields")]
+	[SerializeField] private bool calculateForwardDirFromQR = true;
+
+	[Tooltip(@"Recommend using POINTCLOUD or WORLD for most cases.
+	 - POINTCLOUD uses the normals of the point cloud to determine the up direction.
+	 - QR uses the QR code to determine the up direction.
+	 - WORLD uses the world up direction (0, 1, 0).")]
+	[SerializeField] private UPDirection upDirection = UPDirection.POINTCLOUD;
+
+	private bool isTracking = false;
 	private WebCamTextureManager webCamTextureManager;
 	private WebCamTexture texture;
 	private EnvironmentRaycastManager raycastManager;
