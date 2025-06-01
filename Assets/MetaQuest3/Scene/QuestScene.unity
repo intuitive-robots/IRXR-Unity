@@ -3149,8 +3149,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 529538743}
-  - component: {fileID: 529538742}
   - component: {fileID: 529538741}
+  - component: {fileID: 529538742}
+  - component: {fileID: 529538746}
+  - component: {fileID: 529538745}
+  - component: {fileID: 529538744}
   m_Layer: 0
   m_Name: QuestSceneManager
   m_TagString: Untagged
@@ -3186,9 +3189,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   indicator: {fileID: 1430872477}
-  trackingStyle: 1
   startTrackingOnStart: 1
-  calculateForwardDirFromQR: 0
+  trackingStyle: 1
+  calculateForwardDirFromQR: 1
   upDirection: 2
 --- !u!4 &529538743
 Transform:
@@ -3209,6 +3212,46 @@ Transform:
   - {fileID: 1285684598}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &529538744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 529538740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8affdff7ba47d892cc734baac9ac71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &529538745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 529538740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a44ab3682a38f034e80cb083caa78837, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Eye: 0
+  RequestedResolution: {x: 0, y: 0}
+--- !u!114 &529538746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 529538740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b72178a834d51d469c487c0ec1ca46a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PermissionRequestsOnStartup:
+  - com.oculus.permission.USE_SCENE
 --- !u!1 &530698444
 GameObject:
   m_ObjectHideFlags: 0
@@ -4030,13 +4073,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: QR-Tracking
       objectReference: {fileID: 0}
+    - target: {fileID: 104565970247915755, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2356796321156540093, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2713430264232361211, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2739748375570366947, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4076,6 +4127,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6490276896379860021, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8911989060071759499, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}

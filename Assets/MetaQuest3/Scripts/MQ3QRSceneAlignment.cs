@@ -5,6 +5,7 @@ using ZXing;
 using ZXing.QrCode;
 using ZXing.Common;
 using Meta.XR;
+using NUnit.Framework;
 
 public class MQ3QRSceneAlignment : QRSceneAlignment
 {
@@ -22,18 +23,20 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 	 - WORLD uses the world up direction (0, 1, 0).")]
 	[SerializeField] private UPDirection upDirection = UPDirection.POINTCLOUD;
 
-	private bool isTracking = false;
 	private WebCamTextureManager webCamTextureManager;
 	private WebCamTexture texture;
 	private EnvironmentRaycastManager raycastManager;
+	
+	private bool isTracking = false;
+	private bool hasPermission = false;
 
     private void Start()
-    {
+	{
 		if (startTrackingOnStart)
 		{
 			StartQRTracking(new QRSceneAlignmentData());
 		}
-    }
+	}
 
     private void Update()
 	{
@@ -84,13 +87,13 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 	{
 		if (!HasScenePermission())
 		{
-			Debug.LogError($"Scene permission not granted. Please request permission before starting QR tracking. Following permission is required: {SPATIAL_PERMISSION}");
-			return;
+			Debug.LogError($"QR: Scene permission not granted. Please request permission before starting QR tracking. Following permission is required: {SPATIAL_PERMISSION}");
 		}
-	
+
 		if (!EnvironmentRaycastManager.IsSupported)
 		{
-			Debug.LogError("EnvironmentRaycastManager is not supported: please read the official documentation to get more details. (https://developers.meta.com/horizon/documentation/unity/unity-depthapi-overview/)");
+			Debug.LogError("QR: EnvironmentRaycastManager is not supported: please read the official documentation to get more details. (https://developers.meta.com/horizon/documentation/unity/unity-depthapi-overview/)");
+			return;
 		}
 
 		if (raycastManager == null)
@@ -98,7 +101,7 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 			raycastManager = FindAnyObjectByType<EnvironmentRaycastManager>();
 			if (raycastManager == null)
 			{
-				Debug.LogError("EnvironmentRaycastManager not found in the scene: please read the official documentation to get more details. (https://developers.meta.com/horizon/documentation/unity/unity-depthapi-overview/)");
+				Debug.LogError("QR: EnvironmentRaycastManager not found in the scene: please read the official documentation to get more details. (https://developers.meta.com/horizon/documentation/unity/unity-depthapi-overview/)");
 				return;
 			}
 		}
@@ -119,6 +122,15 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 	private void OnTrackingQR()
 	{
 		if (webCamTextureManager.WebCamTexture == null) return;
+		if (!hasPermission) 
+		{
+			hasPermission = HasScenePermission();
+			if (!hasPermission)
+			{
+				Debug.LogError("QR: Camera permission not granted. Please request permission before starting QR tracking.");
+				return;
+			}
+		}
 
 		texture = webCamTextureManager.WebCamTexture;
 		LuminanceSource luminanceSource = getLuminanceSource(texture);
@@ -198,13 +210,10 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 				break;
 		}
 		// forward-vector projected onto plane defined by up-vector https://en.wikipedia.org/wiki/Vector_projection
-		Vector3 rejForward = forward - Vector3.Project(forward, up);
-		// set up and forward-direction of the GameObject
-		
+		Vector3 rejForward = forward - Vector3.Project(forward, up);		
 		Quaternion rotation = Quaternion.LookRotation(rejForward, up);
 		Vector3 pos = (positions[0] + positions[1] + positions[2]) / 3;
 		transform.SetPositionAndRotation(pos, rotation);
-        // transform.LookAt(forward);
     }
 
 
