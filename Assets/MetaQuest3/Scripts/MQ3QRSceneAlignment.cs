@@ -67,6 +67,12 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 	public override void StopQRTracking()
 	{
 		isTracking = false;
+
+		// TODO: Seperate the logic for stopping tracking based on the style
+		if (trackingStyle == TRACKING_STYLE.QR && webCamTextureManager != null)
+		{
+			webCamTextureManager.StopRecording();
+		}
 	}
 
 
@@ -85,11 +91,6 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 
 	private void StartQRTracking()
 	{
-		if (!HasScenePermission())
-		{
-			Debug.LogError($"QR: Scene permission not granted. Please request permission before starting QR tracking. Following permission is required: {SPATIAL_PERMISSION}");
-		}
-
 		if (!EnvironmentRaycastManager.IsSupported)
 		{
 			Debug.LogError("QR: EnvironmentRaycastManager is not supported: please read the official documentation to get more details. (https://developers.meta.com/horizon/documentation/unity/unity-depthapi-overview/)");
@@ -115,7 +116,7 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 				return;
 			}
 		}
-		
+		webCamTextureManager.StartRecording();
 	}
 
 

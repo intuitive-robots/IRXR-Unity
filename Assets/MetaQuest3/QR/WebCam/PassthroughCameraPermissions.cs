@@ -16,12 +16,12 @@ using PCD = PassthroughCameraSamples.PassthroughCameraDebugger;
 /// </summary>
 public class PassthroughCameraPermissions : MonoBehaviour
 {
-    [SerializeField] public List<string> PermissionRequestsOnStartup = new() { OVRPermissionsRequester.ScenePermission };
 
     public static readonly string[] CameraPermissions =
     {
-        "android.permission.CAMERA",          // Required to use WebCamTexture object.
-        "horizonos.permission.HEADSET_CAMERA" // Required to access the Passthrough Camera API in Horizon OS v74 and above.
+        "android.permission.CAMERA",                // Required to use WebCamTexture object.
+        "horizonos.permission.HEADSET_CAMERA",      // Required to access the Passthrough Camera API in Horizon OS v74 and above.
+        OVRPermissionsRequester.ScenePermission     // Required to access Spatial Data
     };
 
     public static bool? HasCameraPermission { get; private set; }
@@ -53,7 +53,7 @@ public class PassthroughCameraPermissions : MonoBehaviour
             callbacks.PermissionDeniedAndDontAskAgain += PermissionCallbacksPermissionDenied;
 
             // It's important to request all necessary permissions in one request because only one 'PermissionCallbacks' instance is supported at a time.
-            var allPermissions = CameraPermissions.Concat(PermissionRequestsOnStartup).ToArray();
+            var allPermissions = CameraPermissions.ToArray();
             Permission.RequestUserPermissions(allPermissions, callbacks);
         }
     }

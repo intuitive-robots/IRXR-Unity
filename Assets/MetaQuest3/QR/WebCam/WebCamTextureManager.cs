@@ -20,28 +20,25 @@ public class WebCamTextureManager : MonoBehaviour
 
     private bool m_hasPermission;
 
-    private void Awake()
+
+    public WebCamTexture StartRecording()
     {
-        Debug.Log($"{nameof(WebCamTextureManager)}.{nameof(Awake)}() was called");
+        Debug.Log($"PCA: {nameof(StartRecording)}() was called");
         Assert.AreEqual(1, FindObjectsByType<WebCamTextureManager>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length,
-            $"PCA: Passthrough Camera: more than one {nameof(WebCamTextureManager)} component. Only one instance is allowed at a time. Current instance: {name}");
+        $"PCA: Passthrough Camera: more than one {nameof(WebCamTextureManager)} component. Only one instance is allowed at a time. Current instance: {name}");
 #if UNITY_ANDROID
         CameraPermissions = FindAnyObjectByType<PassthroughCameraPermissions>();
         Assert.IsNotNull(CameraPermissions, $"PCA: Passthrough Camera: {nameof(PassthroughCameraPermissions)} component is required to request camera permissions. " +
             $"Please add it to the scene or to the same GameObject as {nameof(WebCamTextureManager)}.");
         CameraPermissions.AskCameraPermissions();
 #endif
-    }
 
-    private void OnEnable()
-    {
-        Debug.Log($"PCA: {nameof(OnEnable)}() was called");
         if (!PassthroughCameraUtils.IsSupported)
         {
             Debug.Log("PCA: Passthrough Camera functionality is not supported by the current device." +
                         $" Disabling {nameof(WebCamTextureManager)} object");
             enabled = false;
-            return;
+            return WebCamTexture;
         }
 
         m_hasPermission = PassthroughCameraPermissions.HasCameraPermission == true;
@@ -49,16 +46,17 @@ public class WebCamTextureManager : MonoBehaviour
         {
             Debug.LogWarning(
                 $"PCA: Passthrough Camera requires permission(s) {string.Join(" and ", PassthroughCameraPermissions.CameraPermissions)}. Waiting for them to be granted...");
-            return;
+            return WebCamTexture;
         }
 
         Debug.Log("PCA: All permissions have been granted");
         _ = StartCoroutine(InitializeWebCamTexture());
+        return WebCamTexture;
     }
 
-    private void OnDisable()
+    public void StopRecording()
     {
-        Debug.Log($"PCA: {nameof(OnDisable)}() was called");
+        Debug.Log($"PCA: {nameof(StopRecording)}() was called");
         StopCoroutine(InitializeWebCamTexture());
         if (WebCamTexture != null)
         {
