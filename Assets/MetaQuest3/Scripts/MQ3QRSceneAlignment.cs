@@ -13,8 +13,9 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 	private bool isTracking = false;
 
 	// QR-specific fields
-	private static string SPATIAL_PERMISSION = "com.oculus.permission.USE_SCENE";
+	[SerializeField] private bool calculateForwardDirFromQR = true;
 	[SerializeField] private UPDirection upDirection = UPDirection.POINTCLOUD;
+	private static string SPATIAL_PERMISSION = "com.oculus.permission.USE_SCENE";
 	private WebCamTextureManager webCamTextureManager;
 	private WebCamTexture texture;
 	private EnvironmentRaycastManager raycastManager;
@@ -114,7 +115,7 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 
 		texture = webCamTextureManager.WebCamTexture;
 		LuminanceSource luminanceSource = getLuminanceSource(texture);
-		Result result = decodeQr(luminanceSource);
+		Result result = DecodeQr(luminanceSource);
 
 
 		if (result != null)
@@ -123,9 +124,9 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 
 			Vector3[] positions = new Vector3[3];
 			Vector3[] normals = new Vector3[3];
-			getPosesOfCorners(result, positions, normals);
+			GetPosesOfCorners(result, positions, normals);
 
-			setPoseOfGO(positions, normals);
+			SetPoseOfGO(positions, normals);
 		}
 		else
 		{
@@ -134,7 +135,7 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 	}
 
 
-	private void getPosesOfCorners(Result result, Vector3[] positions, Vector3[] normals)
+	private void GetPosesOfCorners(Result result, Vector3[] positions, Vector3[] normals)
 	{
 		// the order is: bottom-left, top-left, top-right
 		for (int i = 0; i < 3; i++)
@@ -167,9 +168,9 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 		return new RGBLuminanceSource(rawBytes, texture.width, texture.height);
 	}
 
-	private void setPoseOfGO(Vector3[] positions, Vector3[] normals)
+	private void SetPoseOfGO(Vector3[] positions, Vector3[] normals)
 	{
-		Vector3 forward = (positions[0] - positions[1]).normalized;
+		Vector3 forward = calculateForwardDirFromQR ? (positions[0] - positions[1]).normalized : Vector3.forward;
 		Vector3 right = (positions[2] - positions[1]).normalized;
 		Vector3 up = Vector3.up;
 		switch (upDirection)
@@ -179,22 +180,28 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 				{
 					up += normals[i];
 				}
-				up /= normals.Length;
+				up = up.normalized;
 				break;
 
 			case UPDirection.QR:
-				up = Vector3.Cross(forward, right).normalized;
+				up = -Vector3.Cross(forward, right).normalized;
 				break;
-			case UPDirection.FLOOR:
+			case UPDirection.WORLD:
 				up = Vector3.up;
 				break;
 		}
-		transform.up = up;
-		transform.LookAt(forward);
-	}
+		// forward-vector projected onto plane defined by up-vector https://en.wikipedia.org/wiki/Vector_projection
+		Vector3 rejForward = forward - Vector3.Project(forward, up);
+		// set up and forward-direction of the GameObject
+		
+		Quaternion rotation = Quaternion.LookRotation(rejForward, up);
+		Vector3 pos = (positions[0] + positions[1] + positions[2]) / 3;
+		transform.SetPositionAndRotation(pos, rotation);
+        // transform.LookAt(forward);
+    }
 
 
-	private static Result decodeQr(LuminanceSource luminanceSource)
+	private static Result DecodeQr(LuminanceSource luminanceSource)
 	{
 		// way 1 ZXing barcode reader
 		// var barcodeReader = new BarcodeReaderGeneric { AutoRotate = false, Options = new ZXing.Common.DecodingOptions { TryHarder = false } };
@@ -250,7 +257,7 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 	{
 		POINTCLOUD,
 		QR,
-		FLOOR
+		WORLD
 	}
 
 }

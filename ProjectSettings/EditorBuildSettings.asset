@@ -4,7 +4,10 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/MetaQuest3/Scene/QuestScene.unity
+    guid: dc0f30f9ab90e8947a3b640ed7edeaf1
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: e666918531afe824f9c3812ce1ec0219, type: 2}
     com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 3a0a624b0f88ecd47ad3f4e01f432f63, type: 2}
