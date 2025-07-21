@@ -3250,8 +3250,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b72178a834d51d469c487c0ec1ca46a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PermissionRequestsOnStartup:
-  - com.oculus.permission.USE_SCENE
 --- !u!1 &530698444
 GameObject:
   m_ObjectHideFlags: 0
@@ -4061,107 +4059,6 @@ Transform:
   - {fileID: 1967726103}
   m_Father: {fileID: 1927476451}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &653854864
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 104565970247915755, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_Name
-      value: QR-Tracking
-      objectReference: {fileID: 0}
-    - target: {fileID: 104565970247915755, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2356796321156540093, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2713430264232361211, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2739748375570366947, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3528560581583167039, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6490276896379860021, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8911989060071759499, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: prefab
-      value: 
-      objectReference: {fileID: 4985561527546214594, guid: 56c13545b5fad2141b2d703e924e8d2c, type: 3}
-    - target: {fileID: 8911989060071759499, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: markerGO
-      value: 
-      objectReference: {fileID: 1285684597}
-    - target: {fileID: 8911989060071759499, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8911989060071759499, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: upDirection
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8911989060071759499, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: axisMarkerPrefab
-      value: 
-      objectReference: {fileID: 1958783570294104, guid: d3f436728a834c94eb3d882d0dabd410, type: 3}
-    - target: {fileID: 8911989060071759499, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
-      propertyPath: startTrackingOnStart
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: b133a99e771ba5d45845ee7ecb1720db, type: 3}
 --- !u!1 &660562264
 GameObject:
   m_ObjectHideFlags: 0
@@ -7403,11 +7300,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5702f2aa065381d489668e5042b2d92c, type: 3}
---- !u!1 &1285684597 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 100000, guid: 5702f2aa065381d489668e5042b2d92c, type: 3}
-  m_PrefabInstance: {fileID: 1285684596}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1285684598 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 5702f2aa065381d489668e5042b2d92c, type: 3}
@@ -11449,4 +11341,3 @@ SceneRoots:
   - {fileID: 118015491}
   - {fileID: 730623243}
   - {fileID: 529538743}
-  - {fileID: 653854864}
