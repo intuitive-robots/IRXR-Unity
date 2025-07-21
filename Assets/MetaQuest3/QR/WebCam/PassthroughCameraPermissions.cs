@@ -6,7 +6,6 @@ using Meta.XR.Samples;
 using UnityEngine;
 #if UNITY_ANDROID
 using UnityEngine.Android;
-using PCD = PassthroughCameraSamples.PassthroughCameraDebugger;
 
 #endif
 
@@ -41,11 +40,11 @@ public class PassthroughCameraPermissions : MonoBehaviour
         if (IsAllCameraPermissionsGranted())
         {
             HasCameraPermission = true;
-            PCD.DebugMessage(LogType.Log, "PCA: All camera permissions granted.");
+            Debug.Log("PCA: All camera permissions granted.");
         }
         else
         {
-            PCD.DebugMessage(LogType.Log, "PCA: Requesting camera permissions.");
+            Debug.Log("PCA: Requesting camera permissions.");
 
             var callbacks = new PermissionCallbacks();
             callbacks.PermissionDenied += PermissionCallbacksPermissionDenied;
@@ -64,7 +63,7 @@ public class PassthroughCameraPermissions : MonoBehaviour
     /// <param name="permissionName"></param>
     private static void PermissionCallbacksPermissionGranted(string permissionName)
     {
-        PCD.DebugMessage(LogType.Log, $"PCA: Permission {permissionName} Granted");
+        Debug.Log($"PCA: Permission {permissionName} Granted");
 
         // Only initialize the WebCamTexture object if both permissions are granted
         if (IsAllCameraPermissionsGranted())
@@ -79,7 +78,7 @@ public class PassthroughCameraPermissions : MonoBehaviour
     /// <param name="permissionName"></param>
     private static void PermissionCallbacksPermissionDenied(string permissionName)
     {
-        PCD.DebugMessage(LogType.Warning, $"PCA: Permission {permissionName} Denied");
+        Debug.Log($"PCA: Permission {permissionName} Denied");
         HasCameraPermission = false;
         s_askedOnce = false;
     }
