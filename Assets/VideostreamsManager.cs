@@ -9,27 +9,32 @@ public class VideostreamsManager : MonoBehaviour
 {
     public Canvas canvas; // Reference to the Canvas where video streams will be displayed
     private Dictionary<string, RawImage> videoStreams;
-    private Service<CreateVideoStreamRequest, bool> createVideoStreamService;
-    private Service<UpdateVideoStreamRequest, bool> updateVideoStreamService;
-    private Service<string, bool> removeVideoStreamService;
+    private Service<VideoStreamRequest, bool> videoStreamService;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         videoStreams = new Dictionary<string, RawImage>();
-        createVideoStreamService = new Service<CreateVideoStreamRequest, bool>(
-            "CreateVideoStream",
-            (request) => CreateVideoStream(request.VideoStreamId, request.Position, request.Rotation)
+        videoStreamService = new Service<VideoStreamRequest, bool>(
+            "VideoStream",
+            (request) => HandleVideoStreamRequest(request)
         );
-        updateVideoStreamService = new Service<UpdateVideoStreamRequest, bool>(
-            "UpdateVideoStream",
-            (request) => UpdateVideoStream(request.VideoStreamId, request.ImageData)
-        );
-        removeVideoStreamService = new Service<string, bool>(
-            "RemoveVideoStream",
-            (videoStreamId) => RemoveVideoStream(videoStreamId)
-        );
+    }
 
+    private bool HandleVideoStreamRequest(VideoStreamRequest request)
+    {
+        switch (request.Operation)
+        {
+            case VideoStreamOperation.Create:
+                return CreateVideoStream(request.VideoStreamId, request.Position, request.Rotation);
+            case VideoStreamOperation.Update:
+                return UpdateVideoStream(request.VideoStreamId, request.ImageData);
+            case VideoStreamOperation.Remove:
+                return RemoveVideoStream(request.VideoStreamId);
+            default:
+                Debug.LogWarning($"Unknown video stream operation: {request.Operation}");
+                return false;
+        }
     }
 
 
@@ -82,20 +87,28 @@ public class VideostreamsManager : MonoBehaviour
     {
         // Logic to remove a video stream
         Debug.Log($"Video stream '{videoStreamId}' removed.");
-        return videoStreams.Remove(videoStreamId);
+        if (videoStreams.TryGetValue(videoStreamId, out RawImage rawImage))
+        {
+            Destroy(rawImage.gameObject);
+            return videoStreams.Remove(videoStreamId);
+        }
+        return false;
     }
 
-    // Request classes for video stream services
-    public class CreateVideoStreamRequest
+    // Enum and class for the unified video stream service
+    public enum VideoStreamOperation
     {
+        Create,
+        Update,
+        Remove
+    }
+
+    public class VideoStreamRequest
+    {
+        public VideoStreamOperation Operation { get; set; }
         public string VideoStreamId { get; set; }
         public Vector3 Position { get; set; }
         public Quaternion Rotation { get; set; }
-    }
-
-    public class UpdateVideoStreamRequest
-    {
-        public string VideoStreamId { get; set; }
         public byte[] ImageData { get; set; }
     }
 }
