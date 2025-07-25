@@ -8,16 +8,16 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 	// [SerializeField] private TRACKING_STYLE trackingStyle = TRACKING_STYLE.QR;
 
 
-    private void Start()
+	private void Start()
 	{
 		// if (trackingStyle == TRACKING_STYLE.QR) trackingManager.StartQRTracking();
-		if (trackingManager == null) { 
+		if (trackingManager == null) {
 			Debug.LogError("MQ3QRSceneAlignment: trackingManager is not assigned. Please assign it in the inspector.");
 			return;
 		}
 
 		startAlignmentService = new("StartQRAlignment", StartQRAlignment);
-        stopAlignmentService = new("StopQRAlignment", StopQRAlignment);
+		stopAlignmentService = new("StopQRAlignment", StopQRAlignment);
 
 		if (startTrackingOnStart)
 		{
@@ -25,7 +25,7 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 		}
 	}
 
-    private void Update()
+	private void Update()
 	{
 		if (isTrackingQR) trackingManager.OnTrackingQR();
 	}
@@ -43,7 +43,7 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 		return base.StopQRAlignment(signal);
 	}
 
-
+	#region MotionControllerTracking
 	private void OnTrackingMotionController()
 	{
 		var activeController = OVRInput.GetActiveController();
@@ -56,4 +56,5 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 		Vector3 euler = Quaternion.Slerp(leftRot, rightRot, 0.5f).eulerAngles;
 		transform.rotation = Quaternion.Euler(0, euler.y, 0);
 	}
+	#endregion
 }
