@@ -11,16 +11,15 @@ public class QRTackingManager : MonoBehaviour
     private WebCamTextureManager webCamTextureManager;
     private WebCamTexture texture;
     private EnvironmentRaycastManager raycastManager;
+	private bool hasPermission = false;
 
-    [Header("QR-specific fields")]
-    [SerializeField] private bool calculateForwardDirFromQR = true;
+    // [SerializeField] private bool calculateForwardDirFromQR = true;
 
     [Tooltip(@"Recommend using POINTCLOUD or WORLD for most cases.
 	 - POINTCLOUD uses the normals of the point cloud to determine the up direction.
 	 - QR uses the QR code to determine the up direction.
 	 - WORLD uses the world up direction (0, 1, 0).")]
     [SerializeField] private UPDirection upDirection = UPDirection.POINTCLOUD;
-	private bool hasPermission = false;
 
 
 
@@ -54,7 +53,18 @@ public class QRTackingManager : MonoBehaviour
         webCamTextureManager.StartRecording();
     }
 
-
+    public void StopQRTracking()
+    {
+        if (webCamTextureManager != null)
+        {
+            webCamTextureManager.StopRecording();
+        }
+        else
+        {
+            Debug.LogWarning("WebCamTextureManager is not set, cannot stop recording.");
+        }
+    }
+    
     public void OnTrackingQR()
     {
         if (webCamTextureManager.WebCamTexture == null) return;
@@ -125,7 +135,7 @@ public class QRTackingManager : MonoBehaviour
 
     private void SetPoseOfGO(Vector3[] positions, Vector3[] normals)
     {
-        Vector3 forward = calculateForwardDirFromQR ? (positions[0] - positions[1]).normalized : Vector3.forward;
+        Vector3 forward = (positions[0] - positions[1]).normalized;
         Vector3 right = (positions[2] - positions[1]).normalized;
         Vector3 up = Vector3.up;
         switch (upDirection)
@@ -197,21 +207,9 @@ public class QRTackingManager : MonoBehaviour
             return (null, null);
         }
     }
-
-    internal void StopQRTracking()
-    {
-        if (webCamTextureManager != null)
-        {
-            webCamTextureManager.StopRecording();
-        }
-        else
-        {
-            Debug.LogWarning("WebCamTextureManager is not set, cannot stop recording.");
-        }
-    }
     
     
-	private enum UPDirection
+	public enum UPDirection
 	{
 		POINTCLOUD,
 		QR,

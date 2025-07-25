@@ -3,45 +3,45 @@ using UnityEngine;
 public class MQ3QRSceneAlignment : QRSceneAlignment
 {
 
-	[SerializeField] private bool startTrackingOnStart = true;
+	[SerializeField] private bool startTrackingOnStart = false;
 	[SerializeField] private QRTackingManager trackingManager;
 	// [SerializeField] private TRACKING_STYLE trackingStyle = TRACKING_STYLE.QR;
-	private bool isTracking = false;
 
 
     private void Start()
-	{
-		if (startTrackingOnStart)
-		{
-			StartQRTracking(new QRSceneAlignmentData());
-		}
-	}
-
-    private void Update()
-	{
-		if (isTracking) trackingManager.OnTrackingQR();
-	}
-
-	public override void StartQRTracking(QRSceneAlignmentData data)
 	{
 		// if (trackingStyle == TRACKING_STYLE.QR) trackingManager.StartQRTracking();
 		if (trackingManager == null) { 
 			Debug.LogError("MQ3QRSceneAlignment: trackingManager is not assigned. Please assign it in the inspector.");
 			return;
 		}
-		isTracking = true;
-		ApplyOffset();
-		}
 
+		startAlignmentService = new("StartQRAlignment", StartQRAlignment);
+        stopAlignmentService = new("StopQRAlignment", StopQRAlignment);
 
-		public override void StopQRTracking()
+		if (startTrackingOnStart)
 		{
-			isTracking = false;
-
-			// TODO: Seperate the logic for stopping tracking based on the style
-			// if (trackingStyle == TRACKING_STYLE.QR)
-			trackingManager.StopQRTracking();
+			StartQRAlignment(new QRSceneAlignmentData());
 		}
+	}
+
+    private void Update()
+	{
+		if (isTrackingQR) trackingManager.OnTrackingQR();
+	}
+
+	public override string StartQRAlignment(QRSceneAlignmentData data)
+	{
+		trackingManager.StartQRTracking();
+		return base.StartQRAlignment(data);
+	}
+
+
+	public override string StopQRAlignment(string signal)
+	{
+		trackingManager.StopQRTracking();
+		return base.StopQRAlignment(signal);
+	}
 
 
 	private void OnTrackingMotionController()
@@ -56,14 +56,4 @@ public class MQ3QRSceneAlignment : QRSceneAlignment
 		Vector3 euler = Quaternion.Slerp(leftRot, rightRot, 0.5f).eulerAngles;
 		transform.rotation = Quaternion.Euler(0, euler.y, 0);
 	}
-
-
-	private enum TRACKING_STYLE
-	{
-		MOTION_CONTROLLER,
-		QR
-	}
-
-
-
 }

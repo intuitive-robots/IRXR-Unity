@@ -29,8 +29,8 @@ public class QRSceneAlignment : MonoBehaviour {
     [SerializeField] protected GameObject indicator;
     protected QRSceneAlignmentData _data;
     protected bool isTrackingQR = false;
-    private Service<QRSceneAlignmentData, string> startAlignmentService;
-    private Service<string, string> stopAlignmentService;
+    protected Service<QRSceneAlignmentData, string> startAlignmentService;
+    protected Service<string, string> stopAlignmentService;
 
     private void Start() {
         startAlignmentService = new("StartQRAlignment", StartQRAlignment);
@@ -45,7 +45,7 @@ public class QRSceneAlignment : MonoBehaviour {
         }
     }
 
-    public string StartQRAlignment(QRSceneAlignmentData data) {
+    public virtual string StartQRAlignment(QRSceneAlignmentData data) {
         _data = data;
         isTrackingQR = true;
         indicator.SetActive(true);
@@ -54,7 +54,7 @@ public class QRSceneAlignment : MonoBehaviour {
         return IRXRSignal.SUCCESS;
     }
 
-    public string StopQRAlignment(string signal) {
+    public virtual string StopQRAlignment(string signal) {
         isTrackingQR = false;
         indicator.SetActive(false);
         Debug.Log("Stop QR Tracking");
