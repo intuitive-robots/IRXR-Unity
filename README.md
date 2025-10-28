@@ -1,3 +1,16 @@
+# Project Update
+
+The **IRXR** project has now been transitioned to the **[IRIS Project](https://intuitive-robots.github.io/iris-project-page/)**.  
+
+The Unity components have been separated into dedicated repositories:
+
+- **[IRIS-Viz](https://github.com/intuitive-robots/IRIS-Viz)** — Core Unity visualization package  
+- **[IRIS-Meta-Quest3](https://github.com/intuitive-robots/IRIS-Meta-Quest3)** — Device-specific integration for Meta Quest 3  
+
+The Python module **[SimPublisher](https://github.com/intuitive-robots/SimPublisher)** remains unchanged and continues to serve as the primary simulation publisher.
+
+---
+
 # Intuitive Robot & Mixed Reality (IRXR-Unity)
 
 ![FancyGym](./Docs/Pictures/fancy_gym_example.gif)
