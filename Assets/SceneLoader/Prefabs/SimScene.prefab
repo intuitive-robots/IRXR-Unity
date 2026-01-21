@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2085763002845073359}
   - component: {fileID: 1817450283232457565}
   - component: {fileID: 5552327243606421420}
+  - component: {fileID: 2865823669208674190}
   - component: {fileID: 7136934837751640320}
   m_Layer: 0
   m_Name: SimScene
@@ -59,6 +60,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43b973fe0a32ff894963acb23af7fd0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2865823669208674190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1715612398501171564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b9354a0ff8c2bc459f4fb7b784dcebf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7136934837751640320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,4 +85,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lightIntensity: 0.5
+  lightHeight: 10
+  lightOffset: 10
   lightColor: {r: 1, g: 1, b: 1, a: 1}
